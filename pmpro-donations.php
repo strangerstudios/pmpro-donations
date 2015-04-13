@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Paid Memberships Pro - Donations
-Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-variable-prices/
+Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .1
+Version: .2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -383,6 +383,9 @@ function pmprodon_getPriceComponents($order)
 		if($donation > 0)
 			$r['price'] = $order->total - $donation;	
 	}
+	
+	//filter added .2
+	$r = apply_filters('pmpro_donations_get_price_components', $r, $order);
 	
 	return $r;
 }
