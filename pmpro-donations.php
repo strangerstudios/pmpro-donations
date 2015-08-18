@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .2.1
+Version: .2.2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -443,7 +443,7 @@ add_filter("pmpro_email_filter", "pmprodon_pmpro_email_filter", 10, 2);
 Function to add links to the plugin row meta
 */
 function pmprodon_plugin_row_meta($links, $file) {
-	if(strpos($file, 'pmpro-variable-prices.php') !== false)
+	if(strpos($file, 'pmpro-donations.php') !== false)
 	{
 		$new_links = array(
 			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
