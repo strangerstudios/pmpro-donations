@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .2.1
+Version: .2.2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -37,7 +37,7 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 <h3 class="topborder">Donations</h3>
 <p>If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.</p>
 <table>
-<tbody class="form-table">	
+<tbody class="form-table">
 	<tr>
 		<th scope="row" valign="top"><label for="donations">Enable:</label></th>
 		<td>
@@ -45,15 +45,15 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 		</td>
 	</tr>
 	<tr>
-		<th scope="row" valign="top"><label for="min_price">Min Amount:</label></th>
+		<th scope="row" valign="top"><label for="donation_min_price">Min Amount:</label></th>
 		<td>
-			<?php echo $pmpro_currency_symbol?><input type="text" id="min_price" name="min_price" value="<?php echo esc_attr($min_price); ?>" />
+			<?php echo $pmpro_currency_symbol?><input type="text" id="donation_min_price" name="donation_min_price" value="<?php echo esc_attr($min_price); ?>" />
 		</td>
 	</tr>
 	<tr>
-		<th scope="row" valign="top"><label for="max_price">Max Amount:</label></th>
+		<th scope="row" valign="top"><label for="donation_max_price">Max Amount:</label></th>
 		<td>
-			<?php echo $pmpro_currency_symbol?><input type="text" id="max_price" name="max_price" value="<?php echo esc_attr($max_price); ?>" />
+			<?php echo $pmpro_currency_symbol?><input type="text" id="donation_max_price" name="donation_max_price" value="<?php echo esc_attr($max_price); ?>" />
 		</td>
 	</tr>
 	<tr>
@@ -78,8 +78,8 @@ add_action("pmpro_membership_level_after_other_settings", "pmprodon_pmpro_member
 function pmprodon_pmpro_save_membership_level($level_id)
 {
 	$donations = intval($_REQUEST['donations']);
-	$min_price = preg_replace("[^0-9\.]", "", $_REQUEST['min_price']);
-	$max_price = preg_replace("[^0-9\.]", "", $_REQUEST['max_price']);
+	$min_price = preg_replace("[^0-9\.]", "", $_REQUEST['donation_min_price']);
+	$max_price = preg_replace("[^0-9\.]", "", $_REQUEST['donation_max_price']);
 	$text = $_REQUEST['donations_text'];
 	$dropdown_prices = $_REQUEST['dropdown_prices'];
 	
@@ -443,7 +443,7 @@ add_filter("pmpro_email_filter", "pmprodon_pmpro_email_filter", 10, 2);
 Function to add links to the plugin row meta
 */
 function pmprodon_plugin_row_meta($links, $file) {
-	if(strpos($file, 'pmpro-variable-prices.php') !== false)
+	if(strpos($file, 'pmpro-donations.php') !== false)
 	{
 		$new_links = array(
 			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
