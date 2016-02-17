@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .2.2
+Version: .3
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -92,10 +92,15 @@ add_action("pmpro_save_membership_level", "pmprodon_pmpro_save_membership_level"
 */
 function pmprodon_init_dropdown_values()
 {
+	if(!empty($_SESSION['donation_dropdown']) && $_SESSION['donation_dropdown'] != 'other')
+		$_SESSION['donation'] = $_SESSION['donation_dropdown'];
+	
 	if(!empty($_REQUEST['donation_dropdown']) && $_REQUEST['donation_dropdown'] != 'other')
 		$_REQUEST['donation'] = $_REQUEST['donation_dropdown'];
+	
 	if(!empty($_GET['donation_dropdown']) && $_GET['donation_dropdown'] != 'other')
 		$_GET['donation'] = $_GET['donation_dropdown'];
+	
 	if(!empty($_POST['donation_dropdown']) && $_POST['donation_dropdown'] != 'other')
 		$_POST['donation'] = $_POST['donation_dropdown'];
 }
@@ -106,7 +111,7 @@ add_action('init', 'pmprodon_init_dropdown_values', 1);
 */
 function pmprodon_pmpro_checkout_after_level_cost()
 {
-	global $pmpro_currency_symbol, $pmpro_level, $gateway;
+	global $pmpro_currency_symbol, $pmpro_level, $gateway, $pmpro_review;
 	
 	//get variable pricing info
 	$donfields = get_option("pmprodon_" . $pmpro_level->id);
@@ -122,6 +127,8 @@ function pmprodon_pmpro_checkout_after_level_cost()
 	
 	if(isset($_REQUEST['donation']))
 		$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
+	elseif(isset($_SESSION['donation']))
+		$donation = preg_replace("[^0-9\.]", "", $_SESSION['donation']);
 	elseif(!empty($min_price))
 		$donation = $min_price;
 	else
@@ -149,7 +156,7 @@ function pmprodon_pmpro_checkout_after_level_cost()
 			//show dropdown
 			sort($dropdown_prices);
 			?>
-			<select id="donation_dropdown" name="donation_dropdown">
+			<select id="donation_dropdown" name="donation_dropdown" <?php if($pmpro_review) { ?>disabled="disabled"<?php } ?>>
 			<?php
 				foreach($dropdown_prices as $price)
 				{
@@ -165,17 +172,20 @@ function pmprodon_pmpro_checkout_after_level_cost()
 	?>
 	
 	<span id="pmprodon_donation_input" <?php if($pmprodon_allow_other && $_REQUEST['donation_dropdown'] != 'other') { ?>style="display: none;"<?php } ?>>
-	<?php echo $pmpro_currency_symbol;?> <input type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr($donation);?>" />
+	<?php echo $pmpro_currency_symbol;?> <input type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr($donation);?>" <?php if($pmpro_review) { ?>disabled="disabled"<?php } ?> />
 	</span>
 	<br />	
 	<?php 
-		if(!empty($donfields['text']))
-			echo $donfields['text'];
-		else
+		if(empty($pmpro_review)) 
 		{
-		?>
-		Enter an amount between <?php echo $pmpro_currency_symbol . $donfields['min_price'];?> and <?php echo $pmpro_currency_symbol . $donfields['max_price'];?>
-		<?php
+			if(!empty($donfields['text']))
+				echo $donfields['text'];
+			else
+			{
+			?>
+			Enter an amount between <?php echo $pmpro_currency_symbol . $donfields['min_price'];?> and <?php echo $pmpro_currency_symbol . $donfields['max_price'];?>
+			<?php
+			}
 		}
 	?>
 </p>
@@ -438,6 +448,19 @@ function pmprodon_pmpro_email_filter($email)
 	return $email;
 }
 add_filter("pmpro_email_filter", "pmprodon_pmpro_email_filter", 10, 2);
+
+/*
+	Save donation amount into a session variable for PayPal Express.
+*/
+function pmprodon_pmpro_paypalexpress_session_vars()
+{
+	//save our added fields in session while the user goes off to PayPal	
+	if(isset($_REQUEST['donation_dropdown']))
+		$_SESSION['donation_dropdown'] = $_REQUEST['donation_dropdown'];
+	if(isset($_REQUEST['donation']))
+		$_SESSION['donation'] = $_REQUEST['donation'];
+}
+add_action("pmpro_paypalexpress_session_vars", "pmprodon_pmpro_paypalexpress_session_vars");
 
 /*
 Function to add links to the plugin row meta
