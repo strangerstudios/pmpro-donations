@@ -77,7 +77,10 @@ add_action("pmpro_membership_level_after_other_settings", "pmprodon_pmpro_member
 //save level cost text when the level is saved/added
 function pmprodon_pmpro_save_membership_level($level_id)
 {
-	$donations = intval($_REQUEST['donations']);
+	if(!empty($_REQUEST['donations']))
+		$donations = 1;
+	else
+		$donations = 0;
 	$min_price = preg_replace("[^0-9\.]", "", $_REQUEST['donation_min_price']);
 	$max_price = preg_replace("[^0-9\.]", "", $_REQUEST['donation_max_price']);
 	$text = $_REQUEST['donations_text'];
