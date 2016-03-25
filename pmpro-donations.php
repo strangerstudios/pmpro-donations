@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .3
+Version: .3.1
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -169,14 +169,15 @@ function pmprodon_pmpro_checkout_after_level_cost()
 				}
 			?>
 			<option value="other">Other</option>
-			</select> &nbsp;
+			</select> &nbsp;			
 			<?php
 		}
 	?>
 	
-	<span id="pmprodon_donation_input" <?php if($pmprodon_allow_other && $_REQUEST['donation_dropdown'] != 'other') { ?>style="display: none;"<?php } ?>>
+	<span id="pmprodon_donation_input" <?php if(!empty($pmprodon_allow_other) && $_REQUEST['donation_dropdown'] != 'other') { ?>style="display: none;"<?php } ?>>
 	<?php echo $pmpro_currency_symbol;?> <input type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr($donation);?>" <?php if($pmpro_review) { ?>disabled="disabled"<?php } ?> />
-	</span>
+	<?php if($pmpro_review) { ?><input type="hidden" name="donation" value="<?php echo esc_attr($donation);?>" /><?php } ?>
+	</span>	
 	<br />	
 	<?php 
 		if(empty($pmpro_review)) 
