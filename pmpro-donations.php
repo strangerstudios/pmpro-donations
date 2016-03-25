@@ -164,11 +164,11 @@ function pmprodon_pmpro_checkout_after_level_cost()
 				foreach($dropdown_prices as $price)
 				{
 				?>
-				<option <?php selected($price, $_REQUEST['donation']);?> value="<?php echo esc_attr($price);?>"><?php echo pmpro_formatPrice((double)$price);?></option>
+				<option <?php selected($price, $donation);?> value="<?php echo esc_attr($price);?>"><?php echo pmpro_formatPrice((double)$price);?></option>
 				<?php
 				}
 			?>
-			<option value="other">Other</option>
+			<option value="other" <?php selected(true, !empty($donation) && !in_array($donation, $dropdown_prices));?>>Other</option>
 			</select> &nbsp;			
 			<?php
 		}

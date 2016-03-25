@@ -24,7 +24,8 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 
 == Changelog ==
 = .3.1 =
-* Fixed bug where donation amount was not being passed correctly to PayPal.
+* BUG: Fixed bug where donation dropdown amount was not set correctly when returning from PayPal to review. (Thanks, lok1728 on GitHub)
+* BUG: Fixed bug where donation amount was not being passed correctly to PayPal.
 
 = .3 =
 * Added support for PayPal express by saving donation amount into a session variable.
