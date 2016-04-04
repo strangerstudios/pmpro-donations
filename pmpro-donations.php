@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .3.1
+Version: .3.2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
