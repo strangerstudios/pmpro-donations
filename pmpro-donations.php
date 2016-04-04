@@ -137,10 +137,11 @@ function pmprodon_pmpro_checkout_after_level_cost()
 	else
 		$donation = "";
 ?>
-<p>
-	Make a Gift 
-	
-	<?php
+	<p>
+<?php
+		_e('Make a Gift', 'pmprod');
+
+
 		//check for dropdown
 		if(!empty($dropdown_prices))
 		{
