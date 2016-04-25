@@ -3,11 +3,10 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .3.1
+Version: .3.2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
-
 /*
 	Min Price and Max Price Fields on the edit levels page
 */
@@ -34,36 +33,36 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 		$dropdown_prices = '';
 	}
 ?>
-<h3 class="topborder">Donations</h3>
-<p>If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.</p>
+<h3 class="topborder"><?php _e('Donations', 'pmprodon'); ?></h3>
+<p><?php _e('If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.', 'pmprodon'); ?></p>
 <table>
 <tbody class="form-table">
 	<tr>
-		<th scope="row" valign="top"><label for="donations">Enable:</label></th>
+		<th scope="row" valign="top"><label for="donations"><?php _e('Enable:' , 'pmprodon'); ?></label></th>
 		<td>
-			<input type="checkbox" id="donations" name="donations" value="1" <?php checked($donations, "1");?> /> Enable Donations
+			<input type="checkbox" id="donations" name="donations" value="1" <?php checked($donations, "1");?> /> <?php _e('Enable Donations', 'pmprodon'); ?>
 		</td>
 	</tr>
 	<tr>
-		<th scope="row" valign="top"><label for="donation_min_price">Min Amount:</label></th>
+		<th scope="row" valign="top"><label for="donation_min_price"><?php _e('Min Amount:', 'pmprodon'); ?></label></th>
 		<td>
 			<?php echo $pmpro_currency_symbol?><input type="text" id="donation_min_price" name="donation_min_price" value="<?php echo esc_attr($min_price); ?>" />
 		</td>
 	</tr>
 	<tr>
-		<th scope="row" valign="top"><label for="donation_max_price">Max Amount:</label></th>
+		<th scope="row" valign="top"><label for="donation_max_price"><?php _e('Max Amount:', 'pmprodon'); ?></label></th>
 		<td>
 			<?php echo $pmpro_currency_symbol?><input type="text" id="donation_max_price" name="donation_max_price" value="<?php echo esc_attr($max_price); ?>" />
 		</td>
 	</tr>
 	<tr>
-		<th scope="row" valign="top"><label for="dropdown_prices">Price Dropdown:</label></th>
+		<th scope="row" valign="top"><label for="dropdown_prices"><?php _e('Price Dropdown:', 'pmprodon'); ?></label></th>
 		<td>
-			<input type="text" id="dropdown_prices" name="dropdown_prices" size="60" value="<?php echo esc_attr($dropdown_prices); ?>" /><br /><small>Enter numbers separated by commas to popuplate a dropdown with suggested prices. Include "other" (all lowercase) in the list to allow users to enter their own amount.</small>
+			<input type="text" id="dropdown_prices" name="dropdown_prices" size="60" value="<?php echo esc_attr($dropdown_prices); ?>" /><br /><small><?php _e("Enter numbers separated by commas to popuplate a dropdown with suggested prices. Include 'other' (all lowercase) in the list to allow users to enter their own amount.", "pmprodon"); ?></small>
 		</td>
 	</tr>
 	<tr>
-		<th scope="row" valign="top"><label for="donations_text">Help Text:</label></th>
+		<th scope="row" valign="top"><label for="donations_text"><?php _e('Help Text:', 'pmprodon'); ?></label></th>
 		<td>
 			<textarea id="donations_text" name="donations_text" rows="5" cols="60"><?php echo esc_textarea($donations_text);?></textarea>
 		</td>
@@ -73,7 +72,6 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 <?php
 }
 add_action("pmpro_membership_level_after_other_settings", "pmprodon_pmpro_membership_level_after_other_settings");
-
 //save level cost text when the level is saved/added
 function pmprodon_pmpro_save_membership_level($level_id)
 {
@@ -89,7 +87,6 @@ function pmprodon_pmpro_save_membership_level($level_id)
 	update_option("pmprodon_" . $level_id, array('donations' => $donations, 'min_price' => $min_price, 'max_price' => $max_price, 'text'=>$text, 'dropdown_prices'=>$dropdown_prices));
 }
 add_action("pmpro_save_membership_level", "pmprodon_pmpro_save_membership_level");
-
 /*
 	Update donation amount if a dropdown value is used
 */
@@ -108,7 +105,6 @@ function pmprodon_init_dropdown_values()
 		$_POST['donation'] = $_POST['donation_dropdown'];
 }
 add_action('init', 'pmprodon_init_dropdown_values', 1);
-
 /*
 	Show form at checkout.
 */
@@ -137,10 +133,9 @@ function pmprodon_pmpro_checkout_after_level_cost()
 	else
 		$donation = "";
 ?>
-<p>
-	Make a Gift 
-	
-	<?php
+	<p>
+<?php
+		_e('Make a Gift', 'pmprodon');
 		//check for dropdown
 		if(!empty($dropdown_prices))
 		{
@@ -187,7 +182,7 @@ function pmprodon_pmpro_checkout_after_level_cost()
 			else
 			{
 			?>
-			Enter an amount between <?php echo $pmpro_currency_symbol . $donfields['min_price'];?> and <?php echo $pmpro_currency_symbol . $donfields['max_price'];?>
+			<?php _e('Enter an amount between', 'pmprodon'); echo $pmpro_currency_symbol . $donfields['min_price']; _e('and','pmprodon'); echo $pmpro_currency_symbol . $donfields['max_price'];?>
 			<?php
 			}
 		}
@@ -278,7 +273,6 @@ function pmprodon_pmpro_checkout_after_level_cost()
 <?php
 }
 add_action('pmpro_checkout_after_level_cost', 'pmprodon_pmpro_checkout_after_level_cost');
-
 //set price
 function pmprodon_pmpro_checkout_level($level)
 {
@@ -300,7 +294,6 @@ function pmprodon_pmpro_checkout_level($level)
 	return $level;
 }
 add_filter("pmpro_checkout_level", "pmprodon_pmpro_checkout_level", 99);
-
 //check price is between min and max
 function pmprodon_pmpro_registration_checks($continue)
 {
@@ -319,7 +312,7 @@ function pmprodon_pmpro_registration_checks($continue)
 			//make sure this level has variable pricing
 			if(empty($donfields) || empty($donfields['donations']))
 			{
-				$pmpro_msg = "Error: You tried to set the donation on a level that doesn't have donations. Please try again.";
+				$pmpro_msg = __("Error: You tried to set the donation on a level that doesn't have donations. Please try again.", "pmprodon");
 				$pmpro_msgt = "pmmpro_error";
 			}
 			
@@ -329,13 +322,13 @@ function pmprodon_pmpro_registration_checks($continue)
 			//check that the donation falls between the min and max
 			if((double)$donation < (double)$donfields['min_price'])
 			{
-				$pmpro_msg = "The lowest accepted donation is " . $pmpro_currency_symbol . $donfields['min_price'] . ". Please enter a new amount.";
+				$pmpro_msg = __('The lowest accepted donation is', 'pmprodon') . $pmpro_currency_symbol . $donfields['min_price'] . ". " . __('Please enter a new amount.', 'pmprodon'); 
 				$pmpro_msgt = "pmmpro_error";
 				$continue = false;
 			}
 			elseif((double)$donation > (double)$donfields['max_price'])
 			{
-				$pmpro_msg = "The highest accepted donation is " . $pmpro_currency_symbol . $donfields['max_price'] . ". Please enter a new amount.";
+				$pmpro_msg = __('The highest accepted donation is ', 'pmprodon') . $pmpro_currency_symbol . $donfields['max_price'] . ". " . __('Please enter a new amount.', 'pmprodon');
 				$pmpro_msgt = "pmmpro_error";
 				$continue = false;
 			}
@@ -347,7 +340,6 @@ function pmprodon_pmpro_registration_checks($continue)
 	return $continue;
 }
 add_filter("pmpro_registration_checks", "pmprodon_pmpro_registration_checks");
-
 /*
 	override level cost text on checkout page
 */
@@ -365,7 +357,6 @@ function pmprodon_pmpro_level_cost_text($text, $level)
 	return $text;
 }
 add_filter("pmpro_level_cost_text", "pmprodon_pmpro_level_cost_text", 10, 2);
-
 /*
 	Save donation amount to order notes.
 */
@@ -376,13 +367,11 @@ function pmprodon_pmpro_checkout_order($order)
 	else
 		return $order;
 	
-	if(!empty($donation) && strpos($order->notes, "Donation:") === false)
-		$order->notes .= "Donation:" . $donation . "\n";
-
+	if(!empty($donation) && strpos($order->notes, __('Donation:', 'pmprodon')) === false)
+		$order->notes .= __("Donation:", "pmprodon") . $donation . "\n";
 	return $order;
 }
 add_filter('pmpro_checkout_order', 'pmprodon_pmpro_checkout_order');
-
 /*
 	Function to get donation and original price out of an order.
 */
@@ -390,7 +379,7 @@ function pmprodon_getPriceComponents($order)
 {
 	$r = array("price" => $order->total, "donation"=> "");
 		
-	if(!empty($order->notes) && strpos($order->notes, "Donation:") !== false)
+	if(!empty($order->notes) && strpos($order->notes, __('Donation:', 'pmprodon')) !== false)
 	{
 		$donation = pmpro_getMatches("/Donation\:([0-9\.]+)/", $order->notes, true);		
 		$r['donation'] = $donation;
@@ -403,7 +392,6 @@ function pmprodon_getPriceComponents($order)
 	
 	return $r;
 }
-
 /*
 	Show order components on confirmation and invoice pages.
 */
@@ -413,13 +401,12 @@ function pmprodon_pmpro_invoice_bullets_bottom($order)
 	if(!empty($components['donation']))
 	{
 	?>
-	<li><strong><?php _e('Membership Cost', 'pmpro');?>:</strong> <?php echo pmpro_formatPrice($components['price']);?></li>
-	<li><strong><?php _e('Donation', 'pmpro');?>:</strong> <?php echo pmpro_formatPrice($components['donation']);?></li>
+	<li><strong><?php _e('Membership Cost', 'pmprodon'); ?>:</strong> <?php echo pmpro_formatPrice($components['price']);?></li>
+	<li><strong><?php _e('Donation', 'pmprodon'); ?>:</strong> <?php echo pmpro_formatPrice($components['donation']);?></li>
 	<?php
 	}
 }
 add_filter('pmpro_invoice_bullets_bottom', 'pmprodon_pmpro_invoice_bullets_bottom');
-
 /*
 	Show order components in confirmation email.
 */
@@ -435,7 +422,6 @@ function pmprodon_pmpro_email_filter($email)
 	{
 		//get the user_id from the email
 		$order_id = $email->data['invoice_id'];
-
 		if(!empty($order_id))
 		{
 			$order = new MemberOrder($order_id);
@@ -444,7 +430,7 @@ function pmprodon_pmpro_email_filter($email)
 			//add to bottom of email
 			if(!empty($components['donation']))
 			{
-				$email->body = preg_replace("/\<p\>\s*Invoice/", "<p>Donation Amount: " . pmpro_formatPrice($components['donation']) . "</p><p>Invoice", $email->body);	
+				$email->body = preg_replace("/\<p\>\s*Invoice/", "<p>" . __('Donation Amount:', 'pmprodon') . "" . pmpro_formatPrice($components['donation']) . "</p><p>Invoice", $email->body);	
 			}
 		}
 	}
@@ -452,7 +438,6 @@ function pmprodon_pmpro_email_filter($email)
 	return $email;
 }
 add_filter("pmpro_email_filter", "pmprodon_pmpro_email_filter", 10, 2);
-
 /*
 	Save donation amount into a session variable for PayPal Express.
 */
@@ -465,7 +450,6 @@ function pmprodon_pmpro_paypalexpress_session_vars()
 		$_SESSION['donation'] = $_REQUEST['donation'];
 }
 add_action("pmpro_paypalexpress_session_vars", "pmprodon_pmpro_paypalexpress_session_vars");
-
 /*
 Function to add links to the plugin row meta
 */
@@ -473,7 +457,7 @@ function pmprodon_plugin_row_meta($links, $file) {
 	if(strpos($file, 'pmpro-donations.php') !== false)
 	{
 		$new_links = array(
-			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmprodon' ) ) . '">' . __( 'Support', 'pmprodon' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
 	}
