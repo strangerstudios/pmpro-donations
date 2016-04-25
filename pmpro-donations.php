@@ -18,11 +18,11 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 	if($level_id > 0)
 	{
 		$donfields = get_option("pmprodon_" . $level_id, array('donations' => 0, 'min_price' => '', 'max_price' => ''));
-		$donations = $donfields['donations'];
-		$min_price = $donfields['min_price'];
-		$max_price = $donfields['max_price'];
-		$donations_text = $donfields['text'];
-		$dropdown_prices = $donfields['dropdown_prices'];
+		$donations = (!isset($donfields['donations'])) ? 0 : $donfields['donations'];
+		$min_price = (!isset($donfields['min_price'])) ? '' : $donfields['min_price'];
+		$max_price = (!isset($donfields['max_price'])) ? '' : $donfields['max_price'];
+		$donations_text = (!isset($donfields['text'])) ? '' : $donfields['text'];
+		$dropdown_prices = (!isset($donfields['dropdown_prices'])) ? '' : $donfields['dropdown_prices'];
 	}
 	else
 	{
@@ -314,8 +314,8 @@ function pmprodon_pmpro_registration_checks($continue)
 		{
 			//get values
 			$level_id = intval($_REQUEST['level']);
-			$donfields = get_option("pmprodon_" . $level_id);						
-			
+			$donfields = get_option("pmprodon_" . $level_id);
+
 			//make sure this level has variable pricing
 			if(empty($donfields) || empty($donfields['donations']))
 			{
@@ -329,13 +329,13 @@ function pmprodon_pmpro_registration_checks($continue)
 			//check that the donation falls between the min and max
 			if(!empty($donfields['min_price']) && (double)$donation < (double)$donfields['min_price'])
 			{
-				$pmpro_msg = __('The lowest accepted donation is', 'pmprodon') . $pmpro_currency_symbol . $donfields['min_price'] . ". " . __('Please enter a new amount.', 'pmprodon'); 
+				$pmpro_msg = sprintf(__('The lowest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['min_price'])); 
 				$pmpro_msgt = "pmmpro_error";
 				$continue = false;
 			}
 			elseif(!empty($donfields['max_price']) && (double)$donation > (double)$donfields['max_price'])
 			{
-				$pmpro_msg = __('The highest accepted donation is ', 'pmprodon') . $pmpro_currency_symbol . $donfields['max_price'] . ". " . __('Please enter a new amount.', 'pmprodon');
+				$pmpro_msg = sprintf(__('The highest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['max_price'])); 
 				$pmpro_msgt = "pmmpro_error";
 				$continue = false;
 			}
@@ -428,7 +428,7 @@ function pmprodon_pmpro_email_filter($email)
 	if(strpos($email->template, "checkout") !== false)
 	{
 		//get the user_id from the email
-		$order_id = $email->data['invoice_id'];
+		$order_id = (empty($email->data) || empty($email->data['invoice_id'])) ? false : $email->data['invoice_id'];
 		if(!empty($order_id))
 		{
 			$order = new MemberOrder($order_id);
