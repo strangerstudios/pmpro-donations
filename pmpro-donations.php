@@ -179,11 +179,18 @@ function pmprodon_pmpro_checkout_after_level_cost()
 		{
 			if(!empty($donfields['text']))
 				echo $donfields['text'];
-			else
+			elseif(!empty($donfields['min_price']) && empty($donfields['max_price']))
 			{
-			?>
-			<?php _e('Enter an amount between', 'pmprodon'); echo $pmpro_currency_symbol . $donfields['min_price']; _e('and','pmprodon'); echo $pmpro_currency_symbol . $donfields['max_price'];?>
-			<?php
+				printf(__('Enter an amount %s or greater', 'pmprodon'), pmpro_formatPrice($donfields['min_price']));
+			}
+			
+			elseif(!empty($donfields['max_price']) && empty($donfields['min_price']))
+			{
+				printf(__('Enter an amount %s or less', 'pmprodon'), pmpro_formatPrice($donfields['max_price']));
+			}
+			elseif(!empty($donfields['max_price']) && !empty($donfields['min_price']))
+			{
+				printf(__('Enter an amount between %s and %s', 'pmprodon'), pmpro_formatPrice($donfields['min_price']), pmpro_formatPrice($donfields['max_price']));
 			}
 		}
 	?>
@@ -320,13 +327,13 @@ function pmprodon_pmpro_registration_checks($continue)
 			$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
 			
 			//check that the donation falls between the min and max
-			if((double)$donation < (double)$donfields['min_price'])
+			if(!empty($donfields['min_price']) && (double)$donation < (double)$donfields['min_price'])
 			{
 				$pmpro_msg = __('The lowest accepted donation is', 'pmprodon') . $pmpro_currency_symbol . $donfields['min_price'] . ". " . __('Please enter a new amount.', 'pmprodon'); 
 				$pmpro_msgt = "pmmpro_error";
 				$continue = false;
 			}
-			elseif((double)$donation > (double)$donfields['max_price'])
+			elseif(!empty($donfields['max_price']) && (double)$donation > (double)$donfields['max_price'])
 			{
 				$pmpro_msg = __('The highest accepted donation is ', 'pmprodon') . $pmpro_currency_symbol . $donfields['max_price'] . ". " . __('Please enter a new amount.', 'pmprodon');
 				$pmpro_msgt = "pmmpro_error";
