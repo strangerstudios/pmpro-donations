@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .3.2
+Version: .4
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -17,7 +17,7 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 	$level_id = intval($_REQUEST['edit']);
 	if($level_id > 0)
 	{
-		$donfields = get_option("pmprodon_" . $level_id, array('donations' => 0, 'min_price' => '', 'max_price' => ''));
+		$donfields = get_option("pmprodon_" . $level_id, array('donations' => 0, 'min_price' => '', 'max_price' => '', 'dropdown_prices' => '', 'text' => ''));
 		$donations = (!isset($donfields['donations'])) ? 0 : $donfields['donations'];
 		$min_price = (!isset($donfields['min_price'])) ? '' : $donfields['min_price'];
 		$max_price = (!isset($donfields['max_price'])) ? '' : $donfields['max_price'];
@@ -65,6 +65,7 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 		<th scope="row" valign="top"><label for="donations_text"><?php _e('Help Text:', 'pmprodon'); ?></label></th>
 		<td>
 			<textarea id="donations_text" name="donations_text" rows="5" cols="60"><?php echo esc_textarea($donations_text);?></textarea>
+			<br /><small><?php _e("If not blank, this text will override the default text generated to explain the range of donation values accepted.", "pmprodon"); ?></small>
 		</td>
 	</tr>	
 </tbody>
@@ -308,7 +309,7 @@ function pmprodon_pmpro_registration_checks($continue)
 	if($continue)
 	{
 		global $pmpro_currency_symbol, $pmpro_msg, $pmpro_msgt;
-		
+
 		//was a donation passed in?
 		if(isset($_REQUEST['donation']))
 		{
@@ -336,6 +337,7 @@ function pmprodon_pmpro_registration_checks($continue)
 			elseif(!empty($donfields['max_price']) && (double)$donation > (double)$donfields['max_price'])
 			{
 				$pmpro_msg = sprintf(__('The highest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['max_price'])); 
+				
 				$pmpro_msgt = "pmmpro_error";
 				$continue = false;
 			}
@@ -457,6 +459,26 @@ function pmprodon_pmpro_paypalexpress_session_vars()
 		$_SESSION['donation'] = $_REQUEST['donation'];
 }
 add_action("pmpro_paypalexpress_session_vars", "pmprodon_pmpro_paypalexpress_session_vars");
+
+/**
+ * If checking out for a level with donations, use SSL even if it's free
+ * @since .4
+ */
+function pmprodon_pmpro_checkout_preheader() {
+	global $besecure;
+
+	if(!is_admin() && !empty($_REQUEST['level'])) {
+		$level_id = intval($_REQUEST['level']);
+
+		$donfields = get_option("pmprodon_" . $level_id, array('donations' => 0, 'min_price' => '', 'max_price' => '', 'dropdown_prices' => '', 'text' => ''));
+
+		if(!empty($donfields) && !empty($donfields['donations']))
+			$besecure = pmpro_getOption("use_ssl");
+	}
+}
+//add_filter('besecure', 'pmprodon_besecure');
+add_action('pmpro_checkout_preheader', 'pmprodon_pmpro_checkout_preheader');
+
 /*
 Function to add links to the plugin row meta
 */
