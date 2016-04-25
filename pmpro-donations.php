@@ -56,7 +56,7 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 		</td>
 	</tr>
 	<tr>
-		<th scope="row" valign="top"><label for="dropdown_prices"><?php _e('Price Dropdown:', 'pmprdon'); ?></label></th>
+		<th scope="row" valign="top"><label for="dropdown_prices"><?php _e('Price Dropdown:', 'pmprodon'); ?></label></th>
 		<td>
 			<input type="text" id="dropdown_prices" name="dropdown_prices" size="60" value="<?php echo esc_attr($dropdown_prices); ?>" /><br /><small><?php _e("Enter numbers separated by commas to popuplate a dropdown with suggested prices. Include 'other' (all lowercase) in the list to allow users to enter their own amount.", "pmprodon"); ?></small>
 		</td>
