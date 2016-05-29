@@ -376,7 +376,7 @@ function pmprodon_getPriceComponents($order)
 {
 	$r = array("price" => $order->total, "donation"=> "");
 		
-	if(!empty($order->notes) && strpos($order->notes, "Donation:") !== false)
+	if(isset($order->notes) && !empty($order->notes) && strpos($order->notes, "Donation:") !== false)
 	{
 		$donation = pmpro_getMatches("/Donation\:([0-9\.]+)/", $order->notes, true);		
 		$r['donation'] = $donation;
