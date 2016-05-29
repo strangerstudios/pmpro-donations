@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .4
+Version: .5
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -376,8 +376,8 @@ function pmprodon_pmpro_checkout_order($order)
 	else
 		return $order;
 	
-	if(!empty($donation) && strpos($order->notes, __('Donation:', 'pmprodon')) === false)
-		$order->notes .= __("Donation:", "pmprodon") . $donation . "\n";
+	if(!empty($donation) && strpos($order->notes, __('Donation', 'pmprodon')) === false)
+		$order->notes .= __("Donation", "pmprodon") .': '. $donation . "\n";
 	return $order;
 }
 add_filter('pmpro_checkout_order', 'pmprodon_pmpro_checkout_order');
@@ -410,8 +410,8 @@ function pmprodon_pmpro_invoice_bullets_bottom($order)
 	if(!empty($components['donation']))
 	{
 	?>
-	<li><strong><?php _e('Membership Cost', 'pmprodon'); ?>:</strong> <?php echo pmpro_formatPrice($components['price']);?></li>
-	<li><strong><?php _e('Donation', 'pmprodon'); ?>:</strong> <?php echo pmpro_formatPrice($components['donation']);?></li>
+	<li><strong><?php _e('Membership Cost', 'pmprodon'); ?>: </strong> <?php echo pmpro_formatPrice($components['price']);?></li>
+	<li><strong><?php _e('Donation', 'pmprodon'); ?>: </strong> <?php echo pmpro_formatPrice($components['donation']);?></li>
 	<?php
 	}
 }
@@ -439,7 +439,7 @@ function pmprodon_pmpro_email_filter($email)
 			//add to bottom of email
 			if(!empty($components['donation']))
 			{
-				$email->body = preg_replace("/\<p\>\s*Invoice/", "<p>" . __('Donation Amount:', 'pmprodon') . "" . pmpro_formatPrice($components['donation']) . "</p><p>Invoice", $email->body);	
+				$email->body = preg_replace("/\<p\>\s*" . __("Invoice", "pmprodon") ."/", "<p>" . __('Donation Amount:', 'pmprodon') . "" . pmpro_formatPrice($components['donation']) . "</p><p>" . __("Invoice", "pmprodon"), $email->body);
 			}
 		}
 	}
