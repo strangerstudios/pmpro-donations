@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, membership, donate, donations, gifts, charity, charities
 Requires at least: 3.5
 Tested up to: 4.4.2
-Stable tag: .3.2
+Stable tag: .5
 
 Allow customers to set an additional donation amount at checkout.
 
@@ -23,6 +23,10 @@ This plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-donations/issues
 
 == Changelog ==
+= .5 =
+* ENHANCEMENT/FIX: Wouldn't always substitute text properly when translated
+* ENHANCEMENT/FIX: PHP Warnings during checkout
+
 = .3.2 =
 * ENHANCEMENT: Wrapped all text to allow translation.
 
