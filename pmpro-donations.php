@@ -321,7 +321,7 @@ function pmprodon_pmpro_registration_checks($continue)
 			if(empty($donfields) || empty($donfields['donations']))
 			{
 				$pmpro_msg = __("Error: You tried to set the donation on a level that doesn't have donations. Please try again.", "pmprodon");
-				$pmpro_msgt = "pmmpro_error";
+				$pmpro_msgt = "pmpro_error";
 			}
 			
 			//get price
@@ -331,14 +331,14 @@ function pmprodon_pmpro_registration_checks($continue)
 			if(!empty($donfields['min_price']) && (double)$donation < (double)$donfields['min_price'])
 			{
 				$pmpro_msg = sprintf(__('The lowest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['min_price'])); 
-				$pmpro_msgt = "pmmpro_error";
+				$pmpro_msgt = "pmpro_error";
 				$continue = false;
 			}
 			elseif(!empty($donfields['max_price']) && (double)$donation > (double)$donfields['max_price'])
 			{
 				$pmpro_msg = sprintf(__('The highest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['max_price'])); 
 				
-				$pmpro_msgt = "pmmpro_error";
+				$pmpro_msgt = "pmpro_error";
 				$continue = false;
 			}
 			
