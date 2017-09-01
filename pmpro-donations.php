@@ -480,6 +480,30 @@ function pmprodon_pmpro_checkout_preheader() {
 add_action('pmpro_checkout_preheader', 'pmprodon_pmpro_checkout_preheader');
 
 /*
+ * Make sure the amount is updated when going to PayPal
+ */
+function pmprodon_pmpro_do_express_checkout_payment_nvpstr($nvpstr, $order)
+{
+	$order_components = pmprodon_getPriceComponents($order);
+	
+	$nvpArray = array();
+  	parse_str($nvpstr,$nvpArray);
+  	
+  	$nvpArray['AMT'] = $order_components['donation'] + $order_components['price'];
+  	
+  	$nvpstr = "";
+  	
+  	foreach($nvpArray as $key => $value)
+  	{
+  		$nvpstr .= "&" . $key . "=" . urlencode($value);
+  	}
+	
+	return $nvpstr;
+}
+
+add_filter('pmpro_do_express_checkout_payment_nvpstr', 'pmprodon_pmpro_do_express_checkout_payment_nvpstr', 10, 2);
+
+/*
 Function to add links to the plugin row meta
 */
 function pmprodon_plugin_row_meta($links, $file) {
