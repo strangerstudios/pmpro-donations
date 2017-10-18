@@ -3,11 +3,12 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, membership, donate, donations, gifts, charity, charities
 Requires at least: 3.5
 Tested up to: 4.4.2
-Stable tag: .3.2
+Stable tag: .4
 
-Allow customers to set an additional donation amount at checkout.
+Allow customers to set an additional donation amount with customized minimum, maxium, and suggested amounts via dropdown at checkout.
 
 == Description ==
+
 This plugin requires Paid Memberships Pro. 
 
 == Installation ==
@@ -23,6 +24,10 @@ This plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-donations/issues
 
 == Changelog ==
+= .4 =
+* ENHANCEMENT: Layout improvements to donations field on membership checkout.
+* ENHANCEMENT: Updating links to add on documentation and plugin author to PMPro.
+
 = .3.2 =
 * ENHANCEMENT: Wrapped all text to allow translation.
 

@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Paid Memberships Pro - Donations
-Plugin URI: http://www.paidmembershipspro.com/add-ons/pmpro-donations/
+Plugin URI: https://www.paidmembershipspro.com/add-ons/donations-add-on/
 Description: Allow customers to set an additional donation amount at checkout.
 Version: .4
-Author: Stranger Studios
-Author URI: http://www.strangerstudios.com
+Author: Paid Memberships Pro
+Author URI: https://www.paidmembershipspro.com/
 */
 /*
 	Min Price and Max Price Fields on the edit levels page
@@ -134,7 +134,8 @@ function pmprodon_pmpro_checkout_after_level_cost()
 	else
 		$donation = "";
 ?>
-	<p>
+	<hr />
+	<div id="pmpro_donations">
 <?php
 		_e('Make a Gift', 'pmprodon');
 		//check for dropdown
@@ -173,29 +174,27 @@ function pmprodon_pmpro_checkout_after_level_cost()
 	<span id="pmprodon_donation_input" <?php if(!empty($pmprodon_allow_other) && $_REQUEST['donation_dropdown'] != 'other') { ?>style="display: none;"<?php } ?>>
 	<?php echo $pmpro_currency_symbol;?> <input type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr($donation);?>" <?php if($pmpro_review) { ?>disabled="disabled"<?php } ?> />
 	<?php if($pmpro_review) { ?><input type="hidden" name="donation" value="<?php echo esc_attr($donation);?>" /><?php } ?>
-	</span>	
-	<br />	
+	</span>
 	<?php 
-		if(empty($pmpro_review)) 
-		{
-			if(!empty($donfields['text']))
-				echo $donfields['text'];
-			elseif(!empty($donfields['min_price']) && empty($donfields['max_price']))
-			{
-				printf(__('Enter an amount %s or greater', 'pmprodon'), pmpro_formatPrice($donfields['min_price']));
-			}
-			
-			elseif(!empty($donfields['max_price']) && empty($donfields['min_price']))
-			{
-				printf(__('Enter an amount %s or less', 'pmprodon'), pmpro_formatPrice($donfields['max_price']));
-			}
-			elseif(!empty($donfields['max_price']) && !empty($donfields['min_price']))
-			{
-				printf(__('Enter an amount between %s and %s', 'pmprodon'), pmpro_formatPrice($donfields['min_price']), pmpro_formatPrice($donfields['max_price']));
-			}
+		if(empty($pmpro_review)) {
+			?>
+			<p class="pmpro_small">
+			<?php
+				if(!empty($donfields['text'])) {
+					echo $donfields['text'];
+				} elseif(!empty($donfields['min_price']) && empty($donfields['max_price'])) {
+					printf(__('Enter an amount %s or greater', 'pmprodon'), pmpro_formatPrice($donfields['min_price']));
+				} elseif(!empty($donfields['max_price']) && empty($donfields['min_price'])) {
+					printf(__('Enter an amount %s or less', 'pmprodon'), pmpro_formatPrice($donfields['max_price']));
+				} elseif(!empty($donfields['max_price']) && !empty($donfields['min_price'])) {
+					printf(__('Enter an amount between %s and %s', 'pmprodon'), pmpro_formatPrice($donfields['min_price']), pmpro_formatPrice($donfields['max_price']));
+				}
+			?>
+			</p>
+			<?php
 		}
 	?>
-</p>
+</div>
 <script>
 	//some vars for keeping track of whether or not we show billing
 	var pmpro_gateway_billing = <?php if(in_array($gateway, array("paypalexpress", "twocheckout")) !== false) echo "false"; else echo "true";?>;
@@ -486,6 +485,7 @@ function pmprodon_plugin_row_meta($links, $file) {
 	if(strpos($file, 'pmpro-donations.php') !== false)
 	{
 		$new_links = array(
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/donations-add-on/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
 			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmprodon' ) ) . '">' . __( 'Support', 'pmprodon' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
