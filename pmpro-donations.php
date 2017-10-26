@@ -374,8 +374,8 @@ function pmprodon_pmpro_checkout_order($order)
 		$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
 	else
 		return $order;
-	
-	if(!empty($donation) && strpos($order->notes, __('Donation', 'pmprodon')) === false)
+
+	if(!empty($donation) && !empty($order->notes) && strpos($order->notes, __('Donation', 'pmprodon')) === false)
 		$order->notes .= __("Donation", "pmprodon") .': '. $donation . "\n";
 	return $order;
 }
