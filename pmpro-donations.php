@@ -277,7 +277,7 @@ function pmprodon_pmpro_checkout_after_level_cost()
 			jQuery('#pmpro_payment_information_fields').show();
 			pmpro_require_billing = true;
 		}
-		else
+		else if ( 'check' !== gateway )
 		{
 			jQuery('#pmpro_billing_address_fields').hide();
 			jQuery('#pmpro_payment_information_fields').hide();
