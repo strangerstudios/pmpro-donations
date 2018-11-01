@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: https://www.paidmembershipspro.com/add-ons/donations-add-on/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: .4
+Version: .5
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com/
 */
@@ -67,7 +67,7 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 			<textarea id="donations_text" name="donations_text" rows="5" cols="60"><?php echo esc_textarea($donations_text);?></textarea>
 			<br /><small><?php _e("If not blank, this text will override the default text generated to explain the range of donation values accepted.", "pmprodon"); ?></small>
 		</td>
-	</tr>	
+	</tr>
 </tbody>
 </table>
 <?php
@@ -84,7 +84,7 @@ function pmprodon_pmpro_save_membership_level($level_id)
 	$max_price = preg_replace("[^0-9\.]", "", $_REQUEST['donation_max_price']);
 	$text = $_REQUEST['donations_text'];
 	$dropdown_prices = $_REQUEST['dropdown_prices'];
-	
+
 	update_option("pmprodon_" . $level_id, array('donations' => $donations, 'min_price' => $min_price, 'max_price' => $max_price, 'text'=>$text, 'dropdown_prices'=>$dropdown_prices));
 }
 add_action("pmpro_save_membership_level", "pmprodon_pmpro_save_membership_level");
@@ -93,15 +93,19 @@ add_action("pmpro_save_membership_level", "pmprodon_pmpro_save_membership_level"
 */
 function pmprodon_init_dropdown_values()
 {
+	if(function_exists('pmpro_start_session')) {
+		pmpro_start_session();
+	}
+
 	if(!empty($_SESSION['donation_dropdown']) && $_SESSION['donation_dropdown'] != 'other')
 		$_SESSION['donation'] = $_SESSION['donation_dropdown'];
-	
+
 	if(!empty($_REQUEST['donation_dropdown']) && $_REQUEST['donation_dropdown'] != 'other')
 		$_REQUEST['donation'] = $_REQUEST['donation_dropdown'];
-	
+
 	if(!empty($_GET['donation_dropdown']) && $_GET['donation_dropdown'] != 'other')
 		$_GET['donation'] = $_GET['donation_dropdown'];
-	
+
 	if(!empty($_POST['donation_dropdown']) && $_POST['donation_dropdown'] != 'other')
 		$_POST['donation'] = $_POST['donation_dropdown'];
 }
@@ -112,19 +116,23 @@ add_action('init', 'pmprodon_init_dropdown_values', 1);
 function pmprodon_pmpro_checkout_after_level_cost()
 {
 	global $pmpro_currency_symbol, $pmpro_level, $gateway, $pmpro_review;
-	
+
+	if(function_exists('pmpro_start_session')) {
+		pmpro_start_session();
+	}
+
 	//get variable pricing info
 	$donfields = get_option("pmprodon_" . $pmpro_level->id);
-	
+
 	//no variable pricing? just return
 	if(empty($donfields) || empty($donfields['donations']))
 		return;
-	
-	//okay, now we're showing the form	
+
+	//okay, now we're showing the form
 	$min_price = $donfields['min_price'];
 	$max_price = $donfields['max_price'];
 	$dropdown_prices = $donfields['dropdown_prices'];
-	
+
 	if(isset($_REQUEST['donation']))
 		$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
 	elseif(isset($_SESSION['donation']))
@@ -144,15 +152,15 @@ function pmprodon_pmpro_checkout_after_level_cost()
 			//turn into an array
 			$dropdown_prices = str_replace(" ", "", $dropdown_prices);
 			$dropdown_prices = explode(",", $dropdown_prices);
-						
+
 			//check for other option
 			$pmprodon_allow_other = array_search("other", $dropdown_prices);
 			if($pmprodon_allow_other !== false)
 			{
-				unset($dropdown_prices[$pmprodon_allow_other]);			
+				unset($dropdown_prices[$pmprodon_allow_other]);
 				$pmprodon_allow_other = true;
 			}
-			
+
 			//show dropdown
 			sort($dropdown_prices);
 			?>
@@ -166,16 +174,16 @@ function pmprodon_pmpro_checkout_after_level_cost()
 				}
 			?>
 			<option value="other" <?php selected(true, !empty($donation) && !in_array($donation, $dropdown_prices));?>>Other</option>
-			</select> &nbsp;			
+			</select> &nbsp;
 			<?php
 		}
 	?>
-	
+
 	<span id="pmprodon_donation_input" <?php if(!empty($pmprodon_allow_other) && $_REQUEST['donation_dropdown'] != 'other') { ?>style="display: none;"<?php } ?>>
 	<?php echo $pmpro_currency_symbol;?> <input type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr($donation);?>" <?php if($pmpro_review) { ?>disabled="disabled"<?php } ?> />
 	<?php if($pmpro_review) { ?><input type="hidden" name="donation" value="<?php echo esc_attr($donation);?>" /><?php } ?>
 	</span>
-	<?php 
+	<?php
 		if(empty($pmpro_review)) {
 			?>
 			<p class="pmpro_small">
@@ -200,54 +208,54 @@ function pmprodon_pmpro_checkout_after_level_cost()
 	var pmpro_gateway_billing = <?php if(in_array($gateway, array("paypalexpress", "twocheckout")) !== false) echo "false"; else echo "true";?>;
 	var pmpro_pricing_billing = <?php if(!pmpro_isLevelFree($pmpro_level)) echo "true"; else echo "false";?>;
 	var pmpro_donation_billing = pmpro_pricing_billing;
-	
+
 	//this script will hide show billing fields based on the price set
 	jQuery(document).ready(function() {
 		//bind other field toggle to dropdown change
 		jQuery('#donation_dropdown').change(function() {
 			pmprodon_toggleOther();
-		});		
-		
-		//bind check to price field		
+		});
+
+		//bind check to price field
 		var pmprodon_price_timer;
 		jQuery('#donation').bind('keyup change', function() {
 			pmprodon_price_timer = setTimeout(pmprodon_checkForFree, 500);
 		});
-		
+
 		if(jQuery('input[name=gateway]'))
 		{
 			jQuery('input[name=gateway]').bind('click', function() {
 				pmprodon_price_timer = setTimeout(pmprodon_checkForFree, 500);
 			});
-		}	
-		
+		}
+
 		//check when page loads too
 		pmprodon_toggleOther();
 		pmprodon_checkForFree();
 	});
-	
+
 	function pmprodon_toggleOther()
 	{
 		//make sure there is a dropdown to check
 		if(!jQuery('#donation_dropdown').length)
 			return;
-		
+
 		//get val
 		var donation_dropdown = jQuery('#donation_dropdown').val();
-		
+
 		if(donation_dropdown == 'other')
 			jQuery('#pmprodon_donation_input').show();
 		else
 			jQuery('#pmprodon_donation_input').hide();
 	}
-	
+
 	function pmprodon_checkForFree()
 	{
 		var donation = parseFloat(jQuery('#donation').val());
-		
+
 		//does the gateway require billing?
 		if(jQuery('input[name=gateway]').length)
-		{			
+		{
 			var no_billing_gateways = ['paypalexpress', 'twocheckout', 'check', 'paypalstandard'];
 			var gateway = jQuery('input[name=gateway]:checked').val();
 			if(no_billing_gateways.indexOf(gateway) > -1)
@@ -255,13 +263,13 @@ function pmprodon_pmpro_checkout_after_level_cost()
 			else
 				pmpro_gateway_billing = true;
 		}
-				
+
 		//is there a donation?
 		if(donation || pmpro_pricing_billing)
 			pmpro_donation_billing = true;
 		else
 			pmpro_donation_billing = false;
-				
+
 		//figure out if we should show the billing fields
 		if(pmpro_gateway_billing && pmpro_donation_billing)
 		{
@@ -287,17 +295,17 @@ function pmprodon_pmpro_checkout_level($level)
 		$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
 	else
 		return $level;
-	
+
 	if(!empty($donation))
 	{
 		//save initial payment amount
 		global $pmprodon_original_initial_payment;
 		$pmprodon_original_initial_payment = $level->initial_payment;
-		
+
 		//add donation
 		$level->initial_payment = $level->initial_payment + $donation;
-	}	
-	
+	}
+
 	return $level;
 }
 add_filter("pmpro_checkout_level", "pmprodon_pmpro_checkout_level", 99);
@@ -322,29 +330,29 @@ function pmprodon_pmpro_registration_checks($continue)
 				$pmpro_msg = __("Error: You tried to set the donation on a level that doesn't have donations. Please try again.", "pmprodon");
 				$pmpro_msgt = "pmpro_error";
 			}
-			
+
 			//get price
 			$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
-			
+
 			//check that the donation falls between the min and max
 			if(!empty($donfields['min_price']) && (double)$donation < (double)$donfields['min_price'])
 			{
-				$pmpro_msg = sprintf(__('The lowest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['min_price'])); 
+				$pmpro_msg = sprintf(__('The lowest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['min_price']));
 				$pmpro_msgt = "pmpro_error";
 				$continue = false;
 			}
 			elseif(!empty($donfields['max_price']) && (double)$donation > (double)$donfields['max_price'])
 			{
-				$pmpro_msg = sprintf(__('The highest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['max_price'])); 
-				
+				$pmpro_msg = sprintf(__('The highest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['max_price']));
+
 				$pmpro_msgt = "pmpro_error";
 				$continue = false;
 			}
-			
+
 			//all good!
 		}
 	}
-	
+
 	return $continue;
 }
 add_filter("pmpro_registration_checks", "pmprodon_pmpro_registration_checks");
@@ -361,7 +369,7 @@ function pmprodon_pmpro_level_cost_text($text, $level)
 		$pmprodon_text_level_cost_updated = true;	//to prevent loops
 		$text = pmpro_getLevelCost($olevel);
 	}
-	
+
 	return $text;
 }
 add_filter("pmpro_level_cost_text", "pmprodon_pmpro_level_cost_text", 10, 2);
@@ -386,18 +394,18 @@ add_filter('pmpro_checkout_order', 'pmprodon_pmpro_checkout_order');
 function pmprodon_getPriceComponents($order)
 {
 	$r = array("price" => $order->total, "donation"=> "");
-		
+
 	if(isset($order->notes) && !empty($order->notes) && strpos($order->notes, __('Donation', 'pmprodon')) !== false)
 	{
 		$donation = pmpro_getMatches("/" . __("Donation", "pmprodon") . "\:([0-9\.]+)/", $order->notes, true);
 		$r['donation'] = $donation;
 		if($donation > 0)
-			$r['price'] = $order->total - $donation;	
+			$r['price'] = $order->total - $donation;
 	}
-	
+
 	//filter added .2
 	$r = apply_filters('pmpro_donations_get_price_components', $r, $order);
-	
+
 	return $r;
 }
 /*
@@ -424,7 +432,7 @@ add_filter('pmpro_invoice_bullets_bottom', 'pmprodon_pmpro_invoice_bullets_botto
 function pmprodon_pmpro_email_filter($email)
 {
 	global $wpdb;
- 	
+
 	//only update admin confirmation emails
 	if(strpos($email->template, "checkout") !== false)
 	{
@@ -434,7 +442,7 @@ function pmprodon_pmpro_email_filter($email)
 		{
 			$order = new MemberOrder($order_id);
 			$components = pmprodon_getPriceComponents($order);
-						
+
 			//add to bottom of email
 			if(!empty($components['donation']))
 			{
@@ -442,7 +450,7 @@ function pmprodon_pmpro_email_filter($email)
 			}
 		}
 	}
-		
+
 	return $email;
 }
 add_filter("pmpro_email_filter", "pmprodon_pmpro_email_filter", 10, 2);
@@ -451,7 +459,11 @@ add_filter("pmpro_email_filter", "pmprodon_pmpro_email_filter", 10, 2);
 */
 function pmprodon_pmpro_paypalexpress_session_vars()
 {
-	//save our added fields in session while the user goes off to PayPal	
+	if(function_exists('pmpro_start_session')) {
+		pmpro_start_session();
+	}
+
+	//save our added fields in session while the user goes off to PayPal
 	if(isset($_REQUEST['donation_dropdown']))
 		$_SESSION['donation_dropdown'] = $_REQUEST['donation_dropdown'];
 	if(isset($_REQUEST['donation']))
