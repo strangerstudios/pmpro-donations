@@ -26,6 +26,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 == Changelog ==
 = .5 =
 * BUG FIX: Making sure session is started before interacting with session vars.
+* BUG FIX: Keeping billing address fields visible when switching to pay by check option.
 * ENHANCEMENT/FIX: Wouldn't always substitute text properly when translated
 * ENHANCEMENT/FIX: PHP Warnings during checkout
 * ENHANCEMENT: Improved fields display on membership checkout page to use no tables for compatibility with Paid Memberships Pro v1.9.4.
