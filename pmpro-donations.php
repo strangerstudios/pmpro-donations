@@ -40,7 +40,7 @@ function pmprodon_pmpro_membership_level_after_other_settings()
 	<tr>
 		<th scope="row" valign="top"><label for="donations"><?php _e('Enable:' , 'pmprodon'); ?></label></th>
 		<td>
-			<input type="checkbox" id="donations" name="donations" value="1" <?php checked($donations, "1");?> /> <?php _e('Enable Donations', 'pmprodon'); ?>
+			<input type="checkbox" id="donations" name="donations" value="1" <?php checked($donations, "1");?> /> <label for="donations"><?php _e('Enable Donations', 'pmprodon'); ?></label>
 		</td>
 	</tr>
 	<tr>
@@ -382,7 +382,7 @@ function pmprodon_pmpro_checkout_order($order)
 		$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
 	else
 		return $order;
-	
+
 	if(!empty($donation) && !empty($order->notes) && strpos($order->notes, __('Donation', 'pmprodon')) === false)
 		$order->notes .= __("Donation", "pmprodon") .': '. $donation . "\n";
 	return $order;
