@@ -296,7 +296,7 @@ function pmprodon_pmpro_checkout_level($level)
 	else
 		return $level;
 
-	if(!empty($donation))
+	if(!empty($donation) && $donation > 0)
 	{
 		//save initial payment amount
 		global $pmprodon_original_initial_payment;
@@ -335,14 +335,11 @@ function pmprodon_pmpro_registration_checks($continue)
 			$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
 
 			//check that the donation falls between the min and max
-			if(!empty($donfields['min_price']) && (double)$donation < (double)$donfields['min_price'])
-			{
+			if ( (double)$donation < 0 || ( !empty( $donfields['min_price'] ) && (double)$donation < (double)$donfields['min_price'] ) ) {
 				$pmpro_msg = sprintf(__('The lowest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['min_price']));
 				$pmpro_msgt = "pmpro_error";
 				$continue = false;
-			}
-			elseif(!empty($donfields['max_price']) && (double)$donation > (double)$donfields['max_price'])
-			{
+			} elseif ( !empty( $donfields['max_price'] ) && (double)$donation > (double)$donfields['max_price'] ) {
 				$pmpro_msg = sprintf(__('The highest accepted donation is %s. Please enter a new amount.', 'pmprodon'), pmpro_formatPrice($donfields['max_price']));
 
 				$pmpro_msgt = "pmpro_error";
