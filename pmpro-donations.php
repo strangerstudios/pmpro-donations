@@ -291,10 +291,14 @@ add_action('pmpro_checkout_after_level_cost', 'pmprodon_pmpro_checkout_after_lev
 //set price
 function pmprodon_pmpro_checkout_level($level)
 {
-	if(isset($_REQUEST['donation']))
-		$donation = preg_replace("[^0-9\.]", "", $_REQUEST['donation']);
-	else
+
+	if ( isset( $_REQUEST['donation'] ) ) {
+		$donation = preg_replace( "[^0-9\.]", "", $_REQUEST['donation'] );
+	} elseif ( isset( $_SESSION['donation'] ) ) {
+		$donation = preg_replace( "[^0-9\.]", "", $_SESSION['donation'] );
+	} else {
 		return $level;
+	}
 
 	if(!empty($donation) && $donation > 0)
 	{
