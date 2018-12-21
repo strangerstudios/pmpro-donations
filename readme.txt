@@ -24,6 +24,10 @@ This plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-donations/issues
 
 == Changelog ==
+
+= .5.1 =
+* BUG FIX: Fixed bug where donation was not being added to order notes.
+
 = .5 =
 * BUG FIX: Making sure session is started before interacting with session vars.
 * BUG FIX: Keeping billing address fields visible when switching to pay by check option.
