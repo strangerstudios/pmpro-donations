@@ -26,6 +26,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 == Changelog ==
 
 = .5.1 =
+* BUG FIX: Fixed regular expression in pmprodon_getPriceComponents().
 * BUG FIX: Fixed bug where donation was not being added to order notes.
 
 = .5 =
