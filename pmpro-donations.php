@@ -384,7 +384,7 @@ function pmprodon_pmpro_checkout_order($order)
 	else
 		return $order;
 
-	if(!empty($donation) && !empty($order->notes) && strpos($order->notes, __('Donation', 'pmprodon')) === false)
+	if(!empty($donation) && strpos($order->notes, __('Donation', 'pmprodon')) === false)
 		$order->notes .= __("Donation", "pmprodon") .': '. $donation . "\n";
 	return $order;
 }
