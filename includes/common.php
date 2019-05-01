@@ -2,7 +2,7 @@
 /**
  * Function to get donation and original price out of an order.
  */
-function pmprodon_getPriceComponents( $order ) {
+function pmprodon_get_price_components( $order ) {
 	$r = array(
 		'price'    => $order->total,
 		'donation' => '',
@@ -20,4 +20,11 @@ function pmprodon_getPriceComponents( $order ) {
 	$r = apply_filters( 'pmpro_donations_get_price_components', $r, $order );
 
 	return $r;
+}
+
+/**
+ * Deprecated name for pmprodon_get_price_components.
+ */
+function pmprodon_getPriceComponents( $order ) {
+	return pmprodon_get_price_components( $order );
 }

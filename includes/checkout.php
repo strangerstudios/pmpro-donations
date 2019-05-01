@@ -307,7 +307,7 @@ add_filter( 'pmpro_checkout_order', 'pmprodon_pmpro_checkout_order' );
  * Show order components on confirmation and invoice pages.
  */
 function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
-	$components = pmprodon_getPriceComponents( $order );
+	$components = pmprodon_get_price_components( $order );
 	if ( ! empty( $components['donation'] ) ) {
 	?>
 	<li><strong><?php _e( 'Membership Cost', 'pmpro-donations' ); ?>: </strong> <?php echo pmpro_formatPrice( $components['price'] ); ?></li>
@@ -329,7 +329,7 @@ function pmprodon_pmpro_email_filter( $email ) {
 		$order_id = ( empty( $email->data ) || empty( $email->data['invoice_id'] ) ) ? false : $email->data['invoice_id'];
 		if ( ! empty( $order_id ) ) {
 			$order      = new MemberOrder( $order_id );
-			$components = pmprodon_getPriceComponents( $order );
+			$components = pmprodon_get_price_components( $order );
 
 			// add to bottom of email
 			if ( ! empty( $components['donation'] ) ) {
