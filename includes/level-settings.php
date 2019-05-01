@@ -5,28 +5,13 @@
 function pmprodon_pmpro_membership_level_after_other_settings() {
 	global $pmpro_currency_symbol;
 	$level_id = intval( $_REQUEST['edit'] );
-	if ( $level_id > 0 ) {
-		$donfields       = get_option(
-			'pmprodon_' . $level_id, array(
-				'donations'       => 0,
-				'min_price'       => '',
-				'max_price'       => '',
-				'dropdown_prices' => '',
-				'text'            => '',
-			)
-		);
-		$donations       = ( ! isset( $donfields['donations'] ) ) ? 0 : $donfields['donations'];
-		$min_price       = ( ! isset( $donfields['min_price'] ) ) ? '' : $donfields['min_price'];
-		$max_price       = ( ! isset( $donfields['max_price'] ) ) ? '' : $donfields['max_price'];
-		$donations_text  = ( ! isset( $donfields['text'] ) ) ? '' : $donfields['text'];
-		$dropdown_prices = ( ! isset( $donfields['dropdown_prices'] ) ) ? '' : $donfields['dropdown_prices'];
-	} else {
-		$donations       = 0;
-		$min_price       = '';
-		$max_price       = '';
-		$donations_text  = '';
-		$dropdown_prices = '';
-	}
+	$donfields       = pmprodon_get_level_settings( $level_id );			
+	$donations       = ( ! isset( $donfields['donations'] ) ) ? 0 : $donfields['donations'];
+	$donations_only  = ( ! isset( $donfields['donations_only'] ) ) ? 0 : $donfields['donations_only'];
+	$min_price       = ( ! isset( $donfields['min_price'] ) ) ? '' : $donfields['min_price'];
+	$max_price       = ( ! isset( $donfields['max_price'] ) ) ? '' : $donfields['max_price'];
+	$donations_text  = ( ! isset( $donfields['text'] ) ) ? '' : $donfields['text'];
+	$dropdown_prices = ( ! isset( $donfields['dropdown_prices'] ) ) ? '' : $donfields['dropdown_prices'];	
 ?>
 <h3 class="topborder"><?php _e( 'Donations', 'pmpro-donations' ); ?></h3>
 <p><?php _e( 'If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.', 'pmpro-donations' ); ?></p>
@@ -36,6 +21,12 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 		<th scope="row" valign="top"><label for="donations"><?php _e( 'Enable:', 'pmpro-donations' ); ?></label></th>
 		<td>
 			<input type="checkbox" id="donations" name="donations" value="1" <?php checked( $donations, '1' ); ?> /> <label for="donations"><?php _e( 'Enable Donations', 'pmpro-donations' ); ?></label>
+		</td>
+	</tr>
+	<tr>
+		<th scope="row" valign="top"><label for="donations_only"><?php _e( 'Donations-Only Level:', 'pmpro-donations' ); ?></label></th>
+		<td>
+			<input type="checkbox" id="donations_only" name="donations_only" value="1" <?php checked( $donations_only, '1' ); ?> /> <label for="donations_only"><?php _e( 'Check to have existing members NOT switched to this level at checkout.', 'pmpro-donations' ); ?></label>
 		</td>
 	</tr>
 	<tr>
@@ -78,6 +69,11 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 	} else {
 		$donations = 0;
 	}
+	if ( ! empty( $_REQUEST['donations_only'] ) ) {
+		$donations_only = 1;
+	} else {
+		$donations_only = 0;
+	}
 	$min_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_min_price'] );
 	$max_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
 	$text            = $_REQUEST['donations_text'];
@@ -86,6 +82,7 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 	update_option(
 		'pmprodon_' . $level_id, array(
 			'donations'       => $donations,
+			'donations_only'  => $donations_only,
 			'min_price'       => $min_price,
 			'max_price'       => $max_price,
 			'text'            => $text,

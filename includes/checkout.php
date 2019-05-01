@@ -296,6 +296,10 @@ function pmprodon_pmpro_checkout_order( $order ) {
 		return $order;
 	}
 
+	if ( empty( $order->notes ) ) {
+		$order->notes = '';
+	}
+
 	if ( ! empty( $donation ) && strpos( $order->notes, __( 'Donation', 'pmpro-donations' ) ) === false ) {
 		$order->notes .= __( 'Donation', 'pmpro-donations' ) . ': ' . $donation . "\n";
 	}
