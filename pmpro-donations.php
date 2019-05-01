@@ -384,7 +384,7 @@ function pmprodon_pmpro_checkout_order($order)
 	else
 		return $order;
 
-	if(!empty($donation) && !empty($order->notes) && strpos($order->notes, __('Donation', 'pmprodon')) === false)
+	if(!empty($donation) && strpos($order->notes, __('Donation', 'pmprodon')) === false)
 		$order->notes .= __("Donation", "pmprodon") .': '. $donation . "\n";
 	return $order;
 }
@@ -398,7 +398,7 @@ function pmprodon_getPriceComponents($order)
 
 	if(isset($order->notes) && !empty($order->notes) && strpos($order->notes, __('Donation', 'pmprodon')) !== false)
 	{
-		$donation = pmpro_getMatches("/" . __("Donation", "pmprodon") . "\:([0-9\.]+)/", $order->notes, true);
+		$donation = pmpro_getMatches("/" . __("Donation", "pmprodon") . "\: ([0-9\.]+)/", $order->notes, true);
 		$r['donation'] = $donation;
 		if($donation > 0)
 			$r['price'] = $order->total - $donation;
