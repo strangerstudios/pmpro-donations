@@ -87,8 +87,10 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 				<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo pmpro_formatPrice( (double) $price ); ?></option>
 				<?php
 			}
-			?>
-			<option value="other" <?php selected( true, ! empty( $donation ) && ! in_array( $donation, $dropdown_prices ) ); ?>>Other</option>
+			if ( $pmprodon_allow_other ) {
+				?>
+				<option value="other" <?php selected( true, ! empty( $donation ) && ! in_array( $donation, $dropdown_prices ) ); ?>>Other</option>
+			<?php } ?>
 		</select> &nbsp;
 		<?php
 	}
