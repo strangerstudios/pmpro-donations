@@ -45,8 +45,8 @@ function pmprodon_get_level_settings( $level_id ) {
 	if ( $level_id > 0 ) {
 		$settings = get_option( 'pmprodon_' . $level_id, $default_settings );
 	}
-	
-	$settings = array_merge( $default_settings, $settings );
+
+	$settings = ( ! empty( $settings ) && is_array( $settings ) ) ? array_merge( $default_settings, $settings ) : $default_settings;
 	
 	return $settings;
 }
