@@ -106,10 +106,10 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	<?php
 	if ( empty( $pmpro_review ) ) {
 		?>
-		<p class="pmpro_small">
+		<div class="pmpro_small">
 		<?php
 		if ( ! empty( $donfields['text'] ) ) {
-			echo $donfields['text'];
+			echo stripslashes( $donfields['text'] );
 		} elseif ( ! empty( $donfields['min_price'] ) && empty( $donfields['max_price'] ) ) {
 			printf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) );
 		} elseif ( ! empty( $donfields['max_price'] ) && empty( $donfields['min_price'] ) ) {
@@ -118,7 +118,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 			printf( __( 'Enter an amount between %1$s and %2$s', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ), pmpro_formatPrice( $donfields['max_price'] ) );
 		}
 		?>
-		</p>
+		</div>
 		<?php
 	}
 	?>
