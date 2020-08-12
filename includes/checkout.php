@@ -96,7 +96,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	}
 	?>
 
-	<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && $_REQUEST['donation_dropdown'] != 'other' ) { ?>style="display: none;"<?php } ?>>
+	<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
 		<?php echo $pmpro_currency_symbol; ?> <input type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
 		<?php if ( $pmpro_review ) { ?>
 			<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
