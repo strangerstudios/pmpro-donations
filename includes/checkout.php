@@ -23,7 +23,7 @@ function pmprodon_init_dropdown_values() {
 		$_POST['donation'] = $_POST['donation_dropdown'];
 	}
 }
-add_action( 'init', 'pmprodon_init_dropdown_values', 1 );
+add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_init_dropdown_values', 1 );
 
 /**
  * Show form at checkout.
