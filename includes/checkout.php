@@ -323,14 +323,28 @@ function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 }
 add_filter( 'pmpro_invoice_bullets_bottom', 'pmprodon_pmpro_invoice_bullets_bottom' );
 
+function pmprodon_pmpro_email_data( $data, $email ) {
+	$order_id = empty( $email->data['invoice_id'] ) ? false : $email->data['invoice_id'];
+	if ( ! empty( $order_id ) ) {
+		$order      = new MemberOrder( $order_id );
+		$components = pmprodon_get_price_components( $order );
+
+		if ( ! empty( $components['donation'] ) ) {
+			$data['donation'] =  pmpro_formatPrice( $components['donation'] );
+		}
+	}
+	return $data;
+}
+add_filter( 'pmpro_email_data', 'pmprodon_pmpro_email_data', 10, 2 );
+
 /**
  * Show order components in confirmation email.
  */
 function pmprodon_pmpro_email_filter( $email ) {
 	global $wpdb;
 
-	// only update admin confirmation emails
-	if ( strpos( $email->template, 'checkout' ) !== false ) {
+	// only update confirmation emails which aren't using !!donation!! email variable
+	if ( strpos( $email->template, 'checkout' ) !== false && strpos( $email->body, '!!donation!!' ) === false ) {
 		// get the user_id from the email
 		$order_id = ( empty( $email->data ) || empty( $email->data['invoice_id'] ) ) ? false : $email->data['invoice_id'];
 		if ( ! empty( $order_id ) ) {
