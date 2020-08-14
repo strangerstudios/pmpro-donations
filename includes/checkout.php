@@ -331,6 +331,8 @@ function pmprodon_pmpro_email_data( $data, $email ) {
 
 		if ( ! empty( $components['donation'] ) ) {
 			$data['donation'] =  pmpro_formatPrice( $components['donation'] );
+		} else {
+			$data['donation'] =  pmpro_formatPrice( 0 );
 		}
 	}
 	return $data;
