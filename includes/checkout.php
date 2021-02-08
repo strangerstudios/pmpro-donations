@@ -61,8 +61,10 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	?>
 	<hr />
 	<div id="pmpro_donations">
+		
+		<span id="pmprodon_donation_prompt"><?php _e( 'Make a Gift', 'pmpro-donations' ); ?></span>
+		
 	<?php
-	_e( 'Make a Gift', 'pmpro-donations' );
 	
 	// check for dropdown
 	if ( ! empty( $dropdown_prices ) ) {
