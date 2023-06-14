@@ -240,8 +240,8 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 		// was a donation passed in?
 		if ( isset( $_REQUEST['donation'] ) ) {
 			// get values
-			$level_id  = intval( $_REQUEST['level'] );
-			$donfields = get_option( 'pmprodon_' . $level_id );
+			$level = pmpro_getLevelAtCheckout();
+			$donfields = get_option( 'pmprodon_' . $level->id );
 
 			// make sure this level has variable pricing
 			if ( empty( $donfields ) || empty( $donfields['donations'] ) ) {
@@ -390,11 +390,10 @@ add_action( 'pmpro_paypalexpress_session_vars', 'pmprodon_pmpro_paypalexpress_se
 function pmprodon_pmpro_checkout_preheader() {
 	global $besecure;
 
-	if ( ! is_admin() && ! empty( $_REQUEST['level'] ) ) {
-		$level_id = intval( $_REQUEST['level'] );
-
+	$level = pmpro_getLevelAtCheckout();
+	if ( ! is_admin() && ! empty( $level->id ) ) {
 		$donfields = get_option(
-			'pmprodon_' . $level_id, array(
+			'pmprodon_' . intval( $level->id ), array(
 				'donations'       => 0,
 				'min_price'       => '',
 				'max_price'       => '',
