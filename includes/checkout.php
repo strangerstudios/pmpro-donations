@@ -47,6 +47,8 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	$min_price       = $donfields['min_price'];
 	$max_price       = $donfields['max_price'];
 	$dropdown_prices = $donfields['dropdown_prices'];
+	//We want to keep backwards compatibility with those donations options that doest't have saved the placeholder
+	$donation_placeholder = $donfields['donation_placeholder'] ? $donfields['donation_placeholder'] : "";
 
 	if ( isset( $_REQUEST['donation'] ) ) {
 		$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
@@ -97,7 +99,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	?>
 
 	<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
-		<?php echo $pmpro_currency_symbol; ?> <input type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
+		<?php echo $pmpro_currency_symbol; ?> <input type="number" step="0.01" min="<?php echo $min_price; ?>" max="<?php echo $max_price; ?>" placeholder="<?php echo $donation_placeholder; ?>" id="donation" name="donation" size="10" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
 		<?php if ( $pmpro_review ) { ?>
 			<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
 		<?php } ?>

@@ -42,3 +42,15 @@ function pmprodon_plugin_row_meta( $links, $file ) {
 	return $links;
 }
 add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
+
+
+/**
+ * Enqueue CSS assets.
+ *
+ * @since TBD
+ */
+function pmpro_donations_css_assets() {
+	wp_register_style( 'pmpro-donations-css', plugins_url( 'css/pmpro-donations.css', __FILE__ ) );
+	wp_enqueue_style( 'pmpro-donations-css' );
+}
+add_action( 'wp_enqueue_scripts', 'pmpro_donations_css_assets' );
