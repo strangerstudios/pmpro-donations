@@ -1,0 +1,8 @@
+.content-area input[type=number] {
+    color: #666;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px;
+    padding: 1.45rem;
+    word-break: normal;
+    min-width: 6vw;
+}

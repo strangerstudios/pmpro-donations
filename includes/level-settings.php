@@ -11,7 +11,8 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	$min_price       = ( ! isset( $donfields['min_price'] ) ) ? '' : $donfields['min_price'];
 	$max_price       = ( ! isset( $donfields['max_price'] ) ) ? '' : $donfields['max_price'];
 	$donations_text  = ( ! isset( $donfields['text'] ) ) ? '' : $donfields['text'];
-	$dropdown_prices = ( ! isset( $donfields['dropdown_prices'] ) ) ? '' : $donfields['dropdown_prices'];	
+	$dropdown_prices = ( ! isset( $donfields['dropdown_prices'] ) ) ? '' : $donfields['dropdown_prices'];
+	$donation_placeholder = ( ! isset( $donfields['donation_placeholder'] ) ) ? '' : $donfields['donation_placeholder'];
 ?>
 <h3 class="topborder"><?php _e( 'Donations', 'pmpro-donations' ); ?></h3>
 <p><?php _e( 'If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.', 'pmpro-donations' ); ?></p>
@@ -32,13 +33,19 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	<tr>
 		<th scope="row" valign="top"><label for="donation_min_price"><?php _e( 'Min Amount:', 'pmpro-donations' ); ?></label></th>
 		<td>
-			<?php echo $pmpro_currency_symbol; ?><input type="text" id="donation_min_price" name="donation_min_price" value="<?php echo esc_attr( $min_price ); ?>" />
+			<?php echo $pmpro_currency_symbol; ?><input type="number" step="0.01" min="0.01" id="donation_min_price" name="donation_min_price" value="<?php echo esc_attr( $min_price ); ?>" />
 		</td>
 	</tr>
 	<tr>
 		<th scope="row" valign="top"><label for="donation_max_price"><?php _e( 'Max Amount:', 'pmpro-donations' ); ?></label></th>
 		<td>
-			<?php echo $pmpro_currency_symbol; ?><input type="text" id="donation_max_price" name="donation_max_price" value="<?php echo esc_attr( $max_price ); ?>" />
+			<?php echo $pmpro_currency_symbol; ?><input type="number" step="0.01" min="0.01" id="donation_max_price" name="donation_max_price" value="<?php echo esc_attr( $max_price ); ?>" />
+		</td>
+	</tr>
+	<tr>
+		<th scope="row" valign="top"><label for="donation_placeholder"><?php _e( 'Placeholder:', 'pmpro-donations' ); ?></label></th>
+		<td>
+			<input type="text" id="donation_placeholder" name="donation_placeholder" value="<?php echo esc_attr( $donation_placeholder ); ?>" />
 		</td>
 	</tr>
 	<tr>
@@ -56,6 +63,48 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	</tr>
 </tbody>
 </table>
+<script>
+	jQuery(document).ready(function($) {
+		/**
+		 * Watch min and max amount fields and validate that max is greater than min.
+		 *
+		 * Since TBD
+		 */
+		$('input[type="number"]').on('change', ev => {
+			const $td = $('#donation_max_price').closest('td');
+			if( parseFloat($('#donation_min_price').val()) > parseFloat($('#donation_max_price').val()) ) {
+				$('#donation_min_price').css('border-color', 'red');
+				$('#donation_max_price').css('border-color', 'red');
+				emptyMessage($td);
+				$td.append($('<br/>'), $('<small/>').css('padding-left', '10px').text('<?php _e( 'Max Amount must be greater than Min Amount', 'pmpro-donations' ); ?>'));
+				toggleSubmitButtonDisableAttribute($td, true);
+			} else {
+				$('#donation_min_price, #donation_max_price').removeAttr('style');
+				emptyMessage($td);
+				toggleSubmitButtonDisableAttribute($td, false);
+			}
+		});
+
+		/**
+		 * Empty the message in the given td.
+		 *
+		 * @since TBD
+		 */
+		const emptyMessage = $td => {
+			$td.find('small').remove();
+			$td.find('br').remove();
+		}
+
+		/**
+		 * Toggle the disabled attribute on the level form submit  button accordingly
+		 *
+		 * @since TBD
+		 */
+		const toggleSubmitButtonDisableAttribute = ($td, val) => {
+			$td.closest('form').find('input[type="submit"]').prop('disabled', () => val);
+		}
+	});
+</script>
 <?php
 }
 add_action( 'pmpro_membership_level_after_other_settings', 'pmprodon_pmpro_membership_level_after_other_settings' );
@@ -75,9 +124,18 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 		$donations_only = 0;
 	}
 	$min_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_min_price'] );
+	//if min price is blank, set it to 1
+	if( !$min_price ) {
+		$min_price = 1;
+	}
 	$max_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
 	$text            = $_REQUEST['donations_text'];
 	$dropdown_prices = $_REQUEST['dropdown_prices'];
+	$donation_placeholder = $_REQUEST['donation_placeholder'];
+	if( $min_price > $max_price ) {
+		//this is validated in the front, if reach here there's a malicious user trying to break it , should we log it  ?
+		return;
+	}
 
 	update_option(
 		'pmprodon_' . $level_id, array(
@@ -87,6 +145,7 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 			'max_price'       => $max_price,
 			'text'            => $text,
 			'dropdown_prices' => $dropdown_prices,
+			'donation_placeholder' => $donation_placeholder,
 		)
 	);
 }
