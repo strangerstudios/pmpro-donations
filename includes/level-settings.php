@@ -57,8 +57,8 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	<tr>
 		<th scope="row" valign="top"><label for="donations_text"><?php _e( 'Help Text:', 'pmpro-donations' ); ?></label></th>
 		<td>
-			<textarea id="donations_text" name="donations_text" rows="5" cols="60"><?php echo wpautop( wp_unslash( esc_textarea( $donations_text ) ) ); ?></textarea>
-			<br /><small><?php _e( 'If not blank, this text will override the default text generated to explain the range of donation values accepted.', 'pmpro-donations' ); ?></small>
+			<textarea id="donations_text" name="donations_text" rows="5" cols="60"><?php echo  wp_unslash( esc_textarea( $donations_text ) ); ?></textarea>
+			<br /><small><?php _e( 'If not blank, this text will override the default text generated to explain the range of donation values accepted. Wrap text among HTML p tags if you need help text splitted into paragraphs.', 'pmpro-donations' ); ?></small>
 		</td>
 	</tr>
 </tbody>

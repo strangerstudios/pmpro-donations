@@ -3,13 +3,6 @@
  * Update donation amount if a dropdown value is used
  */
 function pmprodon_init_dropdown_values() {
-	if ( function_exists( 'pmpro_start_session' ) ) {
-		pmpro_start_session();
-	}
-
-	if ( ! empty( $_SESSION['donation_dropdown'] ) && $_SESSION['donation_dropdown'] != 'other' ) {
-		$_SESSION['donation'] = $_SESSION['donation_dropdown'];
-	}
 
 	if ( ! empty( $_REQUEST['donation_dropdown'] ) && $_REQUEST['donation_dropdown'] != 'other' ) {
 		$_REQUEST['donation'] = $_REQUEST['donation_dropdown'];
@@ -31,10 +24,6 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_i
 function pmprodon_pmpro_checkout_after_level_cost() {
 	global $pmpro_currency_symbol, $pmpro_level, $gateway, $pmpro_review;
 
-	if ( function_exists( 'pmpro_start_session' ) ) {
-		pmpro_start_session();
-	}
-
 	// get variable pricing info
 	$donfields = get_option( 'pmprodon_' . $pmpro_level->id );
 
@@ -50,10 +39,9 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	//We want to keep backwards compatibility with those donations options that doest't have saved the placeholder
 	$donation_placeholder = $donfields['donation_placeholder'] ? $donfields['donation_placeholder'] : "";
 
+
 	if ( isset( $_REQUEST['donation'] ) ) {
 		$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
-	} elseif ( isset( $_SESSION['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_SESSION['donation'] );
 	} elseif ( ! empty( $min_price ) ) {
 		$donation = $min_price;
 	} else {
@@ -99,7 +87,8 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	?>
 
 	<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
-		<?php echo $pmpro_currency_symbol; ?> <input type="number" step="0.01" min="<?php echo $min_price; ?>" max="<?php echo $max_price; ?>" placeholder="<?php echo $donation_placeholder; ?>" id="donation" name="donation" size="10" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
+		<?php echo $pmpro_currency_symbol; ?> <input autocomplete="off" type="number" step="0.01" min="<?php echo $min_price; ?>" max="<?php echo $max_price; ?>" placeholder="<?php echo $donation_placeholder; ?>" id="donation" name="donation" size="10" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
+
 		<?php if ( $pmpro_review ) { ?>
 			<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
 		<?php } ?>
@@ -212,8 +201,6 @@ function pmprodon_pmpro_checkout_level( $level ) {
 
 	if ( isset( $_REQUEST['donation'] ) ) {
 		$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
-	} elseif ( isset( $_SESSION['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_SESSION['donation'] );
 	} else {
 		return $level;
 	}
@@ -317,10 +304,9 @@ add_filter( 'pmpro_checkout_order', 'pmprodon_pmpro_checkout_order' );
 function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 	$components = pmprodon_get_price_components( $order );
 	if ( ! empty( $components['donation'] ) ) {
-	?>
-	<li><strong><?php _e( 'Membership Cost', 'pmpro-donations' ); ?>: </strong> <?php echo pmpro_formatPrice( $components['price'] ); ?></li>
-	<li><strong><?php _e( 'Donation', 'pmpro-donations' ); ?>: </strong> <?php echo pmpro_formatPrice( $components['donation'] ); ?></li>
-	<?php
+		$bullets = '<li><strong>' . __( 'Membership Cost', 'pmpro-donations' ) . ": </strong> " . pmpro_formatPrice( $components['price'] ) . '</li>' 
+		 . '<li><strong>' . __( 'Donation', 'pmpro-donations' ) . ": </strong>"  .  pmpro_formatPrice( $components['donation'] ) . '</li>';
+	echo $bullets = apply_filters( 'pmpro_donations_bullets_invoice', $bullets, $order );
 	}
 }
 add_filter( 'pmpro_invoice_bullets_bottom', 'pmprodon_pmpro_invoice_bullets_bottom' );
@@ -365,24 +351,6 @@ function pmprodon_pmpro_email_filter( $email ) {
 	return $email;
 }
 add_filter( 'pmpro_email_filter', 'pmprodon_pmpro_email_filter', 10, 2 );
-
-/**
- * Save donation amount into a session variable for PayPal Express.
- */
-function pmprodon_pmpro_paypalexpress_session_vars() {
-	if ( function_exists( 'pmpro_start_session' ) ) {
-		pmpro_start_session();
-	}
-
-	// save our added fields in session while the user goes off to PayPal
-	if ( isset( $_REQUEST['donation_dropdown'] ) ) {
-		$_SESSION['donation_dropdown'] = $_REQUEST['donation_dropdown'];
-	}
-	if ( isset( $_REQUEST['donation'] ) ) {
-		$_SESSION['donation'] = $_REQUEST['donation'];
-	}
-}
-add_action( 'pmpro_paypalexpress_session_vars', 'pmprodon_pmpro_paypalexpress_session_vars' );
 
 /**
  * If checking out for a level with donations, use SSL even if it's free
