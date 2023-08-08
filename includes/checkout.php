@@ -3,13 +3,6 @@
  * Update donation amount if a dropdown value is used
  */
 function pmprodon_init_dropdown_values() {
-	if ( function_exists( 'pmpro_start_session' ) ) {
-		pmpro_start_session();
-	}
-
-	if ( ! empty( $_SESSION['donation_dropdown'] ) && $_SESSION['donation_dropdown'] != 'other' ) {
-		$_SESSION['donation'] = $_SESSION['donation_dropdown'];
-	}
 
 	if ( ! empty( $_REQUEST['donation_dropdown'] ) && $_REQUEST['donation_dropdown'] != 'other' ) {
 		$_REQUEST['donation'] = $_REQUEST['donation_dropdown'];
@@ -31,10 +24,6 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_i
 function pmprodon_pmpro_checkout_after_level_cost() {
 	global $pmpro_currency_symbol, $pmpro_level, $gateway, $pmpro_review;
 
-	if ( function_exists( 'pmpro_start_session' ) ) {
-		pmpro_start_session();
-	}
-
 	// get variable pricing info
 	$donfields = get_option( 'pmprodon_' . $pmpro_level->id );
 
@@ -51,8 +40,6 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 
 	if ( isset( $_REQUEST['donation'] ) ) {
 		$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
-	} elseif ( isset( $_SESSION['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_SESSION['donation'] );
 	} elseif ( ! empty( $min_price ) ) {
 		$donation = $min_price;
 	} else {
@@ -211,8 +198,6 @@ function pmprodon_pmpro_checkout_level( $level ) {
 
 	if ( isset( $_REQUEST['donation'] ) ) {
 		$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
-	} elseif ( isset( $_SESSION['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_SESSION['donation'] );
 	} else {
 		return $level;
 	}
@@ -363,24 +348,6 @@ function pmprodon_pmpro_email_filter( $email ) {
 	return $email;
 }
 add_filter( 'pmpro_email_filter', 'pmprodon_pmpro_email_filter', 10, 2 );
-
-/**
- * Save donation amount into a session variable for PayPal Express.
- */
-function pmprodon_pmpro_paypalexpress_session_vars() {
-	if ( function_exists( 'pmpro_start_session' ) ) {
-		pmpro_start_session();
-	}
-
-	// save our added fields in session while the user goes off to PayPal
-	if ( isset( $_REQUEST['donation_dropdown'] ) ) {
-		$_SESSION['donation_dropdown'] = $_REQUEST['donation_dropdown'];
-	}
-	if ( isset( $_REQUEST['donation'] ) ) {
-		$_SESSION['donation'] = $_REQUEST['donation'];
-	}
-}
-add_action( 'pmpro_paypalexpress_session_vars', 'pmprodon_pmpro_paypalexpress_session_vars' );
 
 /**
  * If checking out for a level with donations, use SSL even if it's free
