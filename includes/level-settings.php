@@ -65,6 +65,28 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 </table>
 <script>
 	jQuery(document).ready(function($) {
+		$('#dropdown_prices').on('blur', ev => {
+			const $dropDownPrices = $(ev.target);
+			const $td = $dropDownPrices.closest('td');
+			//If it's empty we don't need logic below
+			if(!$dropDownPrices.val()) {
+				resetDropDownInput($dropDownPrices, $td);
+				return;
+			}
+			const values = $dropDownPrices.val().split(',');
+			const valuesAreValid = values.every((element) => element === 'other' || 
+				( parseFloat(element) >= parseFloat($('#donation_min_price').val())
+					&& parseFloat(element) <= parseFloat($('#donation_max_price').val())));
+			if(values.length < 2 || !valuesAreValid ) {
+				$dropDownPrices.css('border-color', 'red');
+				pmproEmptyMessage($td)
+				addMessage($td, '<?php _e( 'values must be among mix and max defined above. Other option is also accepted.', 'pmpro-donations' ); ?>');
+				toggleSubmitButtonDisableAttribute($td, true);
+			} else {
+				resetDropDownInput($dropDownPrices, $td)
+			}
+		});
+
 		/**
 		 * Watch min and max amount fields and validate that max is greater than min.
 		 *
@@ -75,12 +97,12 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 			if( parseFloat($('#donation_min_price').val()) > parseFloat($('#donation_max_price').val()) ) {
 				$('#donation_min_price').css('border-color', 'red');
 				$('#donation_max_price').css('border-color', 'red');
-				emptyMessage($td);
-				$td.append($('<br/>'), $('<small/>').css('padding-left', '10px').text('<?php _e( 'Max Amount must be greater than Min Amount', 'pmpro-donations' ); ?>'));
+				pmproEmptyMessage($td);
+				addMessage($td, '<?php _e( 'Max Amount must be greater than Min Amount', 'pmpro-donations' ); ?>');
 				toggleSubmitButtonDisableAttribute($td, true);
 			} else {
 				$('#donation_min_price, #donation_max_price').removeAttr('style');
-				emptyMessage($td);
+				pmproEmptyMessage($td);
 				toggleSubmitButtonDisableAttribute($td, false);
 			}
 		});
@@ -90,9 +112,18 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 		 *
 		 * @since TBD
 		 */
-		const emptyMessage = $td => {
+		const pmproEmptyMessage = $td => {
 			$td.find('small').remove();
 			$td.find('br').remove();
+		}
+
+		/**
+		 * Add a message to the given td.
+		 *
+		 * @since TBD
+		 */
+		const addMessage = ($td, message) => {
+			$td.append($('<br/>'), $('<small/>').css('padding-left', '10px').text(message));
 		}
 
 		/**
@@ -102,6 +133,13 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 		 */
 		const toggleSubmitButtonDisableAttribute = ($td, val) => {
 			$td.closest('form').find('input[type="submit"]').prop('disabled', () => val);
+		}
+
+		const resetDropDownInput = ($dropDownPrices, $td)  => {
+			$dropDownPrices.removeAttr('style');
+			pmproEmptyMessage($td);
+			addMessage($td, '<?php _e( 'Enter numbers separated by commas to popuplate a dropdown with suggested prices. Include "other" (all lowercase) in the list to allow users to enter their own amount.', 'pmpro-donations' ); ?>');
+			toggleSubmitButtonDisableAttribute($td, false);
 		}
 	});
 </script>
@@ -131,8 +169,18 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 	$max_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
 	$text            = $_REQUEST['donations_text'];
 	$dropdown_prices = $_REQUEST['dropdown_prices'];
+	$dropdown_prices_array = $dropdown_prices ? explode ( ',', $dropdown_prices ) : array();
 	$donation_placeholder = $_REQUEST['donation_placeholder'];
-	if( $min_price > $max_price ) {
+	
+	//Validate dropdown values
+	$invalid_values = false;
+	foreach ( $dropdown_prices_array as $price ) {
+		if (  ( is_numeric( $price ) && ($price > $max_price || $price < $min_price) ) || ( !is_numeric( $price ) && $price != 'other' ) ) {
+			$invalid_values = true;
+			break;
+		}
+	}
+	if( $min_price > $max_price || $invalid_values) {
 		//this is validated in the front, if reach here there's a malicious user trying to break it , should we log it  ?
 		return;
 	}

@@ -116,78 +116,81 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 </div>
 <script>
 	//some vars for keeping track of whether or not we show billing
-	var pmpro_gateway_billing = <?php if ( in_array( $gateway, array( 'paypalexpress', 'twocheckout' ) ) !== false ) { echo'false';	} else { echo 'true'; } ?>;
-	var pmpro_pricing_billing = <?php if ( ! pmpro_isLevelFree( $pmpro_level ) ) { echo 'true';	} else { echo 'false'; } ?>;
-	var pmpro_donation_billing = pmpro_pricing_billing;
+	const pmpro_gateway_billing = <?php if ( in_array( $gateway, array( 'paypalexpress', 'twocheckout' ) ) !== false ) { echo'false';	} else { echo 'true'; } ?>;
+	const pmpro_pricing_billing = pmpro_donation_billing = <?php if ( ! pmpro_isLevelFree( $pmpro_level ) ) { echo 'true';	} else { echo 'false'; } ?>;
 
 	//this script will hide show billing fields based on the price set
-	jQuery(document).ready(function() {
-		//bind other field toggle to dropdown change
-		jQuery('#donation_dropdown').change(function() {
+	jQuery(document).ready(function($) {
+		//Watch for donation dropdown changes
+		$('#donation_dropdown').on('change', () => {
 			pmprodon_toggleOther();
+			pmprodon_checkForFree();
 		});
-
-		//bind check to price field
-		var pmprodon_price_timer;
-		jQuery('#donation').bind('keyup change', function() {
-			pmprodon_price_timer = setTimeout(pmprodon_checkForFree, 500);
+		//Watch fot donation field changes
+		$('#donation').on('keyup change', () => {
+			pmprodon_checkForFree();
 		});
-
-		if(jQuery('input[name=gateway]'))
-		{
-			jQuery('input[name=gateway]').bind('click', function() {
-				pmprodon_price_timer = setTimeout(pmprodon_checkForFree, 500);
-			});
-		}
+		// Watch for gateway selection
+		$('input[name=gateway]').on('click', () => {
+			pmprodon_checkForFree();
+		});
 
 		//check when page loads too
 		pmprodon_toggleOther();
 		pmprodon_checkForFree();
 	});
 
-	function pmprodon_toggleOther() {
+	/**
+	 * Toggle donation input based on dropdown selection.
+	 *
+	 * @since TBD
+	 */
+	const pmprodon_toggleOther = () => {
 		//make sure there is a dropdown to check
-		if(!jQuery('#donation_dropdown').length)
+		if(!jQuery('#donation_dropdown').length) {
 			return;
+		}
 
-		//get val
-		var donation_dropdown = jQuery('#donation_dropdown').val();
+		//check if "other" option is selected
+		const isOther = jQuery('#donation_dropdown').val() == 'other';
+		jQuery('#pmprodon_donation_input').toggle(isOther);
+		if(!isOther) {
+			jQuery('#donation').val(jQuery('#donation_dropdown').val());
+		}
+	};
 
-		if(donation_dropdown == 'other')
-			jQuery('#pmprodon_donation_input').show();
-		else
-			jQuery('#pmprodon_donation_input').hide();
-	}
-
-	function pmprodon_checkForFree() {
-		var donation = parseFloat(jQuery('#donation').val());
-
+	/**
+	 * Toggle billing fields based on donation, level pricing and gateway.
+	 *
+	 * @since TBD
+	 */
+	const pmprodon_checkForFree = () => {
+		const donation = parseFloat(jQuery('#donation').val());
 		//does the gateway require billing?
 		if(jQuery('input[name=gateway]').length) {
-			var no_billing_gateways = ['paypalexpress', 'twocheckout', 'check', 'paypalstandard'];
+			const no_billing_gateways = ['paypalexpress', 'twocheckout', 'check', 'paypalstandard'];
 			var gateway = jQuery('input[name=gateway]:checked').val();
-			if(no_billing_gateways.indexOf(gateway) > -1)
-				pmpro_gateway_billing = false;
-			else
-				pmpro_gateway_billing = true;
+			//determine if there's a checked gateway
+			const pmpro_gateway_billing = ! no_billing_gateways.includes(gateway);
 		}
-
-		//is there a donation?
-		if(donation || pmpro_pricing_billing)
-			pmpro_donation_billing = true;
-		else
-			pmpro_donation_billing = false;
 
 		//figure out if we should show the billing fields
-		if(pmpro_gateway_billing && pmpro_donation_billing) {
-			jQuery('#pmpro_billing_address_fields').show();
-			jQuery('#pmpro_payment_information_fields').show();
-			pmpro_require_billing = true;
+		if(donation || (pmpro_gateway_billing && pmpro_pricing_billing)) {
+			toggleBillingFields(true);
 		} else if ( 'check' !== gateway ) {
-			jQuery('#pmpro_billing_address_fields').hide();
-			jQuery('#pmpro_payment_information_fields').hide();
-			pmpro_require_billing = false;
+			toggleBillingFields(false);
 		}
+	};
+
+	/**
+	 * Toggle billing fields.
+	 *
+	 * @since TBD
+	 */
+	const toggleBillingFields = toggle => {
+		jQuery('#pmpro_billing_address_fields').toggle(toggle)
+		jQuery('#pmpro_payment_information_fields').toggle(toggle);
+		pmpro_require_billing = toggle;
 	}
 </script>
 <?php
