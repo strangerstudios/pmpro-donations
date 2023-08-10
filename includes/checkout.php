@@ -109,7 +109,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 		<div class="pmpro_small">
 		<?php
 		if ( ! empty( $donfields['text'] ) ) {
-			echo stripslashes( $donfields['text'] );
+			echo wpautop( $donfields['text'] );
 		} elseif ( ! empty( $donfields['min_price'] ) && empty( $donfields['max_price'] ) ) {
 			printf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) );
 		} elseif ( ! empty( $donfields['max_price'] ) && empty( $donfields['min_price'] ) ) {
