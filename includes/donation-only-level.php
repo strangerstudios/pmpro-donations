@@ -41,3 +41,21 @@ function pmprodon_pmpro_after_checkout( $user_id ) {
 	}
 }
 add_action( 'pmpro_after_checkout', 'pmprodon_pmpro_after_checkout' );
+
+/**
+ * On the edit level page, we never want to prevent a user from selecting a donation-only level.
+ *
+ * @since TBD
+ *
+ * @param bool $return
+ * @param object $level
+ * @return bool
+ */
+function pmprodon_pmpro_is_level_expiring_soon( $return, $level ) {
+	if ( ! empty( $level->id ) && pmprodon_is_donations_only( $level->id ) ) {
+		return true;
+	}
+
+	return $return;
+}
+add_filter( 'pmpro_is_level_expiring_soon', 'pmprodon_pmpro_is_level_expiring_soon', 10, 2 );
