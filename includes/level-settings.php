@@ -14,7 +14,7 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	$dropdown_prices = ( ! isset( $donfields['dropdown_prices'] ) ) ? '' : $donfields['dropdown_prices'];
 	$donation_placeholder = ( ! isset( $donfields['donation_placeholder'] ) ) ? '' : $donfields['donation_placeholder'];
 ?>
-<h3 class="topborder"><?php _e( 'Donations', 'pmpro-donations' ); ?></h3>
+<h2 class="topborder"><?php _e( 'Donations', 'pmpro-donations' ); ?></h2>
 <p><?php _e( 'If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.', 'pmpro-donations' ); ?></p>
 <table>
 <tbody class="form-table">
@@ -57,8 +57,8 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	<tr>
 		<th scope="row" valign="top"><label for="donations_text"><?php _e( 'Help Text:', 'pmpro-donations' ); ?></label></th>
 		<td>
-			<textarea id="donations_text" name="donations_text" rows="5" cols="60"><?php echo  wp_unslash( esc_textarea( $donations_text ) ); ?></textarea>
-			<br /><small><?php _e( 'If not blank, this text will override the default text generated to explain the range of donation values accepted. Wrap text among HTML p tags if you need help text splitted into paragraphs.', 'pmpro-donations' ); ?></small>
+			<?php wp_editor( $donations_text, 'donations_text', array( 'textarea_rows' => 5 ) ); ?>
+			<br /><small><?php _e( 'If not blank, this text will override the default text generated to explain the range of donation values accepted.', 'pmpro-donations' ); ?></small>
 		</td>
 	</tr>
 </tbody>
@@ -151,6 +151,8 @@ add_action( 'pmpro_membership_level_after_other_settings', 'pmprodon_pmpro_membe
  * Save level cost text when the level is saved/added
  */
 function pmprodon_pmpro_save_membership_level( $level_id ) {
+	global $allowedposttags;
+
 	if ( ! empty( $_REQUEST['donations'] ) ) {
 		$donations = 1;
 	} else {
@@ -167,7 +169,7 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 		$min_price = 1;
 	}
 	$max_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
-	$text            = $_REQUEST['donations_text'];
+	$text            = wp_kses( wp_unslash( $_REQUEST['donations_text'] ), $allowedposttags );
 	$dropdown_prices = $_REQUEST['dropdown_prices'];
 	$dropdown_prices_array = $dropdown_prices ? explode ( ',', $dropdown_prices ) : array();
 	$donation_placeholder = $_REQUEST['donation_placeholder'];
