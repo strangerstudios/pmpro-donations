@@ -50,7 +50,7 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	<tr>
 		<th scope="row" valign="top"><label for="donations_text"><?php _e( 'Help Text:', 'pmpro-donations' ); ?></label></th>
 		<td>
-			<textarea id="donations_text" name="donations_text" rows="5" cols="60"><?php echo wpautop( wp_unslash( esc_textarea( $donations_text ) ) ); ?></textarea>
+			<?php wp_editor( $donations_text, 'donations_text', array( 'textarea_rows' => 5 ) ); ?>
 			<br /><small><?php _e( 'If not blank, this text will override the default text generated to explain the range of donation values accepted.', 'pmpro-donations' ); ?></small>
 		</td>
 	</tr>
@@ -64,6 +64,8 @@ add_action( 'pmpro_membership_level_after_other_settings', 'pmprodon_pmpro_membe
  * Save level cost text when the level is saved/added
  */
 function pmprodon_pmpro_save_membership_level( $level_id ) {
+	global $allowedposttags;
+
 	if ( ! empty( $_REQUEST['donations'] ) ) {
 		$donations = 1;
 	} else {
@@ -76,7 +78,7 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 	}
 	$min_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_min_price'] );
 	$max_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
-	$text            = $_REQUEST['donations_text'];
+	$text            = wp_kses( wp_unslash( $_REQUEST['donations_text'] ), $allowedposttags );
 	$dropdown_prices = $_REQUEST['dropdown_prices'];
 
 	update_option(
