@@ -49,9 +49,9 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	$dropdown_prices = $donfields['dropdown_prices'];
 
 	if ( isset( $_REQUEST['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
+		$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
 	} elseif ( isset( $_SESSION['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_SESSION['donation'] );
+		$donation = preg_replace( '/[^0-9\.]/', '', $_SESSION['donation'] );
 	} elseif ( ! empty( $min_price ) ) {
 		$donation = $min_price;
 	} else {
@@ -61,9 +61,10 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	?>
 	<hr />
 	<div id="pmpro_donations">
+		
+		<span id="pmprodon_donation_prompt"><?php _e( 'Make a Gift', 'pmpro-donations' ); ?></span>
+		
 	<?php
-	_e( 'Make a Gift', 'pmpro-donations' );
-
 	// check for dropdown
 	if ( ! empty( $dropdown_prices ) ) {
 		// turn into an array
@@ -209,9 +210,9 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_pmpro_checkout_after_le
 function pmprodon_pmpro_checkout_level( $level ) {
 
 	if ( isset( $_REQUEST['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
+		$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
 	} elseif ( isset( $_SESSION['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_SESSION['donation'] );
+		$donation = preg_replace( '/[^0-9\.]/', '', $_SESSION['donation'] );
 	} else {
 		return $level;
 	}
@@ -240,8 +241,8 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 		// was a donation passed in?
 		if ( isset( $_REQUEST['donation'] ) ) {
 			// get values
-			$level_id  = intval( $_REQUEST['level'] );
-			$donfields = get_option( 'pmprodon_' . $level_id );
+			$level = pmpro_getLevelAtCheckout();
+			$donfields = get_option( 'pmprodon_' . $level->id );
 
 			// make sure this level has variable pricing
 			if ( empty( $donfields ) || empty( $donfields['donations'] ) ) {
@@ -250,7 +251,7 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 			}
 
 			// get price
-			$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
+			$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
 
 			// check that the donation falls between the min and max
 			if ( (double) $donation < 0 || ( ! empty( $donfields['min_price'] ) && (double) $donation < (double) $donfields['min_price'] ) ) {
@@ -293,7 +294,7 @@ add_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2 );
  */
 function pmprodon_pmpro_checkout_order( $order ) {
 	if ( ! empty( $_REQUEST['donation'] ) ) {
-		$donation = preg_replace( '[^0-9\.]', '', $_REQUEST['donation'] );
+		$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
 	} else {
 		return $order;
 	}
@@ -390,11 +391,10 @@ add_action( 'pmpro_paypalexpress_session_vars', 'pmprodon_pmpro_paypalexpress_se
 function pmprodon_pmpro_checkout_preheader() {
 	global $besecure;
 
-	if ( ! is_admin() && ! empty( $_REQUEST['level'] ) ) {
-		$level_id = intval( $_REQUEST['level'] );
-
+	$level = pmpro_getLevelAtCheckout();
+	if ( ! is_admin() && ! empty( $level->id ) ) {
 		$donfields = get_option(
-			'pmprodon_' . $level_id, array(
+			'pmprodon_' . intval( $level->id ), array(
 				'donations'       => 0,
 				'min_price'       => '',
 				'max_price'       => '',
