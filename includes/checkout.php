@@ -267,17 +267,32 @@ add_filter( 'pmpro_registration_checks', 'pmprodon_pmpro_registration_checks' );
  * Override level cost text on checkout page
  */
 function pmprodon_pmpro_level_cost_text( $text, $level ) {
-	global $pmpro_pages, $pmprodon_original_initial_payment, $pmprodon_text_level_cost_updated;
-	if ( is_page( $pmpro_pages['checkout'] ) && ! empty( $pmprodon_original_initial_payment ) && empty( $pmprodon_text_level_cost_updated ) ) {
-		$olevel                           = $level;
-		$olevel->initial_payment          = $pmprodon_original_initial_payment;
-		$pmprodon_text_level_cost_updated = true;   // to prevent loops
-		$text                             = pmpro_getLevelCost( $olevel );
+	global $pmprodon_original_initial_payment;
+	if ( ! empty( $pmprodon_original_initial_payment ) ) {
+		$olevel                  = clone $level;
+		$olevel->initial_payment = $pmprodon_original_initial_payment;
+		remove_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2);
+		$text = pmpro_getLevelCost( $olevel );
+		add_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2);
 	}
 
 	return $text;
 }
-add_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2 );
+
+/**
+ * We only want pmprodon_pmpro_level_cost_text to run for the level cost on the checkout form.
+ *
+ * This means we want to hook on pmpro_checkout_before_form and unhook on pmpro_checkout_after_level_cost.
+ */
+function pmprodon_hook_pmpro_level_cost_text() {
+	add_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2 );
+}
+add_action( 'pmpro_checkout_before_form', 'pmprodon_hook_pmpro_level_cost_text' );
+function pmprodon_unhook_pmpro_level_cost_text() {
+	remove_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2 );
+}
+add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_unhook_pmpro_level_cost_text' );
+
 
 /**
  * Save donation amount to order notes.
