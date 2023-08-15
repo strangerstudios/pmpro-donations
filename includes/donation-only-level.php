@@ -45,7 +45,7 @@ add_action( 'pmpro_after_checkout', 'pmprodon_pmpro_after_checkout' );
 /**
  * On the edit level page, we never want to prevent a user from selecting a donation-only level.
  *
- * @since TBD
+ * @since 1.1.2
  *
  * @param bool $return
  * @param object $level
