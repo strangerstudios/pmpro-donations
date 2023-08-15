@@ -122,6 +122,11 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 		//bind other field toggle to dropdown change
 		jQuery('#donation_dropdown').change(function() {
 			pmprodon_toggleOther();
+			// If we changed to a non-other value, update the donation field.
+			if ( jQuery( '#donation_dropdown' ).val() !== 'other' ) {
+				jQuery( '#donation' ).val( jQuery( '#donation_dropdown' ).val() );
+			}
+			pmprodon_checkForFree();
 		});
 
 		//bind check to price field
