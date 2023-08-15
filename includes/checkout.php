@@ -57,7 +57,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	} else {
 		$donation = '';
 	}
-	
+
 	?>
 	<hr />
 	<div id="pmpro_donations">
@@ -65,7 +65,6 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 		<span id="pmprodon_donation_prompt"><?php _e( 'Make a Gift', 'pmpro-donations' ); ?></span>
 		
 	<?php
-	
 	// check for dropdown
 	if ( ! empty( $dropdown_prices ) ) {
 		// turn into an array
@@ -405,7 +404,7 @@ function pmprodon_pmpro_checkout_preheader() {
 		);
 
 		if ( ! empty( $donfields ) && ! empty( $donfields['donations'] ) ) {
-			$besecure = pmpro_getOption( 'use_ssl' );
+			$besecure = get_option( 'pmpro_use_ssl' );
 		}
 	}
 }
