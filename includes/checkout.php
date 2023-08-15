@@ -308,9 +308,14 @@ add_filter( 'pmpro_checkout_order', 'pmprodon_pmpro_checkout_order' );
 function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 	$components = pmprodon_get_price_components( $order );
 	if ( ! empty( $components['donation'] ) ) {
-		$bullets = '<li><strong>' . __( 'Membership Cost', 'pmpro-donations' ) . ": </strong> " . pmpro_formatPrice( $components['price'] ) . '</li>' 
-		 . '<li><strong>' . __( 'Donation', 'pmpro-donations' ) . ": </strong>"  .  pmpro_formatPrice( $components['donation'] ) . '</li>';
-	echo $bullets = apply_filters( 'pmpro_donations_bullets_invoice', $bullets, $order );
+		$bullets = array(
+			'membership_cost' => '<strong>' . __( 'Membership Cost', 'pmpro-donations' ) . ": </strong> " . pmpro_formatPrice( $components['price'] ),
+			'donation'        => '<strong>' . __( 'Donation', 'pmpro-donations' ) . ": </strong>" . pmpro_formatPrice( $components['donation'] )
+		);
+		apply_filters( 'pmpro_donations_invoice_bullets', $bullets, $order );
+		foreach ( $bullets as $bullet ) {
+			echo '<li>' . $bullet . '</li>';
+		}
 	}
 }
 add_filter( 'pmpro_invoice_bullets_bottom', 'pmprodon_pmpro_invoice_bullets_bottom' );
