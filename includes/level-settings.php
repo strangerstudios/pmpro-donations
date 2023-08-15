@@ -13,7 +13,7 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	$donations_text  = ( ! isset( $donfields['text'] ) ) ? '' : $donfields['text'];
 	$dropdown_prices = ( ! isset( $donfields['dropdown_prices'] ) ) ? '' : $donfields['dropdown_prices'];	
 ?>
-<h3 class="topborder"><?php _e( 'Donations', 'pmpro-donations' ); ?></h3>
+<h2 class="topborder"><?php _e( 'Donations', 'pmpro-donations' ); ?></h2>
 <p><?php _e( 'If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.', 'pmpro-donations' ); ?></p>
 <table>
 <tbody class="form-table">
