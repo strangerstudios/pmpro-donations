@@ -402,7 +402,7 @@ function pmprodon_pmpro_checkout_preheader() {
 add_action( 'pmpro_checkout_preheader', 'pmprodon_pmpro_checkout_preheader' );
 
 /**
- * Fix issue where incorrect donation amoount is charged when using PayPal Express.
+ * Fix issue where incorrect donation amount is charged when using PayPal Express.
  *
  * @since TBD
  */
