@@ -404,7 +404,7 @@ add_action( 'pmpro_checkout_preheader', 'pmprodon_pmpro_checkout_preheader' );
 /**
  * Fix issue where incorrect donation amount is charged when using PayPal Express.
  *
- * @since TBD
+ * @since 1.1.3
  */
 function pmprodon_ppe_add_donation_to_request() {
 	// Check if the "review" or "confirm" request variables are set.
