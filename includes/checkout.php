@@ -400,3 +400,47 @@ function pmprodon_pmpro_checkout_preheader() {
 	}
 }
 add_action( 'pmpro_checkout_preheader', 'pmprodon_pmpro_checkout_preheader' );
+
+/**
+ * Fix issue where incorrect donation amount is charged when using PayPal Express.
+ *
+ * @since TBD
+ */
+function pmprodon_ppe_add_donation_to_request() {
+	// Check if the "review" or "confirm" request variables are set.
+	if ( empty( $_REQUEST['review'] ) && empty( $_REQUEST['confirm'] ) ) {
+		return;
+	}
+
+	// Check if we have a PPE token that we are reviewing.
+	if ( empty( $_REQUEST['token'] ) ) {
+		return;
+	}
+	$token = sanitize_text_field( $_REQUEST['token'] );
+
+	// Make sure that the MemberOrder class is loaded.
+	if ( ! class_exists( 'MemberOrder' ) ) {
+		return;
+	}
+
+	// Check if we have an order with this token.
+	$order = new MemberOrder();
+	$order->getMemberOrderByPayPalToken( $token );
+	if ( empty( $order->id ) ) {
+		return;
+	}
+
+	// Make sure that this order is in token status.
+	if ( $order->status !== 'token' ) {
+		return;
+	}
+
+	// Get the donation information for this order.
+	$donation = pmprodon_get_price_components( $order );
+
+	// If there is a donation amount on the order but not yet in $_REQUEST, add it.
+	if ( ! empty( $donation['donation'] ) && empty( $_REQUEST['donation'] ) ) {
+		$_REQUEST['donation'] = $donation['donation'];
+	}
+}
+add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_ppe_add_donation_to_request' );
