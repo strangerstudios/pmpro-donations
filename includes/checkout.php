@@ -120,7 +120,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	const pmpro_gateway_billing = <?php if ( in_array( $gateway, array( 'paypalexpress', 'twocheckout' ) ) !== false ) { echo'false';	} else { echo 'true'; } ?>;
 	const pmpro_pricing_billing = pmpro_donation_billing = <?php if ( ! pmpro_isLevelFree( $pmpro_level ) ) { echo 'true';	} else { echo 'false'; } ?>;
 
-	//this script will hide show billing fields based on the price set
+//this script will hide show billing fields based on the price set
 	jQuery(document).ready(function($) {
 		//Watch for donation dropdown changes
 		$('#donation_dropdown').on('change', () => {
@@ -269,17 +269,32 @@ add_filter( 'pmpro_registration_checks', 'pmprodon_pmpro_registration_checks' );
  * Override level cost text on checkout page
  */
 function pmprodon_pmpro_level_cost_text( $text, $level ) {
-	global $pmpro_pages, $pmprodon_original_initial_payment, $pmprodon_text_level_cost_updated;
-	if ( is_page( $pmpro_pages['checkout'] ) && ! empty( $pmprodon_original_initial_payment ) && empty( $pmprodon_text_level_cost_updated ) ) {
-		$olevel                           = $level;
-		$olevel->initial_payment          = $pmprodon_original_initial_payment;
-		$pmprodon_text_level_cost_updated = true;   // to prevent loops
-		$text                             = pmpro_getLevelCost( $olevel );
+	global $pmprodon_original_initial_payment;
+	if ( ! empty( $pmprodon_original_initial_payment ) ) {
+		$olevel                  = clone $level;
+		$olevel->initial_payment = $pmprodon_original_initial_payment;
+		remove_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2);
+		$text = pmpro_getLevelCost( $olevel );
+		add_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2);
 	}
 
 	return $text;
 }
-add_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2 );
+
+/**
+ * We only want pmprodon_pmpro_level_cost_text to run for the level cost on the checkout form.
+ *
+ * This means we want to hook on pmpro_checkout_before_form and unhook on pmpro_checkout_after_level_cost.
+ */
+function pmprodon_hook_pmpro_level_cost_text() {
+	add_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2 );
+}
+add_action( 'pmpro_checkout_before_form', 'pmprodon_hook_pmpro_level_cost_text' );
+function pmprodon_unhook_pmpro_level_cost_text() {
+	remove_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2 );
+}
+add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_unhook_pmpro_level_cost_text' );
+
 
 /**
  * Save donation amount to order notes.
@@ -387,3 +402,47 @@ function pmprodon_pmpro_checkout_preheader() {
 	}
 }
 add_action( 'pmpro_checkout_preheader', 'pmprodon_pmpro_checkout_preheader' );
+
+/**
+ * Fix issue where incorrect donation amount is charged when using PayPal Express.
+ *
+ * @since 1.1.3
+ */
+function pmprodon_ppe_add_donation_to_request() {
+	// Check if the "review" or "confirm" request variables are set.
+	if ( empty( $_REQUEST['review'] ) && empty( $_REQUEST['confirm'] ) ) {
+		return;
+	}
+
+	// Check if we have a PPE token that we are reviewing.
+	if ( empty( $_REQUEST['token'] ) ) {
+		return;
+	}
+	$token = sanitize_text_field( $_REQUEST['token'] );
+
+	// Make sure that the MemberOrder class is loaded.
+	if ( ! class_exists( 'MemberOrder' ) ) {
+		return;
+	}
+
+	// Check if we have an order with this token.
+	$order = new MemberOrder();
+	$order->getMemberOrderByPayPalToken( $token );
+	if ( empty( $order->id ) ) {
+		return;
+	}
+
+	// Make sure that this order is in token status.
+	if ( $order->status !== 'token' ) {
+		return;
+	}
+
+	// Get the donation information for this order.
+	$donation = pmprodon_get_price_components( $order );
+
+	// If there is a donation amount on the order but not yet in $_REQUEST, add it.
+	if ( ! empty( $donation['donation'] ) && empty( $_REQUEST['donation'] ) ) {
+		$_REQUEST['donation'] = $donation['donation'];
+	}
+}
+add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_ppe_add_donation_to_request' );

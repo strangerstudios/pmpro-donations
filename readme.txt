@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, membership, donate, donations, gifts, charity, charities
 Requires at least: 4
-Tested up to: 5.5
-Stable tag: 1.1.1
+Tested up to: 6.3
+Stable tag: 1.1.3
 
 Allow customers to set an additional donation amount with customized minimum, maxium, and suggested amounts via dropdown at checkout.
 
@@ -24,6 +24,24 @@ This plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-donations/issues
 
 == Changelog ==
+= 1.1.3 - 2023-09-06 =
+* BUG FIX: Fixing issue where donations would not be charged when using the PayPal Express gateway. #63 (@dparker1005)
+
+= 1.1.2 - 2023-08-15 =
+* ENHANCEMENT: Added a new filter `pmpro_donations_invoice_bullets` to filter the bullet points that are added to the PMPro Invoice page. #55 (@MaximilianoRicoTabo, @dparker1005)
+* ENHANCEMENT: Now wrapping the donation prompt text at checkout in a `<span>` tag so that it can be styled with CSS. #39 (@elementswebsolutions)
+* ENHANCEMENT: Updating `<h3>` tags to `<h2>` tags for better accessibility. #50 (@ipokkel)
+* ENHANCEMENT: Now preventing autocompletion of donation field at checkout. #45 (@MaximilianoRicoTabo)
+* BUG FIX/ENHANCEMENT: Fixing paragraph spacing issues with custom help text by switching to using `wp_editor()`. #58 (@dparker1005, @MaximilianoRicoTabo)
+* BUG FIX/ENHANCEMENT: Now always allowing users to renew a donations-only level. #60 (@dparker1005)
+* BUG FIX: Added delimiters to regular expressions. Fixes issue where donation inputs may be ignored if non-numeric characters were included. #47 (@becleung)
+* BUG FIX: Fixing issue where payment fields may not show if a non-zero donation dropdown option is selected. #59 (@dparker1005)
+* BUG FIX: Now correctly sending the “Checkout - Paid" email template if a non-zero donation was added to a free level at checkout. #61 (@dparker1005)
+* BUG FIX: No longer storing donation amounts in `$_SESSION` which was causing issues on some sites. #36 (@MaximilianoRicoTabo)
+* REFACTOR: No longer pulling the checkout level from the `$_REQUEST` variable. #46 (@dparker1005)
+* REFACTOR: Now using the function `get_option()` instead of `pmpro_getOption()`. #48 (@michaelbeil)
+
+
 = 1.1.1 - 2020-08-12 =
 * BUG FIX: Resolved issue where !!donation!! email variable would not be replaced if user did not donate.
 
