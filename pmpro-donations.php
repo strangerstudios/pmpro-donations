@@ -42,3 +42,33 @@ function pmprodon_plugin_row_meta( $links, $file ) {
 	return $links;
 }
 add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
+
+
+
+/**
+ *  Function to add custom confirmation message.
+ *
+ * @param string $message The confirmation message.
+ * @param object $invoice The invoice object.
+ * @return string $message The confirmation message.
+ * @since TBD
+ */
+function pmprodon_pmpro_confirmation_message($message, $invoice) {
+	$level_id = $_REQUEST['pmpro_level'];
+	//Bail if not a donation level
+	if( ! pmprodon_is_donations( $level_id )) {
+		return $message;
+	}
+
+	$settings = pmprodon_get_level_settings( $level_id );
+
+	//add to message
+	$message .= "<p>" .  $settings['confirmation_message'] . "</p>";
+
+	return $message;
+}
+
+/**
+ * Function to add custom confirmation message.
+ */
+add_filter('pmpro_confirmation_message', 'pmprodon_pmpro_confirmation_message', 10, 2);
