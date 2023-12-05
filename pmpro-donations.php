@@ -42,3 +42,40 @@ function pmprodon_plugin_row_meta( $links, $file ) {
 	return $links;
 }
 add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
+
+
+/**
+ * Filter the level cost text, which consists of all levels.
+ *
+ * @see pmpro_getLevelsCost
+ *
+ * @param string $r The level text.
+ * @param array  $levels Array of level objects.
+ * @param bool   $tags   Whether to include HTML tags or not (true or false).
+ * @param bool   $short Whether the level text is shortened (true or false).
+ *
+ * @return string The level cost text.
+ * @since TBD
+ */
+function pmprodon_pmpro_levels_cost_text($r, $levels, $tags, $short) {
+	//We only want to filter the cost text on the checkout page.
+	if( !isset( $pagename ) || $pagename != "membership-checkout" ) {
+		return $r;
+	}
+	$current_level = $_REQUEST['pmpro_level'];
+	if(! pmprodon_is_donations_only( $current_level )) {
+		return $r;
+	} else {
+		$user = wp_get_current_user();
+		$level = pmpro_getLevel($user->membership_level->ID);
+		//If it's a donation only level, don't show the cost text.
+		if ( $level && pmprodon_is_donations_only( $current_level ) ) {
+			return "";
+		} else {
+			return $r;
+		}
+	}
+
+}
+
+add_filter('pmpro_level_cost_text', 'pmprodon_pmpro_levels_cost_text', 10, 4);
