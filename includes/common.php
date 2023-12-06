@@ -57,17 +57,5 @@ function pmprodon_get_level_settings( $level_id ) {
  */
 function pmprodon_is_donations_only( $level_id ) {
 	$settings = pmprodon_get_level_settings( $level_id );
-	return pmprodon_is_donations( $level_id ) && $settings['donations_only'];
-}
-
-/**
- * Check if a level is a donations level
- *
- * @param int $level_id ID of the level to check.
- * @return bool True if the level is a donations level, false otherwise.
- * @since TBD
- */
-function pmprodon_is_donations( $level_id ) {
-	$settings = pmprodon_get_level_settings( $level_id );
-	return $settings['donations'];
+	return $settings['donations'] && $settings['donations_only'];
 }

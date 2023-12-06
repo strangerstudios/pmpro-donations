@@ -3,7 +3,7 @@
  * Add Min Price and Max Price Fields on the edit levels page
  */
 function pmprodon_pmpro_membership_level_after_other_settings() {
-	global $pmpro_currency_symbol;
+	global $pmpro_currency_symbol, $allowedposttags;
 	$level_id = intval( $_REQUEST['edit'] );
 	$donfields       = pmprodon_get_level_settings( $level_id );			
 	$donations       = ( ! isset( $donfields['donations'] ) ) ? 0 : $donfields['donations'];
@@ -57,10 +57,10 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 		</td>
 	</tr>
 	<tr>
-		<th scope="row" valign="top"><label for="confirmation_message"><?php _e( 'Confirmation text:', 'pmpro-donations' ); ?></label></th>
+		<th scope="row" valign="top"><label for="confirmation_message"><?php esc_html_e( 'Confirmation text:', 'pmpro-donations' ); ?></label></th>
 		<td>
-			<?php wp_editor( $confirmation_message, 'confirmation_message', array( 'textarea_rows' => 5 ) ); ?>
-			<br /><small><?php _e( 'If not blank, this text will be rendered after regular confirmation text.', 'pmpro-donations' ); ?></small>
+			<?php wp_editor( wp_kses( $confirmation_message,$allowedposttags ), 'confirmation_message', array( 'textarea_rows' => 5 ) ); ?>
+			<br /><small><?php esc_html_e( 'If not blank, this text will be rendered after regular confirmation text.', 'pmpro-donations' ); ?></small>
 		</td>
 	</tr>
 </tbody>

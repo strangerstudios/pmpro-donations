@@ -55,15 +55,18 @@ add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
  */
 function pmprodon_pmpro_confirmation_message($message, $invoice) {
 	$level_id = $_REQUEST['pmpro_level'];
-	//Bail if not a donation level
-	if( ! pmprodon_is_donations( $level_id )) {
+	$settings = pmprodon_get_level_settings( $level_id );
+	if( ! $settings['donations'] ) {
+		//Bail if not a donation level or donations are not enabled.
 		return $message;
 	}
 
-	$settings = pmprodon_get_level_settings( $level_id );
-
-	//add to message
-	$message .= "<p>" .  $settings['confirmation_message'] . "</p>";
+	$message_to_replace = '<p>' . wp_kses_post( $settings['confirmation_message'] ) . '</p>';
+	if( strpos( $message, '!!donation_message!!' ) ) {
+		$message = str_replace( '!!donation_message!!', $message_to_replace, $message );
+	} else {
+		$message .= $message_to_replace;
+	}
 
 	return $message;
 }
