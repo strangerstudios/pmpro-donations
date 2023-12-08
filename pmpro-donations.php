@@ -42,3 +42,18 @@ function pmprodon_plugin_row_meta( $links, $file ) {
 	return $links;
 }
 add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
+
+
+/**
+ * Add donation amount to order meta.
+ *
+ * @param object The order object.
+ * @since TBD
+ */
+function pmprodon_store_donation_amount_in_order_meta( $order) {
+	if ( isset( $_REQUEST['donation'] ) ) {
+		update_pmpro_membership_order_meta( $order->id, 'donation_amount', $_REQUEST['donation'] );
+	}
+}
+
+add_action( 'pmpro_added_order','pmprodon_store_donation_amount_in_order_meta', 10, 1 );
