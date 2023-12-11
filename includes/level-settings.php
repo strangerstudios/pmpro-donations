@@ -73,8 +73,6 @@ add_action( 'pmpro_membership_level_after_other_settings', 'pmprodon_pmpro_membe
  * Save level cost text when the level is saved/added
  */
 function pmprodon_pmpro_save_membership_level( $level_id ) {
-	global $allowedposttags;
-
 	if ( ! empty( $_REQUEST['donations'] ) ) {
 		$donations = 1;
 	} else {
@@ -87,8 +85,8 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 	}
 	$min_price	= preg_replace( '[^0-9\.]', '', $_REQUEST['donation_min_price'] );
 	$max_price	= preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
-	$text	= wp_kses( wp_unslash( $_REQUEST['donations_text'] ), $allowedposttags );
-	$confirmation_message = wp_kses( wp_unslash( $_REQUEST['confirmation_message'] ), $allowedposttags );
+	$text	= wp_kses_post( wp_unslash( $_REQUEST['donations_text'] ) );
+	$confirmation_message = wp_kses_post( wp_unslash( $_REQUEST['confirmation_message'] ) );
 	$dropdown_prices = $_REQUEST['dropdown_prices'];
 
 	update_option(
