@@ -1,6 +1,10 @@
 <?php
 /**
  * Function to get donation and original price out of an order.
+ * 
+ * @param object $order The order object.
+ * @since TBD
+ * return array The price components.
  */
 function pmprodon_get_price_components( $order ) {
 	$r = array(
@@ -8,12 +12,22 @@ function pmprodon_get_price_components( $order ) {
 		'donation' => '',
 	);
 
-	if ( isset( $order->notes ) && ! empty( $order->notes ) && strpos( $order->notes, __( 'Donation', 'pmpro-donations' ) ) !== false ) {
-		$donation      = pmpro_getMatches( '/' . __( 'Donation', 'pmpro-donations' ) . '\: ([0-9\.]+)/', $order->notes, true );
-		$r['donation'] = $donation;
-		if ( $donation > 0 ) {
-			$r['price'] = $order->total - $donation;
-		}
+	global $wpdb;
+	$table_name = $wpdb->pmpro_membership_ordermeta;
+	$donation = 0;
+	// check for donation in order meta table.
+	if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table_name ) ) === $table_name ) {
+		//Set single to true to bring a single donation amount. Shouldn't be more than one.
+		$donation = esc_html( get_pmpro_membership_order_meta( $order->id, 'donation_amount', $single = true ) );
+	// check for donation in order notes for older versions of PMPro.
+	} else if ( empty( $donation ) && isset( $order->notes ) && ! empty( $order->notes ) 
+		&& strpos( $order->notes, __( 'Donation', 'pmpro-donations' ) ) !== false ) {
+		$donation = pmpro_getMatches( '/' . __( 'Donation', 'pmpro-donations' ) . '\: ([0-9\.]+)/', $order->notes, true );
+	}
+
+	$r['donation'] = $donation;
+	if ( $donation > 0 ) {
+		$r['price'] = $order->total - $donation;
 	}
 
 	// filter added .2

@@ -50,10 +50,37 @@ add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
  * @param object The order object.
  * @since TBD
  */
-function pmprodon_store_donation_amount_in_order_meta( $order) {
+function pmprodon_store_donation_amount_in_order_meta( $order ) {
 	if ( isset( $_REQUEST['donation'] ) ) {
-		update_pmpro_membership_order_meta( $order->id, 'donation_amount', $_REQUEST['donation'] );
+		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( $_REQUEST['donation'] ) );
 	}
 }
 
 add_action( 'pmpro_added_order','pmprodon_store_donation_amount_in_order_meta', 10, 1 );
+
+/**
+ * Add donation column to the export csv orders
+ *
+ * @param Array CSV document columns.
+ * @return Array CSV document columns.
+ * @since TBD
+ */
+function pmprodon_add_donation_column_to_export_orders_csv( $columns ){
+	$columns["donation"] = "pmprodon_extra_order_column_donation";
+
+	return $columns;
+}
+
+add_filter("pmpro_orders_csv_extra_columns", "pmprodon_add_donation_column_to_export_orders_csv", 10, 1);
+
+/**
+ * Add donation column to the export csv orders
+ *
+ * @param Object $order The order object.
+ * @return String The donation amount.
+ * @since TBD
+ */
+function pmprodon_extra_order_column_donation( $order ){
+	$r = pmprodon_get_price_components( $order );
+	return $r['donation'];
+}
