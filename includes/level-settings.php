@@ -56,6 +56,22 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	</tr>
 </tbody>
 </table>
+
+<script type="text/javascript">
+	jQuery(document).ready(function($) {
+		$expDetails = $('#expiration-details');
+		//hide expiration details if donations only is checked when DOM's ready
+		if( $('#donations_only').is(':checked')) {
+			$expDetails.hide();
+		}
+
+		//toggle expiration details when donations only checkbox is clicked
+		$('#donations_only').change(function() {
+			$expDetails.toggle(! $(this).is(':checked')) 
+		});
+	});
+</script>
+
 <?php
 }
 add_action( 'pmpro_membership_level_after_other_settings', 'pmprodon_pmpro_membership_level_after_other_settings' );
@@ -91,5 +107,16 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 			'dropdown_prices' => $dropdown_prices,
 		)
 	);
+
+	//Donations only level shouldn't expire.
+	if ( $donations_only ) {
+		$current_level = new PMPro_Membership_Level( $level_id );
+		if( $current_level->expiration_number || $current_level->expiration_period ) {
+			$current_level->expiration_number = 0;
+			$current_level->expiration_period = 0;
+			$current_level->save();
+		}
+	}
 }
+
 add_action( 'pmpro_save_membership_level', 'pmprodon_pmpro_save_membership_level' );
