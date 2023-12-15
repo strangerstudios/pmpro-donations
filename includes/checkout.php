@@ -5,15 +5,15 @@
 function pmprodon_init_dropdown_values() {
 
 	if ( ! empty( $_REQUEST['donation_dropdown'] ) && $_REQUEST['donation_dropdown'] != 'other' ) {
-		$_REQUEST['donation'] = $_REQUEST['donation_dropdown'];
+		$_REQUEST['donation'] = sanitize_text_field( $_REQUEST['donation_dropdown'] );
 	}
 
 	if ( ! empty( $_GET['donation_dropdown'] ) && $_GET['donation_dropdown'] != 'other' ) {
-		$_GET['donation'] = $_GET['donation_dropdown'];
+		$_GET['donation'] = sanitize_text_field( $_GET['donation_dropdown'] );
 	}
 
 	if ( ! empty( $_POST['donation_dropdown'] ) && $_POST['donation_dropdown'] != 'other' ) {
-		$_POST['donation'] = $_POST['donation_dropdown'];
+		$_POST['donation'] = sanitize_text_field( $_POST['donation_dropdown'] );
 	}
 }
 add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_init_dropdown_values', 1 );
@@ -33,8 +33,8 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	}
 
 	// okay, now we're showing the form
-	$min_price       = $donfields['min_price'];
-	$max_price       = $donfields['max_price'];
+	$min_price = $donfields['min_price'];
+	$max_price = $donfields['max_price'];
 	$dropdown_prices = $donfields['dropdown_prices'];
 
 	if ( isset( $_REQUEST['donation'] ) ) {
@@ -202,7 +202,7 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_pmpro_checkout_after_le
 function pmprodon_pmpro_checkout_level( $level ) {
 
 	if ( isset( $_REQUEST['donation'] ) ) {
-		$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
+		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] ) );
 	} else {
 		return $level;
 	}
@@ -241,7 +241,7 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 			}
 
 			// get price
-			$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
+			$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] ) );
 
 			// check that the donation falls between the min and max
 			if ( (double) $donation < 0 || ( ! empty( $donfields['min_price'] ) && (double) $donation < (double) $donfields['min_price'] ) ) {
@@ -269,7 +269,7 @@ add_filter( 'pmpro_registration_checks', 'pmprodon_pmpro_registration_checks' );
 function pmprodon_pmpro_level_cost_text( $text, $level ) {
 	global $pmprodon_original_initial_payment;
 	if ( ! empty( $pmprodon_original_initial_payment ) ) {
-		$olevel                  = clone $level;
+		$olevel = clone $level;
 		$olevel->initial_payment = $pmprodon_original_initial_payment;
 		remove_filter( 'pmpro_level_cost_text', 'pmprodon_pmpro_level_cost_text', 10, 2);
 		$text = pmpro_getLevelCost( $olevel );
@@ -299,7 +299,7 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_unhook_pmpro_level_cost
  */
 function pmprodon_pmpro_checkout_order( $order ) {
 	if ( ! empty( $_REQUEST['donation'] ) ) {
-		$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
+		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] ) );
 	} else {
 		return $order;
 	}
