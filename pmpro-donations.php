@@ -49,12 +49,25 @@ add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
  *  Function to add custom confirmation message.
  *
  * @param string $message The confirmation message.
- * @param object $invoice The invoice object.
+ * @param object $invoice The MemberOrder object.
  * @return string $message The confirmation message.
  * @since TBD
  */
 function pmprodon_pmpro_confirmation_message($message, $invoice) {
-	$level_id = $_REQUEST['pmpro_level'];
+		//Get the level ID from the MemberOrder object.
+	if ( $invoice  ) {
+		$level_id = $invoice->membership_id;
+		//If for some reason we can't find the level ID, try to get it from the URL.
+	 } else if ( isset ( $_REQUEST['pmpro_level'] ) ) {
+		$level_id = $_REQUEST['pmpro_level'];
+		// Backwards compatibility for PMPro 2.x
+	 }  else if ( isset ( $_REQUEST['level'] ) ) { 
+		$level_id = $_REQUEST['level'];
+	 } else {
+		//Bail if we can't find the level ID.
+		return $message;
+	}
+
 	$settings = pmprodon_get_level_settings( $level_id );
 	if( ! $settings['donations'] ) {
 		//Bail if not a donation level or donations are not enabled.
