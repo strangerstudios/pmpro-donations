@@ -68,7 +68,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 		// show dropdown
 		sort( $dropdown_prices );
 		?>
-		<select id="donation_dropdown" name="donation_dropdown" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?>>
+		<select id="donation_dropdown" name="donation_dropdown" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> class="<?php echo esc_attr( pmpro_get_element_class( 'select pmpro_alter_price' ) ); ?>" >
 			<?php
 			foreach ( $dropdown_prices as $price ) {
 				?>
@@ -85,7 +85,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	?>
 
 	<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
-		<?php echo $pmpro_currency_symbol; ?> <input autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
+		<?php echo $pmpro_currency_symbol; ?> <input class="<?php echo esc_attr( pmpro_get_element_class( 'input pmpro_alter_price' ) ); ?>" autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
 		<?php if ( $pmpro_review ) { ?>
 			<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
 		<?php } ?>
