@@ -58,24 +58,28 @@ add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
  * @since TBD
  */
 function pmprodon_pmpro_levels_cost_text($r, $levels, $tags, $short) {
-	//We only want to filter the cost text on the checkout page.
-	if( !isset( $pagename ) || $pagename != "membership-checkout" ) {
+	//Bail if PMPro is not active.
+	if ( !function_exists( 'pmpro_is_checkout' ) ) {
 		return $r;
 	}
-	$current_level = $_REQUEST['pmpro_level'];
-	if(! pmprodon_is_donations_only( $current_level )) {
+	//Bail if we're not on the checkout page.
+	if ( !pmpro_is_checkout() ) {
+		return $r;
+	}
+
+	global $pmpro_level;
+	if(! pmprodon_is_donations_only( $pmpro_level->id )) {
 		return $r;
 	} else {
 		$user = wp_get_current_user();
-		$level = pmpro_getLevel($user->membership_level->ID);
+		$level = pmpro_getLevel( $user->membership_level );
 		//If it's a donation only level, don't show the cost text.
-		if ( $level && pmprodon_is_donations_only( $current_level ) ) {
+		if ( $level && pmprodon_is_donations_only( $pmpro_level->id ) ) {
 			return "";
 		} else {
 			return $r;
 		}
 	}
-
 }
 
 add_filter('pmpro_level_cost_text', 'pmprodon_pmpro_levels_cost_text', 10, 4);
