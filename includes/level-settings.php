@@ -58,20 +58,32 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 </table>
 
 <script type="text/javascript">
-	jQuery(document).ready(function($) {
+	jQuery(document).ready(function() {
 		//toggle expiration details when donations only checkbox is clicked
-		$('#donations_only').change(function() {
-			if($(this).is(':checked')) {
-				$expWarning  = $('#pmpro_expiration_warning').clone();
-				$expWarning.attr('id', 'pmpro_expiration_warning_donations_only');
-				$expWarning.find('p').text('<?php _e( 'Donation only levels do not expire', 'pmpro-donations' ); ?>');
-				$expWarning.insertAfter('#pmpro_expiration_warning');
-				$expWarning.show();
-			} else {
-				$('#pmpro_expiration_warning_donations_only').remove();
-			}
+		toggleDonationsOnly(jQuery('#donations_only'));
+
+		jQuery('#donations_only').on('change', function() {
+			toggleDonationsOnly(jQuery(this));
 		});
 	});
+
+	/**
+	 * Toggle expiration warning depending on whether donations only is checked.
+	 *
+	 * @param {jQuery} donOnlyCheckbox The checkbox for donations only.
+	 * @return {void}
+	 */
+	const toggleDonationsOnly = (donOnlyCheckbox) => {
+		if(donOnlyCheckbox.is(':checked')) {
+			$expWarning = jQuery('#pmpro_expiration_warning').clone();
+			$expWarning.attr('id', 'pmpro_expiration_warning_donations_only');
+			$expWarning.find('p').text('<?php _e( 'Members that donate will receive an expiration date. Are you sure you want this ?', 'pmpro-donations' ); ?>');
+			$expWarning.insertAfter('#pmpro_expiration_warning');
+			$expWarning.show();
+		} else {
+			jQuery('#pmpro_expiration_warning_donations_only').remove();
+		}
+	}
 </script>
 
 <?php
