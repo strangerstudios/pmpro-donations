@@ -111,3 +111,47 @@ function pmprodon_extra_order_column_donation( $order ){
 	$r = pmprodon_get_price_components( $order );
 	return $r['donation'];
 }
+
+/**
+ * Add donation amount field to the orders page.
+ *
+ * @param Object $order The order object.
+ * @return void
+ * @since TBD
+ */
+function pmprodon_add_donation_field_to_orders_page( $order ) {
+	
+	//get donation amount
+	$donation = get_pmpro_membership_order_meta( $order->id, 'donation_amount', true );
+	?>
+	<table class="form-table">
+		<tbody>
+			<tr>
+				<th scope="row" valign="top"><label for="donation"><?php _e( 'Donation Amount', 'pmpro-don' ); ?>:</label></th>
+				<td>
+					<input type="text" id="donation_amount" name="donation_amount" size="20" value="<?php echo esc_attr( $donation ); ?>" />
+					<p class="description"><?php _e( 'Enter the donation amount for this order.', 'pmpro-don' ); ?></p>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<?php
+
+}
+
+add_action( 'pmpro_after_order_settings', 'pmprodon_add_donation_field_to_orders_page'  );
+
+/**
+ * Save donation amount to order meta on pmpro_updated_order action execution.
+ *
+ * @param Object $order The order object.
+ * @return void
+ * @since TBD
+ */
+function pmprodon_save_donation_amount( $order ) {
+	if ( isset( $_REQUEST['donation_amount'] ) ) {
+		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( $_REQUEST['donation_amount'] ) );
+	}
+}
+
+add_action( "pmpro_updated_order", 'pmprodon_save_donation_amount', 10, 1 );
