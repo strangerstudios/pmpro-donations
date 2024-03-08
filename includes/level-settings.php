@@ -69,6 +69,13 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 						<br /><small><?php _e( 'If not blank, this text will override the default text generated to explain the range of donation values accepted.', 'pmpro-donations' ); ?></small>
 					</td>
 				</tr>
+        <tr>
+          <th scope="row" valign="top"><label for="confirmation_message"><?php esc_html_e( 'Confirmation text:', 'pmpro-donations' ); ?></label></th>
+          <td>
+            <?php wp_editor( wp_kses_post( $confirmation_message ), 'confirmation_message', array( 'textarea_rows' => 5 ) ); ?>
+            <br /><small><?php esc_html_e( 'If not blank, this text will be rendered after regular confirmation text.', 'pmpro-donations' ); ?></small>
+          </td>
+        </tr>
 			</tbody>
 		</table>
 	</div>
@@ -102,8 +109,6 @@ add_action( 'pmpro_membership_level_before_content_settings', 'pmprodon_pmpro_me
  * Save level cost text when the level is saved/added
  */
 function pmprodon_pmpro_save_membership_level( $level_id ) {
-	global $allowedposttags;
-
 	if ( ! empty( $_REQUEST['donations'] ) ) {
 		$donations = 1;
 	} else {
@@ -114,10 +119,11 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 	} else {
 		$donations_only = 0;
 	}
-	$min_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_min_price'] );
-	$max_price       = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
-	$text            = wp_kses( wp_unslash( $_REQUEST['donations_text'] ), $allowedposttags );
-	$dropdown_prices = $_REQUEST['dropdown_prices'];
+	$min_price	          = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_min_price'] );
+	$max_price	          = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
+	$text	              = wp_kses_post( wp_unslash( $_REQUEST['donations_text'] ) );
+	$confirmation_message = wp_kses_post( wp_unslash( $_REQUEST['confirmation_message'] ) );
+	$dropdown_prices      = $_REQUEST['dropdown_prices'];
 
 	update_option(
 		'pmprodon_' . $level_id, array(
@@ -127,6 +133,7 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 			'max_price'       => $max_price,
 			'text'            => $text,
 			'dropdown_prices' => $dropdown_prices,
+			'confirmation_message' => $confirmation_message,
 		)
 	);
 }
