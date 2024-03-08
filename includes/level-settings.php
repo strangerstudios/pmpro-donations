@@ -11,6 +11,7 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	$min_price       = ( ! isset( $donfields['min_price'] ) ) ? '' : $donfields['min_price'];
 	$max_price       = ( ! isset( $donfields['max_price'] ) ) ? '' : $donfields['max_price'];
 	$donations_text  = ( ! isset( $donfields['text'] ) ) ? '' : $donfields['text'];
+	$confirmation_message = ( ! isset( $donfields['confirmation_message'] ) ) ? '' : $donfields['confirmation_message'];
 	$dropdown_prices = ( ! isset( $donfields['dropdown_prices'] ) ) ? '' : $donfields['dropdown_prices'];
 	if ( ! empty( $donations ) ) {
 		$section_visibility = 'visible';

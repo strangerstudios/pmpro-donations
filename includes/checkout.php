@@ -502,7 +502,7 @@ function pmprodon_pmpro_confirmation_message( $message, $invoice ) {
 		return str_replace( '!!donation_message!!', '', $message );
 	}
 
-	$message_to_replace = '<p>' . wp_kses_post( $settings['confirmation_message'] ) . '</p>';
+	$message_to_replace = wpautop( wp_kses_post( $settings['confirmation_message'] ) );
 	if( strpos( $message, '!!donation_message!!' ) ) {
 		$message = str_replace( '!!donation_message!!', $message_to_replace, $message );
 	} else {
