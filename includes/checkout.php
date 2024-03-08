@@ -463,7 +463,10 @@ function pmprodon_store_donation_amount_in_order_meta( $user_id, $order ) {
 add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );
 
 /**
- * Function to add custom confirmation message.
+ * Function to add the donation confirmation message to the confirmation page.
+ *
+ * Note: This does not modify the confirmation message in the email. This would
+ * need to be implemented separately.
  *
  * @since TBD
  *
@@ -483,32 +486,22 @@ function pmprodon_pmpro_confirmation_message( $message, $invoice ) {
 		$level_id = $_REQUEST['level'];
 	//Bail if we can't find the level ID.
 	} else {
-		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
-		return str_replace( '!!donation_message!!', '', $message );
+		return $message;
 	}
 
-
-	$settings = pmprodon_get_level_settings( $level_id );
 	//Bail if not a donation level or donations are not enabled or there is no confirmation message.
+	$settings = pmprodon_get_level_settings( $level_id );
 	if( ! $settings['donations'] || empty( $settings['confirmation_message'] ) ) {
-		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
-		return str_replace( '!!donation_message!!', '', $message );
+		return $message;
 	}
 
-	$components = pmprodon_get_price_components( $invoice );
 	//Bail if no donation amount.
+	$components = pmprodon_get_price_components( $invoice );
 	if ( empty( $components['donation'] ) ) {
-		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
-		return str_replace( '!!donation_message!!', '', $message );
+		return $message;
 	}
 
-	$message_to_replace = wpautop( wp_kses_post( $settings['confirmation_message'] ) );
-	if( strpos( $message, '!!donation_message!!' ) ) {
-		$message = str_replace( '!!donation_message!!', $message_to_replace, $message );
-	} else {
-		$message .= $message_to_replace;
-	}
-
-	return $message;
+	// Show the donation confirmation message.
+	return $message . wpautop( wp_kses_post( $settings['confirmation_message'] ) );
 }
 add_filter( 'pmpro_confirmation_message', 'pmprodon_pmpro_confirmation_message', 10, 2 );

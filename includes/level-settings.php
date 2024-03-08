@@ -74,7 +74,7 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
           <th scope="row" valign="top"><label for="confirmation_message"><?php esc_html_e( 'Confirmation text:', 'pmpro-donations' ); ?></label></th>
           <td>
             <?php wp_editor( wp_kses_post( $confirmation_message ), 'confirmation_message', array( 'textarea_rows' => 5 ) ); ?>
-            <br /><small><?php esc_html_e( 'If not blank, this text will be rendered after regular confirmation text.', 'pmpro-donations' ); ?></small>
+            <br /><small><?php esc_html_e( 'If not blank, this text will be shown after the default confirmation text on the membership checkout confirmation page.', 'pmpro-donations' ); ?></small>
           </td>
         </tr>
 			</tbody>
