@@ -19,6 +19,7 @@ require_once( PMPRODON_DIR . '/includes/common.php' );
 require_once( PMPRODON_DIR . '/includes/checkout.php' );
 require_once( PMPRODON_DIR . '/includes/donation-only-level.php' );
 require_once( PMPRODON_DIR . '/includes/level-settings.php' );
+require_once( PMPRODON_DIR . '/includes/admin.php' );
 
 /**
  * Load the languages folder for translations.
@@ -42,3 +43,59 @@ function pmprodon_plugin_row_meta( $links, $file ) {
 	return $links;
 }
 add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
+
+
+
+/**
+ * Function to add custom confirmation message.
+ *
+ * @param string $message The confirmation message.
+ * @param object $invoice The MemberOrder object.
+ * @return string $message The confirmation message.
+ * @since TBD
+ */
+function pmprodon_pmpro_confirmation_message( $message, $invoice ) {
+	//Get the level ID from the MemberOrder object.
+	if ( $invoice ) {
+		$level_id = $invoice->membership_id;
+	//If for some reason we can't find the level ID, try to get it from the URL.
+	 } else if ( isset ( $_REQUEST['pmpro_level'] ) ) {
+		$level_id = $_REQUEST['pmpro_level'];
+	// Backwards compatibility for PMPro 2.x
+	 }  else if ( isset ( $_REQUEST['level'] ) ) { 
+		$level_id = $_REQUEST['level'];
+	//Bail if we can't find the level ID.
+	} else {
+		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
+		return str_replace( '!!donation_message!!', '', $message );
+	}
+
+
+	$settings = pmprodon_get_level_settings( $level_id );
+	//Bail if not a donation level or donations are not enabled or there is no confirmation message.
+	if( ! $settings['donations'] || empty( $settings['confirmation_message'] ) ) {
+		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
+		return str_replace( '!!donation_message!!', '', $message );
+	}
+
+	$components = pmprodon_get_price_components( $invoice );
+	//Bail if no donation amount.
+	if ( empty( $components['donation'] ) ) {
+		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
+		return str_replace( '!!donation_message!!', '', $message );
+	}
+
+	$message_to_replace = '<p>' . wp_kses_post( $settings['confirmation_message'] ) . '</p>';
+	if( strpos( $message, '!!donation_message!!' ) ) {
+		$message = str_replace( '!!donation_message!!', $message_to_replace, $message );
+	} else {
+		$message .= $message_to_replace;
+	}
+
+	return $message;
+}
+
+/**
+ * Function to add custom confirmation message.
+ */
+add_filter( 'pmpro_confirmation_message', 'pmprodon_pmpro_confirmation_message', 10, 2 );
