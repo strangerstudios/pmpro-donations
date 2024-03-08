@@ -45,7 +45,7 @@ function pmprodon_add_donation_field_to_orders_page( $order ) {
 			<tr>
 				<th scope="row" valign="top"><label for="donation"><?php _e( 'Donation Amount', 'pmpro-don' ); ?>:</label></th>
 				<td>
-					<input type="text" id="donation_amount" name="donation_amount" size="20" value="<?php echo esc_attr( $donation ); ?>" />
+					<input type="text" id="donation_amount" name="donation_amount" size="20" value="<?php echo esc_attr( pmpro_filter_price_for_text_field( $donation ) ); ?>" />
 					<p class="description"><?php _e( 'Enter the donation amount for this order.', 'pmpro-don' ); ?></p>
 				</td>
 			</tr>
