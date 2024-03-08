@@ -58,6 +58,7 @@ function pmprodon_get_level_settings( $level_id ) {
 		'max_price'       => '',
 		'dropdown_prices' => '',
 		'text'            => '',
+		'confirmation_message' => '',
 	);
 	
 	if ( $level_id > 0 ) {
@@ -74,9 +75,5 @@ function pmprodon_get_level_settings( $level_id ) {
  */
 function pmprodon_is_donations_only( $level_id ) {
 	$settings = pmprodon_get_level_settings( $level_id );
-	if ( $settings['donations'] && $settings['donations_only'] ) {
-		return true;
-	} else {
-		return false;
-	}
+	return $settings['donations'] && $settings['donations_only'];
 }
