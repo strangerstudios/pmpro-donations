@@ -46,7 +46,7 @@ add_filter( 'plugin_row_meta', 'pmprodon_plugin_row_meta', 10, 2 );
 
 
 /**
- *  Function to add custom confirmation message.
+ * Function to add custom confirmation message.
  *
  * @param string $message The confirmation message.
  * @param object $invoice The MemberOrder object.
@@ -65,20 +65,23 @@ function pmprodon_pmpro_confirmation_message( $message, $invoice ) {
 		$level_id = $_REQUEST['level'];
 	//Bail if we can't find the level ID.
 	} else {
-		return $message;
+		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
+		return str_replace( '!!donation_message!!', '', $message );
 	}
 
 
 	$settings = pmprodon_get_level_settings( $level_id );
-	//Bail if not a donation level or donations are not enabled.
-	if( ! $settings['donations'] ) {
-		return $message;
+	//Bail if not a donation level or donations are not enabled or there is no confirmation message.
+	if( ! $settings['donations'] || empty( $settings['confirmation_message'] ) ) {
+		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
+		return str_replace( '!!donation_message!!', '', $message );
 	}
 
 	$components = pmprodon_get_price_components( $invoice );
 	//Bail if no donation amount.
-	if (  empty( $components['donation'] ) ) {
-		return $message;
+	if ( empty( $components['donation'] ) ) {
+		// Remove !!donation_message!! so that it doesn't appear in the confirmation message.
+		return str_replace( '!!donation_message!!', '', $message );
 	}
 
 	$message_to_replace = '<p>' . wp_kses_post( $settings['confirmation_message'] ) . '</p>';
