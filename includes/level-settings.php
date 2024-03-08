@@ -12,7 +12,7 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	$max_price       = ( ! isset( $donfields['max_price'] ) ) ? '' : $donfields['max_price'];
 	$donations_text  = ( ! isset( $donfields['text'] ) ) ? '' : $donfields['text'];
 	$dropdown_prices = ( ! isset( $donfields['dropdown_prices'] ) ) ? '' : $donfields['dropdown_prices'];
-	if ( checked( $donations, '1' ) ) {
+	if ( ! empty( $donations ) ) {
 		$section_visibility = 'visible';
 		$section_activated  = 'true';
 	} else {
@@ -25,7 +25,7 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	<div class="pmpro_section_toggle">
 		<button class="pmpro_section-toggle-button" type="button" aria-expanded="<?php echo $section_visibility === 'hidden' ? 'false' : 'true'; ?>">
 			<span class="dashicons dashicons-arrow-<?php echo $section_visibility === 'hidden' ? 'down' : 'up'; ?>-alt2"></span>
-			<?php esc_html_e( 'Donations Settings', 'paid-memberships-pro' ); ?>
+			<?php esc_html_e( 'Donations Settings', 'pmpro-donations' ); ?>
 		</button>
 	</div>
 	<div class="pmpro_section_inside" <?php echo $section_visibility === 'hidden' ? 'style="display: none"' : ''; ?>>
