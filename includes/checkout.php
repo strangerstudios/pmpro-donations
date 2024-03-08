@@ -296,8 +296,11 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_unhook_pmpro_level_cost
 
 /**
  * Save donation amount to order notes.
+ *
+ * @deprecated TBD
  */
 function pmprodon_pmpro_checkout_order( $order ) {
+	_deprecated_function( __FUNCTION__, 'TBD' );
 	if ( ! empty( $_REQUEST['donation'] ) ) {
 		$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
 	} else {
@@ -313,7 +316,6 @@ function pmprodon_pmpro_checkout_order( $order ) {
 	}
 	return $order;
 }
-add_filter( 'pmpro_checkout_order', 'pmprodon_pmpro_checkout_order' );
 
 /**
  * Show order components on confirmation and invoice pages.
@@ -444,3 +446,18 @@ function pmprodon_ppe_add_donation_to_request() {
 	}
 }
 add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_ppe_add_donation_to_request' );
+
+/**
+ * Add donation amount to order meta.
+ *
+ * @since TBD
+ *
+ * @param int   $user_id The user ID.
+ * @param object The order object.
+ */
+function pmprodon_store_donation_amount_in_order_meta( $user_id, $order ) {
+	if ( isset( $_REQUEST['donation'] ) ) {
+		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( $_REQUEST['donation'] ) );
+	}
+}
+add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );

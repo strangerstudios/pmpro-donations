@@ -1,6 +1,10 @@
 <?php
 /**
  * Function to get donation and original price out of an order.
+ * 
+ * @param object $order The order object.
+ * @since TBD
+ * return array The price components.
  */
 function pmprodon_get_price_components( $order ) {
 	$r = array(
@@ -8,12 +12,26 @@ function pmprodon_get_price_components( $order ) {
 		'donation' => '',
 	);
 
-	if ( isset( $order->notes ) && ! empty( $order->notes ) && strpos( $order->notes, __( 'Donation', 'pmpro-donations' ) ) !== false ) {
-		$donation      = pmpro_getMatches( '/' . __( 'Donation', 'pmpro-donations' ) . '\: ([0-9\.]+)/', $order->notes, true );
+	//Set single to true to bring a single donation amount. Shouldn't be more than one.
+	$donation = get_pmpro_membership_order_meta( $order->id, 'donation_amount', true );
+	if ( ! empty( $donation ) ) {
+		$donation = floatval( $donation );
 		$r['donation'] = $donation;
 		if ( $donation > 0 ) {
 			$r['price'] = $order->total - $donation;
 		}
+	} else {
+		// Check if we have data stored in the order notes.
+		$donation      = floatval( pmpro_getMatches( '/' . __( 'Donation', 'pmpro-donations' ) . '\: ([0-9\.]+)/', $order->notes, true ) );
+		$r['donation'] = $donation;
+		if ( $donation > 0 ) {
+			$r['price'] = $order->total - $donation;
+		}
+
+		// Save the donation amount to the order meta and remove it from the notes.
+		update_pmpro_membership_order_meta( $order->id, 'donation_amount', $donation );
+		$order->notes = preg_replace( '/' . __( 'Donation', 'pmpro-donations' ) . '\: ([0-9\.]+)/', '', $order->notes );
+		$order->saveOrder();
 	}
 
 	// filter added .2
