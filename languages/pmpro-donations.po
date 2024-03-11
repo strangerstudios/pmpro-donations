@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Paid Memberships Pro
+# Copyright (C) 2024 Paid Memberships Pro
 # This file is distributed under the same license as the Paid Memberships Pro - Donations plugin.
 msgid ""
 msgstr ""
@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-09-06T14:27:59+00:00\n"
+"POT-Creation-Date: 2024-03-11T15:58:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: pmpro-donations\n"
 
 #: pmpro-donations.php:51
@@ -21,46 +21,55 @@ msgstr ""
 
 #: pmpro-donations.php:52
 #: includes/level-settings.php:17
+#: includes/level-settings.php:33
 msgid "If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level."
 msgstr ""
 
 #: pmpro-donations.php:56
 #: includes/level-settings.php:21
+#: includes/level-settings.php:37
 msgid "Enable:"
 msgstr ""
 
 #: pmpro-donations.php:58
 #: includes/level-settings.php:23
+#: includes/level-settings.php:39
 msgid "Enable Donations"
 msgstr ""
 
 #: pmpro-donations.php:62
 #: includes/level-settings.php:33
+#: includes/level-settings.php:49
 msgid "Min Amount:"
 msgstr ""
 
 #: pmpro-donations.php:68
 #: includes/level-settings.php:39
+#: includes/level-settings.php:55
 msgid "Max Amount:"
 msgstr ""
 
 #: pmpro-donations.php:74
 #: includes/level-settings.php:45
+#: includes/level-settings.php:61
 msgid "Price Dropdown:"
 msgstr ""
 
 #: pmpro-donations.php:76
 #: includes/level-settings.php:47
+#: includes/level-settings.php:63
 msgid "Enter numbers separated by commas to popuplate a dropdown with suggested prices. Include 'other' (all lowercase) in the list to allow users to enter their own amount."
 msgstr ""
 
 #: pmpro-donations.php:80
 #: includes/level-settings.php:51
+#: includes/level-settings.php:67
 msgid "Help Text:"
 msgstr ""
 
 #: pmpro-donations.php:83
 #: includes/level-settings.php:54
+#: includes/level-settings.php:70
 msgid "If not blank, this text will override the default text generated to explain the range of donation values accepted."
 msgstr ""
 
@@ -114,21 +123,29 @@ msgstr ""
 #: includes/checkout.php:326
 #: includes/common.php:11
 #: includes/common.php:12
+#: includes/checkout.php:314
+#: includes/checkout.php:315
+#: includes/checkout.php:328
+#: includes/common.php:25
+#: includes/common.php:33
 msgid "Donation"
 msgstr ""
 
 #: pmpro-donations.php:446
 #: includes/checkout.php:325
+#: includes/checkout.php:327
 msgid "Membership Cost"
 msgstr ""
 
 #: pmpro-donations.php:469
 #: includes/checkout.php:368
+#: includes/checkout.php:370
 msgid "Donation Amount:"
 msgstr ""
 
 #: pmpro-donations.php:469
 #: includes/checkout.php:368
+#: includes/checkout.php:370
 msgid "Invoice"
 msgstr ""
 
@@ -142,38 +159,59 @@ msgstr ""
 
 #: pmpro-donations.php:532
 #: pmpro-donations.php:38
+#: pmpro-donations.php:39
 msgid "Support"
 msgstr ""
 
 #: pmpro-donations.php:532
 #: pmpro-donations.php:38
+#: pmpro-donations.php:39
 msgid "Visit Customer Support Forum"
 msgstr ""
 
 #. Plugin Name of the plugin
+#: pmpro-donations.php
 msgid "Paid Memberships Pro - Donations"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: pmpro-donations.php
 msgid "https://www.paidmembershipspro.com/add-ons/donations-add-on/"
 msgstr ""
 
 #. Description of the plugin
+#: pmpro-donations.php
 msgid "Allow customers to set an additional donation amount at checkout."
 msgstr ""
 
 #. Author of the plugin
+#: pmpro-donations.php
 msgid "Paid Memberships Pro"
 msgstr ""
 
 #. Author URI of the plugin
+#: pmpro-donations.php
 msgid "https://www.paidmembershipspro.com/"
 msgstr ""
 
 #: includes/level-settings.php:27
+#: includes/level-settings.php:43
 msgid "Donations-Only Level:"
 msgstr ""
 
 #: includes/level-settings.php:29
+#: includes/level-settings.php:45
 msgid "Check to have existing members NOT switched to this level at checkout."
+msgstr ""
+
+#: includes/level-settings.php:29
+msgid "Donations Settings"
+msgstr ""
+
+#: includes/level-settings.php:74
+msgid "Confirmation text:"
+msgstr ""
+
+#: includes/level-settings.php:77
+msgid "If not blank, this text will be shown after the default confirmation text on the membership checkout confirmation page."
 msgstr ""
