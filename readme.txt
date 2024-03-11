@@ -26,7 +26,7 @@ Please post it in the issues section of GitHub and we'll fix it as soon as we ca
 == Changelog ==
 = 2.0 - 2024-03-08 =
 * FEATURE: Donation levels can now have a "donation confirmation message" that will be shown on the confirmation page after a user donates. #64 (@MaximilianoRicoTabo)
-* ENAHNCEMENT: Order donation amounts are now stored in order meta. #66 (@MaximilianoRicoTabo)
+* ENHANCEMENT: Order donation amounts are now stored in order meta. #66 (@MaximilianoRicoTabo)
 * ENHANCEMENT: Added a new panel for "Donations Settings" when editing a membership level. #65 (@MaximilianoRicoTabo)
 * ENHANCEMENT: Added the `pmpro_alter_price` class to donation fields at checkout to detect when the checkout level price changes. #70 (@MaximilianoRicoTabo)
 * BUG FIX/ENHANCEMENT: Improved the sanitization of some `$_REQUEST` variables. #68 (@MaximilianoRicoTabo)
