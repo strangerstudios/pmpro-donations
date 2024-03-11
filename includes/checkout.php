@@ -297,10 +297,10 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_unhook_pmpro_level_cost
 /**
  * Save donation amount to order notes.
  *
- * @deprecated TBD
+ * @deprecated 2.0
  */
 function pmprodon_pmpro_checkout_order( $order ) {
-	_deprecated_function( __FUNCTION__, 'TBD' );
+	_deprecated_function( __FUNCTION__, '2.0' );
 	if ( ! empty( $_REQUEST['donation'] ) ) {
 		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] ) );
 	} else {
@@ -450,7 +450,7 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_p
 /**
  * Add donation amount to order meta.
  *
- * @since TBD
+ * @since 2.0
  *
  * @param int   $user_id The user ID.
  * @param object The order object.
@@ -468,7 +468,7 @@ add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_met
  * Note: This does not modify the confirmation message in the email. This would
  * need to be implemented separately.
  *
- * @since TBD
+ * @since 2.0
  *
  * @param string $message The confirmation message.
  * @param object $invoice The MemberOrder object.

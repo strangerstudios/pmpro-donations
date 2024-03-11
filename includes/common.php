@@ -3,7 +3,7 @@
  * Function to get donation and original price out of an order.
  * 
  * @param object $order The order object.
- * @since TBD
+ * @since 2.0
  * return array The price components.
  */
 function pmprodon_get_price_components( $order ) {

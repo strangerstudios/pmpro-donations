@@ -5,7 +5,7 @@
  *
  * @param Array CSV document columns.
  * @return Array CSV document columns.
- * @since TBD
+ * @since 2.0
  */
 function pmprodon_add_donation_column_to_export_orders_csv( $columns ){
 	$columns["donation"] = "pmprodon_extra_order_column_donation";
@@ -20,7 +20,7 @@ add_filter( 'pmpro_orders_csv_extra_columns', 'pmprodon_add_donation_column_to_e
  *
  * @param Object $order The order object.
  * @return String The donation amount.
- * @since TBD
+ * @since 2.0
  */
 function pmprodon_extra_order_column_donation( $order ){
 	$r = pmprodon_get_price_components( $order );
@@ -32,7 +32,7 @@ function pmprodon_extra_order_column_donation( $order ){
  *
  * @param Object $order The order object.
  * @return void
- * @since TBD
+ * @since 2.0
  */
 function pmprodon_add_donation_field_to_orders_page( $order ) {
 	
@@ -63,7 +63,7 @@ add_action( 'pmpro_after_order_settings', 'pmprodon_add_donation_field_to_orders
  *
  * @param Object $order The order object.
  * @return void
- * @since TBD
+ * @since 2.0
  */
 function pmprodon_save_donation_amount( $order ) {
 	if ( isset( $_REQUEST['donation_amount'] ) && is_admin() && 'pmpro-orders' === $_REQUEST['page'] ) {
