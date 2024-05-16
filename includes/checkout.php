@@ -327,7 +327,7 @@ function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 			'membership_cost' => '<strong>' . __( 'Membership Cost', 'pmpro-donations' ) . ": </strong> " . pmpro_formatPrice( $components['price'] ),
 			'donation'        => '<strong>' . __( 'Donation', 'pmpro-donations' ) . ": </strong>" . pmpro_formatPrice( $components['donation'] )
 		);
-		apply_filters( 'pmpro_donations_invoice_bullets', $bullets, $order );
+		$bullets = apply_filters( 'pmpro_donations_invoice_bullets', $bullets, $order );
 		foreach ( $bullets as $bullet ) {
 			echo '<li>' . $bullet . '</li>';
 		}
