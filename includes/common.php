@@ -26,12 +26,12 @@ function pmprodon_get_price_components( $order ) {
 		$r['donation'] = $donation;
 		if ( $donation > 0 ) {
 			$r['price'] = $order->total - $donation;
-		}
 
-		// Save the donation amount to the order meta and remove it from the notes.
-		update_pmpro_membership_order_meta( $order->id, 'donation_amount', $donation );
-		$order->notes = preg_replace( '/' . __( 'Donation', 'pmpro-donations' ) . '\: ([0-9\.]+)/', '', $order->notes );
-		$order->saveOrder();
+            // Save the donation amount to the order meta and remove it from the notes.
+            update_pmpro_membership_order_meta( $order->id, 'donation_amount', $donation );
+            $order->notes = preg_replace( '/' . __( 'Donation', 'pmpro-donations' ) . '\: ([0-9\.]+)/', '', $order->notes );
+            $order->saveOrder();
+		}
 	}
 
 	// filter added .2
