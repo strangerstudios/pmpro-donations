@@ -46,153 +46,154 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	}
 
 	?>
-	<hr />
-	<div id="pmpro_donations">
+	<br/>
+	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_checkout-field-donation', 'pmpro_checkout-field-donation' ) ); ?>">
+		<label for="donation" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Make a Gift', 'pmpro-donations' ); ?></label>
+			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields-inline' ) ); ?>">
 		
-		<span id="pmprodon_donation_prompt"><?php _e( 'Make a Gift', 'pmpro-donations' ); ?></span>
-		
-	<?php
-	// check for dropdown
-	if ( ! empty( $dropdown_prices ) ) {
-		// turn into an array
-		$dropdown_prices = str_replace( ' ', '', $dropdown_prices );
-		$dropdown_prices = explode( ',', $dropdown_prices );
-
-		// check for other option
-		$pmprodon_allow_other = array_search( 'other', $dropdown_prices );
-		if ( $pmprodon_allow_other !== false ) {
-			unset( $dropdown_prices[ $pmprodon_allow_other ] );
-			$pmprodon_allow_other = true;
-		}
-
-		// show dropdown
-		sort( $dropdown_prices );
-		?>
-		<select id="donation_dropdown" name="donation_dropdown" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> class="<?php echo esc_attr( pmpro_get_element_class( 'select pmpro_alter_price' ) ); ?>" >
 			<?php
-			foreach ( $dropdown_prices as $price ) {
+			// check for dropdown
+			if ( ! empty( $dropdown_prices ) ) {
+				// turn into an array
+				$dropdown_prices = str_replace( ' ', '', $dropdown_prices );
+				$dropdown_prices = explode( ',', $dropdown_prices );
+
+				// check for other option
+				$pmprodon_allow_other = array_search( 'other', $dropdown_prices );
+				if ( $pmprodon_allow_other !== false ) {
+					unset( $dropdown_prices[ $pmprodon_allow_other ] );
+					$pmprodon_allow_other = true;
+				}
+
+				// show dropdown
+				sort( $dropdown_prices );
 				?>
-				<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo pmpro_formatPrice( (double) $price ); ?></option>
+				<select id="donation_dropdown" name="donation_dropdown" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select' ) ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> class="<?php echo esc_attr( pmpro_get_element_class( 'select pmpro_alter_price' ) ); ?>" >
+					<?php
+					foreach ( $dropdown_prices as $price ) {
+						?>
+						<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo pmpro_formatPrice( (double) $price ); ?></option>
+						<?php
+					}
+					if ( $pmprodon_allow_other ) {
+						?>
+						<option value="other" <?php selected( true, ! empty( $donation ) && ! in_array( $donation, $dropdown_prices ) ); ?>>Other</option>
+					<?php } ?>
+				</select>
 				<?php
 			}
-			if ( $pmprodon_allow_other ) {
-				?>
-				<option value="other" <?php selected( true, ! empty( $donation ) && ! in_array( $donation, $dropdown_prices ) ); ?>>Other</option>
-			<?php } ?>
-		</select> &nbsp;
-		<?php
-	}
-	?>
+			?>
+			<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
+				<?php echo $pmpro_currency_symbol; ?> <input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_alter_price' ) ); ?>" autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
+				<?php if ( $pmpro_review ) { ?>
+					<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
+				<?php } ?>
+			</span>
+		</div>
 
-	<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
-		<?php echo $pmpro_currency_symbol; ?> <input class="<?php echo esc_attr( pmpro_get_element_class( 'input pmpro_alter_price' ) ); ?>" autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
-		<?php if ( $pmpro_review ) { ?>
-			<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
-		<?php } ?>
-	</span>
 
-	<?php
-	if ( empty( $pmpro_review ) ) {
-		?>
-		<div class="pmpro_small">
 		<?php
-		if ( ! empty( $donfields['text'] ) ) {
-			echo wpautop( $donfields['text'] );
-		} elseif ( ! empty( $donfields['min_price'] ) && empty( $donfields['max_price'] ) ) {
-			printf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) );
-		} elseif ( ! empty( $donfields['max_price'] ) && empty( $donfields['min_price'] ) ) {
-			printf( __( 'Enter an amount %s or less', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) );
-		} elseif ( ! empty( $donfields['max_price'] ) && ! empty( $donfields['min_price'] ) ) {
-			printf( __( 'Enter an amount between %1$s and %2$s', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ), pmpro_formatPrice( $donfields['max_price'] ) );
+		if ( empty( $pmpro_review ) ) {
+			?>
+			<div class="pmpro_small">
+			<?php
+			if ( ! empty( $donfields['text'] ) ) {
+				echo wpautop( $donfields['text'] );
+			} elseif ( ! empty( $donfields['min_price'] ) && empty( $donfields['max_price'] ) ) {
+				printf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) );
+			} elseif ( ! empty( $donfields['max_price'] ) && empty( $donfields['min_price'] ) ) {
+				printf( __( 'Enter an amount %s or less', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) );
+			} elseif ( ! empty( $donfields['max_price'] ) && ! empty( $donfields['min_price'] ) ) {
+				printf( __( 'Enter an amount between %1$s and %2$s', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ), pmpro_formatPrice( $donfields['max_price'] ) );
+			}
+			?>
+			</div>
+			<?php
 		}
 		?>
-		</div>
-		<?php
-	}
-	?>
-</div>
-<script>
-	//some vars for keeping track of whether or not we show billing
-	var pmpro_gateway_billing = <?php if ( in_array( $gateway, array( 'paypalexpress', 'twocheckout' ) ) !== false ) { echo'false';	} else { echo 'true'; } ?>;
-	var pmpro_pricing_billing = <?php if ( ! pmpro_isLevelFree( $pmpro_level ) ) { echo 'true';	} else { echo 'false'; } ?>;
-	var pmpro_donation_billing = pmpro_pricing_billing;
+	</div>
+	<script>
+		//some vars for keeping track of whether or not we show billing
+		var pmpro_gateway_billing = <?php if ( in_array( $gateway, array( 'paypalexpress', 'twocheckout' ) ) !== false ) { echo'false';	} else { echo 'true'; } ?>;
+		var pmpro_pricing_billing = <?php if ( ! pmpro_isLevelFree( $pmpro_level ) ) { echo 'true';	} else { echo 'false'; } ?>;
+		var pmpro_donation_billing = pmpro_pricing_billing;
 
-	//this script will hide show billing fields based on the price set
-	jQuery(document).ready(function() {
-		//bind other field toggle to dropdown change
-		jQuery('#donation_dropdown').change(function() {
-			pmprodon_toggleOther();
-			// If we changed to a non-other value, update the donation field.
-			if ( jQuery( '#donation_dropdown' ).val() !== 'other' ) {
-				jQuery( '#donation' ).val( jQuery( '#donation_dropdown' ).val() );
+		//this script will hide show billing fields based on the price set
+		jQuery(document).ready(function() {
+			//bind other field toggle to dropdown change
+			jQuery('#donation_dropdown').change(function() {
+				pmprodon_toggleOther();
+				// If we changed to a non-other value, update the donation field.
+				if ( jQuery( '#donation_dropdown' ).val() !== 'other' ) {
+					jQuery( '#donation' ).val( jQuery( '#donation_dropdown' ).val() );
+				}
+				pmprodon_checkForFree();
+			});
+
+			//bind check to price field
+			var pmprodon_price_timer;
+			jQuery('#donation').bind('keyup change', function() {
+				pmprodon_price_timer = setTimeout(pmprodon_checkForFree, 500);
+			});
+
+			if(jQuery('input[name=gateway]'))
+			{
+				jQuery('input[name=gateway]').bind('click', function() {
+					pmprodon_price_timer = setTimeout(pmprodon_checkForFree, 500);
+				});
 			}
+
+			//check when page loads too
+			pmprodon_toggleOther();
 			pmprodon_checkForFree();
 		});
 
-		//bind check to price field
-		var pmprodon_price_timer;
-		jQuery('#donation').bind('keyup change', function() {
-			pmprodon_price_timer = setTimeout(pmprodon_checkForFree, 500);
-		});
+		function pmprodon_toggleOther() {
+			//make sure there is a dropdown to check
+			if(!jQuery('#donation_dropdown').length)
+				return;
 
-		if(jQuery('input[name=gateway]'))
-		{
-			jQuery('input[name=gateway]').bind('click', function() {
-				pmprodon_price_timer = setTimeout(pmprodon_checkForFree, 500);
-			});
-		}
+			//get val
+			var donation_dropdown = jQuery('#donation_dropdown').val();
 
-		//check when page loads too
-		pmprodon_toggleOther();
-		pmprodon_checkForFree();
-	});
-
-	function pmprodon_toggleOther() {
-		//make sure there is a dropdown to check
-		if(!jQuery('#donation_dropdown').length)
-			return;
-
-		//get val
-		var donation_dropdown = jQuery('#donation_dropdown').val();
-
-		if(donation_dropdown == 'other')
-			jQuery('#pmprodon_donation_input').show();
-		else
-			jQuery('#pmprodon_donation_input').hide();
-	}
-
-	function pmprodon_checkForFree() {
-		var donation = parseFloat(jQuery('#donation').val());
-
-		//does the gateway require billing?
-		if(jQuery('input[name=gateway]').length) {
-			var no_billing_gateways = ['paypalexpress', 'twocheckout', 'check', 'paypalstandard'];
-			var gateway = jQuery('input[name=gateway]:checked').val();
-			if(no_billing_gateways.indexOf(gateway) > -1)
-				pmpro_gateway_billing = false;
+			if(donation_dropdown == 'other')
+				jQuery('#pmprodon_donation_input').show();
 			else
-				pmpro_gateway_billing = true;
+				jQuery('#pmprodon_donation_input').hide();
 		}
 
-		//is there a donation?
-		if(donation || pmpro_pricing_billing)
-			pmpro_donation_billing = true;
-		else
-			pmpro_donation_billing = false;
+		function pmprodon_checkForFree() {
+			var donation = parseFloat(jQuery('#donation').val());
 
-		//figure out if we should show the billing fields
-		if(pmpro_gateway_billing && pmpro_donation_billing) {
-			jQuery('#pmpro_billing_address_fields').show();
-			jQuery('#pmpro_payment_information_fields').show();
-			pmpro_require_billing = true;
-		} else if ( 'check' !== gateway ) {
-			jQuery('#pmpro_billing_address_fields').hide();
-			jQuery('#pmpro_payment_information_fields').hide();
-			pmpro_require_billing = false;
+			//does the gateway require billing?
+			if(jQuery('input[name=gateway]').length) {
+				var no_billing_gateways = ['paypalexpress', 'twocheckout', 'check', 'paypalstandard'];
+				var gateway = jQuery('input[name=gateway]:checked').val();
+				if(no_billing_gateways.indexOf(gateway) > -1)
+					pmpro_gateway_billing = false;
+				else
+					pmpro_gateway_billing = true;
+			}
+
+			//is there a donation?
+			if(donation || pmpro_pricing_billing)
+				pmpro_donation_billing = true;
+			else
+				pmpro_donation_billing = false;
+
+			//figure out if we should show the billing fields
+			if(pmpro_gateway_billing && pmpro_donation_billing) {
+				jQuery('#pmpro_billing_address_fields').show();
+				jQuery('#pmpro_payment_information_fields').show();
+				pmpro_require_billing = true;
+			} else if ( 'check' !== gateway ) {
+				jQuery('#pmpro_billing_address_fields').hide();
+				jQuery('#pmpro_payment_information_fields').hide();
+				pmpro_require_billing = false;
+			}
 		}
-	}
-</script>
-<?php
+	</script>
+	<?php
 }
 add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_pmpro_checkout_after_level_cost' );
 
