@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Donations plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Donations 2.0\n"
+"Project-Id-Version: Paid Memberships Pro - Donations 2.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-03-20T17:24:42+00:00\n"
+"POT-Creation-Date: 2024-07-16T17:43:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: pmpro-donations\n"
@@ -75,40 +75,47 @@ msgstr ""
 
 #: pmpro-donations.php:179
 #: includes/checkout.php:52
+#: includes/checkout.php:53
 msgid "Make a Gift"
 msgstr ""
 
 #: pmpro-donations.php:226
 #: includes/checkout.php:102
+#: includes/checkout.php:108
 #, php-format
 msgid "Enter an amount %s or greater"
 msgstr ""
 
 #: pmpro-donations.php:228
 #: includes/checkout.php:104
+#: includes/checkout.php:110
 #, php-format
 msgid "Enter an amount %s or less"
 msgstr ""
 
 #: pmpro-donations.php:230
 #: includes/checkout.php:106
+#: includes/checkout.php:112
 #, php-format
 msgid "Enter an amount between %1$s and %2$s"
 msgstr ""
 
 #: pmpro-donations.php:356
 #: includes/checkout.php:239
+#: includes/checkout.php:249
 msgid "Error: You tried to set the donation on a level that doesn't have donations. Please try again."
 msgstr ""
 
 #: pmpro-donations.php:365
 #: includes/checkout.php:248
+#: includes/checkout.php:258
 #, php-format
 msgid "The lowest accepted donation is %s. Please enter a new amount."
 msgstr ""
 
 #: pmpro-donations.php:369
 #: includes/checkout.php:252
+#: includes/checkout.php:262
 #, php-format
 msgid "The highest accepted donation is %s. Please enter a new amount."
 msgstr ""
@@ -128,24 +135,31 @@ msgstr ""
 #: includes/checkout.php:328
 #: includes/common.php:25
 #: includes/common.php:33
+#: includes/checkout.php:324
+#: includes/checkout.php:325
+#: includes/checkout.php:338
+#: includes/common.php:32
 msgid "Donation"
 msgstr ""
 
 #: pmpro-donations.php:446
 #: includes/checkout.php:325
 #: includes/checkout.php:327
+#: includes/checkout.php:337
 msgid "Membership Cost"
 msgstr ""
 
 #: pmpro-donations.php:469
 #: includes/checkout.php:368
 #: includes/checkout.php:370
+#: includes/checkout.php:380
 msgid "Donation Amount:"
 msgstr ""
 
 #: pmpro-donations.php:469
 #: includes/checkout.php:368
 #: includes/checkout.php:370
+#: includes/checkout.php:380
 msgid "Invoice"
 msgstr ""
 
@@ -214,4 +228,12 @@ msgstr ""
 
 #: includes/level-settings.php:77
 msgid "If not blank, this text will be shown after the default confirmation text on the membership checkout confirmation page."
+msgstr ""
+
+#: includes/checkout.php:57
+msgid "Donation Amount"
+msgstr ""
+
+#: includes/checkout.php:86
+msgid "Other"
 msgstr ""
