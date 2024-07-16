@@ -82,7 +82,9 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 									}
 									if ( $pmprodon_allow_other ) {
 										?>
-										<option value="other" <?php selected( true, ! empty( $donation ) && ! in_array( $donation, $dropdown_prices ) ); ?>>Other</option>
+										<option value="other" <?php selected( true, ! empty( $donation ) && ! in_array( $donation, $dropdown_prices ) ); ?>>
+											<?php esc_html_e( 'Other', 'pmpro-donations' ) ?>
+										</option>
 									<?php } ?>
 								</select>
 								<?php
@@ -335,7 +337,7 @@ function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 			'membership_cost' => '<strong>' . __( 'Membership Cost', 'pmpro-donations' ) . ": </strong> " . pmpro_formatPrice( $components['price'] ),
 			'donation'        => '<strong>' . __( 'Donation', 'pmpro-donations' ) . ": </strong>" . pmpro_formatPrice( $components['donation'] )
 		);
-		apply_filters( 'pmpro_donations_invoice_bullets', $bullets, $order );
+		$bullets = apply_filters( 'pmpro_donations_invoice_bullets', $bullets, $order );
 		foreach ( $bullets as $bullet ) {
 			echo '<li class="' . esc_attr( pmpro_get_element_class( 'pmpro_list_item' ) ) . '">' . wp_kses_post( $bullet ) . '</li>';
 		}
