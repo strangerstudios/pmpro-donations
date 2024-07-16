@@ -21,7 +21,7 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_i
 /**
  * Show form at checkout.
  */
-function pmprodon_pmpro_checkout_after_level_cost() {
+function pmprodon_pmpro_checkout_after_user_fields() {
 	global $pmpro_currency_symbol, $pmpro_level, $gateway, $pmpro_review;
 
 	// get variable pricing info
@@ -46,72 +46,79 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	}
 
 	?>
-	<br/>
-	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_checkout-field-donation', 'pmpro_checkout-field-donation' ) ); ?>">
-		<label for="donation" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Make a Gift', 'pmpro-donations' ); ?></label>
-			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields-inline' ) ); ?>">
-		
-			<?php
-			// check for dropdown
-			if ( ! empty( $dropdown_prices ) ) {
-				// turn into an array
-				$dropdown_prices = str_replace( ' ', '', $dropdown_prices );
-				$dropdown_prices = explode( ',', $dropdown_prices );
+	<fieldset id="pmpro_form_fieldset-donation" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset', 'pmpro_form_fieldset-donation' ) ); ?>">
+		<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card' ) ); ?>">
+			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
+				<legend class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_legend' ) ); ?>">
+					<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_heading pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Make a Gift', 'pmpro-donations' ); ?></h2>
+				</legend>
+				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ); ?>">
+					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-donation', 'pmpro_form_field-donation' ) ); ?>">
+						<label for="donation" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Donation Amount', 'pmpro-donations' ); ?></label>
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields-inline' ) ); ?>">
+							<?php
+							// check for dropdown
+							if ( ! empty( $dropdown_prices ) ) {
+								// turn into an array
+								$dropdown_prices = str_replace( ' ', '', $dropdown_prices );
+								$dropdown_prices = explode( ',', $dropdown_prices );
 
-				// check for other option
-				$pmprodon_allow_other = array_search( 'other', $dropdown_prices );
-				if ( $pmprodon_allow_other !== false ) {
-					unset( $dropdown_prices[ $pmprodon_allow_other ] );
-					$pmprodon_allow_other = true;
-				}
+								// check for other option
+								$pmprodon_allow_other = array_search( 'other', $dropdown_prices );
+								if ( $pmprodon_allow_other !== false ) {
+									unset( $dropdown_prices[ $pmprodon_allow_other ] );
+									$pmprodon_allow_other = true;
+								}
 
-				// show dropdown
-				sort( $dropdown_prices );
-				?>
-				<select id="donation_dropdown" name="donation_dropdown" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select' ) ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> class="<?php echo esc_attr( pmpro_get_element_class( 'select pmpro_alter_price' ) ); ?>" >
-					<?php
-					foreach ( $dropdown_prices as $price ) {
-						?>
-						<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo pmpro_formatPrice( (double) $price ); ?></option>
+								// show dropdown
+								sort( $dropdown_prices );
+								?>
+								<select id="donation_dropdown" name="donation_dropdown" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select' ) ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> class="<?php echo esc_attr( pmpro_get_element_class( 'select pmpro_alter_price' ) ); ?>" >
+									<?php
+									foreach ( $dropdown_prices as $price ) {
+										?>
+										<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo pmpro_formatPrice( (double) $price ); ?></option>
+										<?php
+									}
+									if ( $pmprodon_allow_other ) {
+										?>
+										<option value="other" <?php selected( true, ! empty( $donation ) && ! in_array( $donation, $dropdown_prices ) ); ?>>Other</option>
+									<?php } ?>
+								</select>
+								<?php
+							}
+							?>
+							<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
+								<?php echo $pmpro_currency_symbol; ?> <input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_alter_price' ) ); ?>" autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
+								<?php if ( $pmpro_review ) { ?>
+									<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
+								<?php } ?>
+							</span>
+						</div> <!-- end pmpro_form_fields-inline -->
 						<?php
-					}
-					if ( $pmprodon_allow_other ) {
+						if ( empty( $pmpro_review ) ) {
+							?>
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ); ?>">
+							<?php
+							if ( ! empty( $donfields['text'] ) ) {
+								echo wpautop( $donfields['text'] );
+							} elseif ( ! empty( $donfields['min_price'] ) && empty( $donfields['max_price'] ) ) {
+								echo '<p>' . sprintf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) ) . '</p>';
+							} elseif ( ! empty( $donfields['max_price'] ) && empty( $donfields['min_price'] ) ) {
+								echo '<p>' . sprintf( __( 'Enter an amount %s or less', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) ) . '</p>';
+							} elseif ( ! empty( $donfields['max_price'] ) && ! empty( $donfields['min_price'] ) ) {
+								echo '<p>' . sprintf( __( 'Enter an amount between %1$s and %2$s', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ), pmpro_formatPrice( $donfields['max_price'] ) ) . '</p>';
+							}
+							?>
+							</div> <!-- end pmpro_form_hint -->
+							<?php
+						}
 						?>
-						<option value="other" <?php selected( true, ! empty( $donation ) && ! in_array( $donation, $dropdown_prices ) ); ?>>Other</option>
-					<?php } ?>
-				</select>
-				<?php
-			}
-			?>
-			<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
-				<?php echo $pmpro_currency_symbol; ?> <input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_alter_price' ) ); ?>" autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
-				<?php if ( $pmpro_review ) { ?>
-					<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
-				<?php } ?>
-			</span>
-		</div>
-
-
-		<?php
-		if ( empty( $pmpro_review ) ) {
-			?>
-			<div class="pmpro_small">
-			<?php
-			if ( ! empty( $donfields['text'] ) ) {
-				echo wpautop( $donfields['text'] );
-			} elseif ( ! empty( $donfields['min_price'] ) && empty( $donfields['max_price'] ) ) {
-				printf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) );
-			} elseif ( ! empty( $donfields['max_price'] ) && empty( $donfields['min_price'] ) ) {
-				printf( __( 'Enter an amount %s or less', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) );
-			} elseif ( ! empty( $donfields['max_price'] ) && ! empty( $donfields['min_price'] ) ) {
-				printf( __( 'Enter an amount between %1$s and %2$s', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ), pmpro_formatPrice( $donfields['max_price'] ) );
-			}
-			?>
-			</div>
-			<?php
-		}
-		?>
-	</div>
+					</div> <!-- end pmpro_form_field-donation -->
+				</div> <!-- end pmpro_form_fields -->
+			</div> <!-- end pmpro_card_content -->
+		</div> <!-- end pmpro_card -->
+	</fieldset> <!-- end pmpro_form_fieldset-donation -->
 	<script>
 		//some vars for keeping track of whether or not we show billing
 		var pmpro_gateway_billing = <?php if ( in_array( $gateway, array( 'paypalexpress', 'twocheckout' ) ) !== false ) { echo'false';	} else { echo 'true'; } ?>;
@@ -195,7 +202,7 @@ function pmprodon_pmpro_checkout_after_level_cost() {
 	</script>
 	<?php
 }
-add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_pmpro_checkout_after_level_cost' );
+add_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_user_fields' );
 
 /**
  * Set price at checkout
@@ -330,7 +337,7 @@ function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 		);
 		apply_filters( 'pmpro_donations_invoice_bullets', $bullets, $order );
 		foreach ( $bullets as $bullet ) {
-			echo '<li>' . $bullet . '</li>';
+			echo '<li class="' . esc_attr( pmpro_get_element_class( 'pmpro_list_item' ) ) . '">' . $bullet . '</li>';
 		}
 	}
 }
