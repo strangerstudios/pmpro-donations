@@ -77,7 +77,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 									<?php
 									foreach ( $dropdown_prices as $price ) {
 										?>
-										<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo pmpro_formatPrice( (double) $price ); ?></option>
+										<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo esc_html( pmpro_formatPrice( (double) $price ) ); ?></option>
 										<?php
 									}
 									if ( $pmprodon_allow_other ) {
@@ -101,13 +101,13 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ); ?>">
 							<?php
 							if ( ! empty( $donfields['text'] ) ) {
-								echo wpautop( $donfields['text'] );
+								echo wp_kses_post( wpautop( $donfields['text'] ) );
 							} elseif ( ! empty( $donfields['min_price'] ) && empty( $donfields['max_price'] ) ) {
-								echo '<p>' . sprintf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) ) . '</p>';
+								echo '<p>' . esc_html( sprintf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) ) ) . '</p>';
 							} elseif ( ! empty( $donfields['max_price'] ) && empty( $donfields['min_price'] ) ) {
-								echo '<p>' . sprintf( __( 'Enter an amount %s or less', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) ) . '</p>';
+								echo '<p>' . esc_html( sprintf( __( 'Enter an amount %s or less', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) ) ) . '</p>';
 							} elseif ( ! empty( $donfields['max_price'] ) && ! empty( $donfields['min_price'] ) ) {
-								echo '<p>' . sprintf( __( 'Enter an amount between %1$s and %2$s', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ), pmpro_formatPrice( $donfields['max_price'] ) ) . '</p>';
+								echo '<p>' . esc_html( sprintf( __( 'Enter an amount between %1$s and %2$s', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ), pmpro_formatPrice( $donfields['max_price'] ) ) ) . '</p>';
 							}
 							?>
 							</div> <!-- end pmpro_form_hint -->
@@ -337,7 +337,7 @@ function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 		);
 		apply_filters( 'pmpro_donations_invoice_bullets', $bullets, $order );
 		foreach ( $bullets as $bullet ) {
-			echo '<li class="' . esc_attr( pmpro_get_element_class( 'pmpro_list_item' ) ) . '">' . $bullet . '</li>';
+			echo '<li class="' . esc_attr( pmpro_get_element_class( 'pmpro_list_item' ) ) . '">' . wp_kses_post( $bullet ) . '</li>';
 		}
 	}
 }
