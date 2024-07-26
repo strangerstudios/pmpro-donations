@@ -73,7 +73,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 								// show dropdown
 								sort( $dropdown_prices );
 								?>
-								<select id="donation_dropdown" name="donation_dropdown" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select' ) ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> class="<?php echo esc_attr( pmpro_get_element_class( 'select pmpro_alter_price' ) ); ?>" >
+								<select id="donation_dropdown" name="donation_dropdown" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select pmpro_alter_price' ) ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?>>
 									<?php
 									foreach ( $dropdown_prices as $price ) {
 										?>
