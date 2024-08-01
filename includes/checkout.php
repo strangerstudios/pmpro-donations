@@ -346,7 +346,7 @@ function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 add_filter( 'pmpro_invoice_bullets_bottom', 'pmprodon_pmpro_invoice_bullets_bottom' );
 
 function pmprodon_pmpro_email_data( $data, $email ) {
-	$order_id = empty( $email->data['invoice_id'] ) ? false : $email->data['invoice_id'];
+	$order_id = empty( $email->data['order_id'] ) ? false : $email->data['order_id'];
 	if ( ! empty( $order_id ) ) {
 		$order      = new MemberOrder( $order_id );
 		$components = pmprodon_get_price_components( $order );
