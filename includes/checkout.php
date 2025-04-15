@@ -370,7 +370,7 @@ function pmprodon_pmpro_email_filter( $email ) {
 	// only update confirmation emails which aren't using !!donation!! email variable
 	if ( strpos( $email->template, 'checkout' ) !== false && strpos( $email->body, '!!donation!!' ) === false ) {
 		// get the user_id from the email
-		$order_id = ( empty( $email->data ) || empty( $email->data['invoice_id'] ) ) ? false : $email->data['invoice_id'];
+		$order_id = ( empty( $email->data ) || empty( $email->data['order_id'] ) ) ? false : $email->data['order_id'];
 		if ( ! empty( $order_id ) ) {
 			$order      = new MemberOrder( $order_id );
 			$components = pmprodon_get_price_components( $order );
