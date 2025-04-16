@@ -207,6 +207,34 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 add_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_user_fields' );
 
 /**
+ * If donations are enabled for a free level, set it to a non-free level
+ * to allow payment gateways like PayPal Express to show up.
+ *
+ * @since TBD
+ *
+ * @param bool $is_free Whether the level is free or not.
+ * @param object $level The membership level object.
+ * @return bool true if level is free, false if not.
+ */
+function pmprodon_enable_payments_for_donations( $is_free, $level ) {
+	// Skip if the level is already not free.
+	if ( ! $is_free ) {
+		return $is_free;
+	}
+
+	// Check if donations are enabled for this level.
+	$settings = pmprodon_get_level_settings( $level->id );
+
+	// If donations are enabled, don't treat the level as free.
+	if ( ! empty( $settings['donations'] ) ) {
+		return false;
+	}
+
+	return $is_free;
+}
+add_filter( 'pmpro_is_level_free', 'pmprodon_enable_payments_for_donations', 10, 2 );
+
+/**
  * Set price at checkout
  */
 function pmprodon_pmpro_checkout_level( $level ) {
