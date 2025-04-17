@@ -218,7 +218,7 @@ add_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_u
  * @param object $level The membership level object.
  * @return bool true if level is free, false if not.
  */
-function pmprodon_enable_payments_for_donations( $is_free, $level ) {
+function pmprodon_enable_payments_for_free_level_donations( $is_free, $level ) {
 	// Check if it suitable to enable donation payments?
 	if ( ! function_exists( 'pmprodon_get_level_settings' ) || ! pmpro_is_checkout() || is_admin() || ! $is_free ) {
 		return $is_free;
@@ -264,7 +264,7 @@ function pmprodon_enable_payments_for_donations( $is_free, $level ) {
 
 	return $is_free;
 }
-add_filter( 'pmpro_is_level_free', 'pmprodon_enable_payments_for_donations', 10, 2 );
+add_filter( 'pmpro_is_level_free', 'pmprodon_enable_payments_for_free_level_donations', 10, 2 );
 
 /**
  * Set price at checkout
