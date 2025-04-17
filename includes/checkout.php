@@ -323,6 +323,10 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 
 				$pmpro_msgt = 'pmpro_error';
 				$continue   = false;
+			} elseif ( intval( $level->initial_payment ) === 0 && ( ! is_numeric( $donation ) || (double) $donation <= 0 ) ) {
+				$pmpro_msg  = __( 'An invalid donation amount was entered. Please enter a new amount.', 'pmpro-donations' );
+				$pmpro_msgt = 'pmpro_error';
+				$continue   = false;
 			}
 
 			// all good!
