@@ -209,6 +209,8 @@ add_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_u
 /**
  * If donations are enabled for a free level, set it to a non-free level
  * to allow payment gateways like PayPal Express to show up.
+ * A minimum donation amount greater than 0 must be set, or donation
+ * dropdown prices must be set with numeric values greater than 0.
  *
  * @since TBD
  *
@@ -217,8 +219,8 @@ add_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_u
  * @return bool true if level is free, false if not.
  */
 function pmprodon_enable_payments_for_donations( $is_free, $level ) {
-	// Skip if the level is already not free.
-	if ( ! $is_free ) {
+	// Check if it suitable to enable donation payments?
+	if ( ! function_exists( 'pmprodon_get_level_settings' ) || ! pmpro_is_checkout() || is_admin() || ! $is_free ) {
 		return $is_free;
 	}
 
@@ -227,7 +229,37 @@ function pmprodon_enable_payments_for_donations( $is_free, $level ) {
 
 	// If donations are enabled, don't treat the level as free.
 	if ( ! empty( $settings['donations'] ) ) {
-		return false;
+		// Check if min_price is greater than 0
+		$min_price_check = ! empty( $settings['min_price'] ) && floatval( $settings['min_price'] ) > 0;
+
+		// Check dropdown values (all must be numeric and > 0, except 'other').
+		$dropdown_check = false;
+		if ( ! empty( $settings['dropdown_prices'] ) ) {
+			$dropdown_values = explode( ',', $settings['dropdown_prices'] );
+			$valid_values = true;
+
+			foreach ( $dropdown_values as $value ) {
+				$value = trim( $value );
+				if ( $value === 'other' ) {
+					continue; // 'other' is allowed.
+				}
+
+				if ( ! is_numeric( $value ) || floatval( $value ) <= 0 ) {
+					$valid_values = false;
+					break;
+				}
+			}
+
+			$dropdown_check = $valid_values && count( $dropdown_values ) > 0;
+		}
+
+		// Only return false (not free) if either condition is met.
+		if ( $min_price_check || $dropdown_check ) {
+			return false;
+		} else {
+			// Let's remove the donation fields if no payment method was enabled.
+			remove_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_user_fields' );
+		}
 	}
 
 	return $is_free;
