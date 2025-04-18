@@ -141,3 +141,37 @@ function pmprodon_pmpro_is_level_expiring_soon( $return, $level ) {
 	return $return;
 }
 add_filter( 'pmpro_is_level_expiring_soon', 'pmprodon_pmpro_is_level_expiring_soon', 10, 2 );
+
+/**
+ * Filter the text that says a level will be removed at checkout.
+ * Only modifies the specific text about level removal during checkout.
+ *
+ * @since TBD
+ *
+ * @param string $translated_text The translated text.
+ * @param string $text The original text.
+ * @param string $domain The text domain.
+ * @return string The modified text.
+ */
+function pmprodon_filter_checkout_level_change_text( $translated_text, $text, $domain ) {
+	// Only proceed if we're on the checkout page.
+	if ( ! pmpro_is_checkout() ) {
+		return $translated_text;
+	}
+
+	// Target only the specific message about level removal.
+	if ( $domain === 'paid-memberships-pro' &&
+		$text === 'Your current membership level of %s will be removed when you complete your purchase.' ) {
+
+		global $pmpro_level;
+
+		// Check if this is a donation-only level.
+		if ( ! empty( $pmpro_level ) && pmprodon_is_donations_only( $pmpro_level->id ) ) {
+			// Return a different message for donation-only levels.
+			return '';
+		}
+	}
+
+	return $translated_text;
+}
+add_filter( 'gettext', 'pmprodon_filter_checkout_level_change_text', 10, 3 );
