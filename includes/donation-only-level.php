@@ -1,5 +1,11 @@
 <?php
+/*
+	IDEA
 
+	* Add setting to edit level page to mark it as a "donation-only level".
+	* Don't cancel any old orders or subscriptions when checking out for a donation-only level.
+	* If an existing user checks out for a donation-only level, give them their old level back.
+*/
 /**
  * Set existing member flag before checkout.
  * Store user's previous levels and prevent cancellation when checking out for donation-only level.
