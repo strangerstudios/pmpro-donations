@@ -469,7 +469,7 @@ function pmprodon_store_donation_amount_in_order_meta( $order ) {
 		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( $_REQUEST['donation'] ) );
 	}
 }
-add_action( 'pmpro_added_order', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );
+add_action( 'pmpro_added_order', 'pmprodon_store_donation_amount_in_order_meta' );
 
 /**
  * Function to add the donation confirmation message to the confirmation page.
