@@ -462,15 +462,14 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_p
  *
  * @since 2.0
  *
- * @param int   $user_id The user ID.
  * @param object The order object.
  */
-function pmprodon_store_donation_amount_in_order_meta( $user_id, $order ) {
+function pmprodon_store_donation_amount_in_order_meta( $order ) {
 	if ( isset( $_REQUEST['donation'] ) ) {
 		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( $_REQUEST['donation'] ) );
 	}
 }
-add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );
+add_action( 'pmpro_added_order', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );
 
 /**
  * Function to add the donation confirmation message to the confirmation page.
