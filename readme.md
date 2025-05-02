@@ -1,4 +1,4 @@
-<!-- ![](pmpro-sample-banner.png) -->
+<!-- ![](pmpro-donations.png) -->
 
 # [Paid Memberships Pro - Donations](https://www.paidmembershipspro.com/add-ons/donations-add-on/) #
 [comment]: # (Generate badges from shields.io, only works for .org plugins to get other stats etc. We'd have to create our own endpoints for Premium plugins)
@@ -8,7 +8,7 @@
 ### Welcome to the Paid Memberships Pro - Donations GitHub Repository
 Allow customers to set an additional donation amount at checkout to offer ways for the community to support you and help your organization meet fundraising goals.
 
-For more information please visit [paidmembershipspro.com/add-ons/donations-add-on/](https://www.paidmembershipspro.com/add-ons/donations-add-on/)
+For more information please visit [Paid Memberships Pro - Donations](https://www.paidmembershipspro.com/add-ons/donations-add-on/)
 
 ## Installation ##
 For detailed installation steps, visit the [documentation](https://www.paidmembershipspro.com/add-ons/donations-add-on/) page.
