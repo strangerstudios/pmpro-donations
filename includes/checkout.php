@@ -77,7 +77,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 									<?php
 									foreach ( $dropdown_prices as $price ) {
 										?>
-										<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo esc_html( pmpro_formatPrice( (double) $price ) ); ?></option>
+										<option <?php selected( $price, $donation ); ?> value="<?php echo esc_attr( $price ); ?>"><?php echo esc_html( pmpro_formatPrice( (float) $price ) ); ?></option>
 										<?php
 									}
 									if ( $pmprodon_allow_other ) {
@@ -254,11 +254,11 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 			$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] ) );
 
 			// check that the donation falls between the min and max
-			if ( (double) $donation < 0 || ( ! empty( $donfields['min_price'] ) && (double) $donation < (double) $donfields['min_price'] ) ) {
+			if ( (float) $donation < 0 || ( ! empty( $donfields['min_price'] ) && (float) $donation < (float) $donfields['min_price'] ) ) {
 				$pmpro_msg  = sprintf( __( 'The lowest accepted donation is %s. Please enter a new amount.', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) );
 				$pmpro_msgt = 'pmpro_error';
 				$continue   = false;
-			} elseif ( ! empty( $donfields['max_price'] ) && (double) $donation > (double) $donfields['max_price'] ) {
+			} elseif ( ! empty( $donfields['max_price'] ) && (float) $donation > (float) $donfields['max_price'] ) {
 				$pmpro_msg = sprintf( __( 'The highest accepted donation is %s. Please enter a new amount.', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) );
 
 				$pmpro_msgt = 'pmpro_error';
