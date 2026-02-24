@@ -207,6 +207,58 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 add_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_user_fields' );
 
 /**
+ * Enable payment gateways for free levels that have donations enabled.
+ *
+ * If a free level has donations enabled with a min_price > 0 or
+ * dropdown_prices containing numeric values > 0, mark the level
+ * as non-free so that payment gateways render on checkout.
+ *
+ * @since 2.3
+ *
+ * @param bool   $is_free Whether the level is free.
+ * @param object $level   The level object being checked.
+ * @return bool Whether the level should be treated as free.
+ */
+function pmprodon_enable_payments_for_free_level_donations( $is_free, $level ) {
+	// Only act on free levels during checkout.
+	if ( ! $is_free || ! pmpro_is_checkout() ) {
+		return $is_free;
+	}
+
+	// Get donation settings for this level.
+	$donfields = pmprodon_get_level_settings( $level->id );
+
+	// If donations are not enabled, leave as-is.
+	if ( empty( $donfields['donations'] ) ) {
+		return $is_free;
+	}
+
+	// Check if min_price requires a donation.
+	if ( ! empty( $donfields['min_price'] ) && (float) $donfields['min_price'] > 0 ) {
+		return false;
+	}
+
+	// Check if dropdown_prices contain numeric values > 0.
+	if ( ! empty( $donfields['dropdown_prices'] ) ) {
+		$prices = str_replace( ' ', '', $donfields['dropdown_prices'] );
+		$prices = explode( ',', $prices );
+		$has_numeric = false;
+		foreach ( $prices as $price ) {
+			if ( $price !== 'other' && (float) $price > 0 ) {
+				$has_numeric = true;
+				break;
+			}
+		}
+		if ( $has_numeric ) {
+			return false;
+		}
+	}
+
+	return $is_free;
+}
+add_filter( 'pmpro_is_level_free', 'pmprodon_enable_payments_for_free_level_donations', 10, 2 );
+
+/**
  * Set price at checkout
  */
 function pmprodon_pmpro_checkout_level( $level ) {
@@ -261,6 +313,13 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 			} elseif ( ! empty( $donfields['max_price'] ) && (float) $donation > (float) $donfields['max_price'] ) {
 				$pmpro_msg = sprintf( __( 'The highest accepted donation is %s. Please enter a new amount.', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) );
 
+				$pmpro_msgt = 'pmpro_error';
+				$continue   = false;
+			}
+
+			// Free levels with min_price > 0 require a donation amount.
+			if ( $continue && ! empty( $donfields['min_price'] ) && (float) $donfields['min_price'] > 0 && intval( $level->initial_payment ) === 0 && (float) $donation <= 0 ) {
+				$pmpro_msg  = sprintf( __( 'A donation of at least %s is required. Please enter a donation amount.', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) );
 				$pmpro_msgt = 'pmpro_error';
 				$continue   = false;
 			}
