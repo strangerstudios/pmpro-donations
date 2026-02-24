@@ -89,10 +89,10 @@ function pmprodon_render_guest_checkout_toggle() {
 					$('#password2').closest('.' + '<?php echo esc_js( pmpro_get_element_class( 'pmpro_form_field' ) ); ?>').hide();
 					// Set placeholder values for hidden fields.
 					if ($('#username').length && !$('#username').val()) {
-						$('#username').val('guest_donor_' + Math.random().toString(36).substr(2, 8));
+						$('#username').val('guest_donor_' + Math.random().toString(36).substring(2, 10));
 					}
 					if ($('#password').length && !$('#password').val()) {
-						var guestPwd = Math.random().toString(36).substr(2, 20) + Math.random().toString(36).substr(2, 20);
+						var guestPwd = Math.random().toString(36).substring(2, 22) + Math.random().toString(36).substring(2, 22);
 						$('#password').val(guestPwd);
 						$('#password2, #password2_confirm').val(guestPwd);
 					}
@@ -914,16 +914,15 @@ function pmprodon_pmpro_email_filter( $email ) {
 	// Replace membership language with donation language for donation-only levels.
 	if ( ! empty( $order->membership_id ) && pmprodon_is_donations_only( $order->membership_id ) ) {
 		// Replace common membership phrases with donation equivalents.
+		// Use __() on search keys so replacements work on translated PMPro sites.
 		$replacements = array(
-			'Your membership account is now active.'     => __( 'Your donation has been received.', 'pmpro-donations' ),
-			'your membership account is now active.'     => __( 'your donation has been received.', 'pmpro-donations' ),
-			'Thank you for your membership'              => __( 'Thank you for your donation', 'pmpro-donations' ),
-			'thank you for your membership'              => __( 'thank you for your donation', 'pmpro-donations' ),
-			'membership level has been changed'          => __( 'donation has been processed', 'pmpro-donations' ),
-			'has changed their membership level'         => __( 'has made a donation', 'pmpro-donations' ),
-			'your membership confirmation'               => __( 'your donation confirmation', 'pmpro-donations' ),
-			'Your membership confirmation'               => __( 'Your donation confirmation', 'pmpro-donations' ),
-			'Membership Level:'                          => __( 'Donation:', 'pmpro-donations' ),
+			__( 'Your membership account is now active.', 'paid-memberships-pro' )  => __( 'Your donation has been received.', 'pmpro-donations' ),
+			__( 'Thank you for your membership', 'paid-memberships-pro' )           => __( 'Thank you for your donation', 'pmpro-donations' ),
+			__( 'membership level has been changed', 'paid-memberships-pro' )       => __( 'donation has been processed', 'pmpro-donations' ),
+			__( 'has changed their membership level', 'paid-memberships-pro' )      => __( 'has made a donation', 'pmpro-donations' ),
+			__( 'your membership confirmation', 'paid-memberships-pro' )            => __( 'your donation confirmation', 'pmpro-donations' ),
+			__( 'Your membership confirmation', 'paid-memberships-pro' )            => __( 'Your donation confirmation', 'pmpro-donations' ),
+			__( 'Membership Level:', 'paid-memberships-pro' )                       => __( 'Donation:', 'pmpro-donations' ),
 		);
 
 		foreach ( $replacements as $search => $replace ) {
@@ -1394,7 +1393,7 @@ function pmprodon_filter_guest_donor_email( $email ) {
 
 	return $email;
 }
-add_filter( 'pmpro_email_filter', 'pmprodon_filter_guest_donor_email', 5, 2 );
+add_filter( 'pmpro_email_filter', 'pmprodon_filter_guest_donor_email', 5 );
 
 /**
  * Handle confirmation key access for guest donors.

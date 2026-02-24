@@ -110,6 +110,10 @@ function pmprodon_pmpro_after_checkout( $user_id ) {
 				}
 
 				// Cancel the donation-only level properly.
+				// Suppress cancellation emails during level swap.
+				add_filter( 'pmpro_send_cancel_admin_email', '__return_false' );
+				add_filter( 'pmpro_email_filter', 'pmprodon_suppress_cancellation_email', 1 );
+
 				pmpro_cancelMembershipLevel( $donation_level_id, $user_id, 'inactive' );
 
 				// Create a custom level array for restoration.
@@ -129,7 +133,14 @@ function pmprodon_pmpro_after_checkout( $user_id ) {
 				);
 
 				// Restore the original level.
-				pmpro_changeMembershipLevel( $custom_level, $user_id );
+				$restored = pmpro_changeMembershipLevel( $custom_level, $user_id );
+				if ( ! $restored ) {
+					error_log( sprintf( 'PMPro Donations: Failed to restore level %d for user %d after donation-only checkout.', $level_to_restore->id, $user_id ) );
+				}
+
+				// Re-enable cancellation emails.
+				remove_filter( 'pmpro_send_cancel_admin_email', '__return_false' );
+				remove_filter( 'pmpro_email_filter', 'pmprodon_suppress_cancellation_email', 1 );
 			}
 		}
 
@@ -168,7 +179,11 @@ function pmprodon_cancel_donation_only_level_for_user( $user_id ) {
 
 	foreach ( $current_levels as $level ) {
 		if ( pmprodon_is_donations_only( $level->id ) ) {
+			add_filter( 'pmpro_send_cancel_admin_email', '__return_false' );
+			add_filter( 'pmpro_email_filter', 'pmprodon_suppress_cancellation_email', 1 );
 			pmpro_cancelMembershipLevel( $level->id, $user_id, 'inactive' );
+			remove_filter( 'pmpro_send_cancel_admin_email', '__return_false' );
+			remove_filter( 'pmpro_email_filter', 'pmprodon_suppress_cancellation_email', 1 );
 
 			// Reset user cache.
 			global $all_membership_levels;
@@ -230,3 +245,22 @@ function pmprodon_filter_checkout_level_change_text( $translated_text, $text, $d
 	return $translated_text;
 }
 add_filter( 'gettext', 'pmprodon_filter_checkout_level_change_text', 10, 3 );
+
+/**
+ * Suppress cancellation emails during donation-only level swaps.
+ *
+ * Hooked temporarily at priority 1 on pmpro_email_filter to block
+ * cancellation emails that would confuse donors during the
+ * cancel-and-restore flow.
+ *
+ * @since 2.3
+ *
+ * @param object $email The email object.
+ * @return object The email object, with send disabled if it's a cancellation email.
+ */
+function pmprodon_suppress_cancellation_email( $email ) {
+	if ( strpos( $email->template, 'cancel' ) !== false ) {
+		$email->send = false;
+	}
+	return $email;
+}

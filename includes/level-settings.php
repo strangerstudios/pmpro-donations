@@ -160,23 +160,6 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 
 <script>
 	jQuery(document).ready(function($) {
-		//toggle fields based on checkbox
-		const toggleDonFields = () => {
-			const $donCheckBox = $('#donations');
-			const $trs = $('.donations-settings-table tbody tr');
-			if($donCheckBox.is(':checked')) {
-				$trs.show();
-			} else {
-				$trs.hide();
-			}
-			$donCheckBox.closest('tr').show();
-		};
-		toggleDonFields();
-		//toggle fields when checkbox state changes
-		$('#donations').on('change', function() {
-			toggleDonFields();
-		});
-
 		//toggle guest donations row based on donations_only checkbox
 		const toggleGuestDonations = () => {
 			if($('#donations_only').is(':checked')) {
@@ -229,6 +212,28 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 		toggleCoverFees();
 		$('#cover_fees_enabled').on('change', function() {
 			toggleCoverFees();
+		});
+
+		//toggle fields based on main donations checkbox
+		const toggleDonFields = () => {
+			const $donCheckBox = $('#donations');
+			const $trs = $('.donations-settings-table tbody tr');
+			if($donCheckBox.is(':checked')) {
+				$trs.show();
+				// Re-apply conditional sub-toggles so dependent rows
+				// respect their own checkbox/field state.
+				toggleGuestDonations();
+				toggleDisplayMode();
+				toggleNoteLabel();
+				toggleCoverFees();
+			} else {
+				$trs.hide();
+			}
+			$donCheckBox.closest('tr').show();
+		};
+		toggleDonFields();
+		$('#donations').on('change', function() {
+			toggleDonFields();
 		});
 	});
 </script>
