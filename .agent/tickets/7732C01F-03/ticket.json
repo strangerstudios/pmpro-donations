@@ -1,0 +1,15 @@
+{
+  "number": 3,
+  "title": "Merge PR #85 — Fix donation-only level replacing user's membership",
+  "body": "## Summary\nMerge PR #85 by @ipokkel (opened 2025-04-18) which fixes the critical bug where users with existing memberships lose their level after checking out for a donation-only level. Resolves Issues #72 and #91.\n\n## Product Context\n- **Goal**: Users should be able to make donations via donation-only levels without losing their existing membership.\n- **User Flow**: Gold member clicks \"Donate\" → checks out via donation-only level → donation is processed → user still has Gold membership.\n\n## Details\n- **PR**: #85, branch `keep-level` → `dev`\n- **Resolves**: Issue #72 (member level changes to donation level), Issue #91 (users keep donation level)\n- **Changes**: Complete rewrite of `donation-only-level.php`\n  - Stores user's previous levels in user meta before checkout\n  - After checkout, finds which level was in the same group as donation level\n  - Cancels donation-only level via `pmpro_cancelMembershipLevel()`\n  - Restores original level via `pmpro_changeMembershipLevel()` with full level data\n\n## Review Notes\n- Old approach (DELETE SQL query) was fragile; new approach using PMPro API is much better\n- Verify: does `pmpro_cancelMembershipLevel()` trigger unwanted side effects (emails, hooks)?\n- The stored `pmprodon_previous_levels` user meta should be cleaned up even on failure paths\n- **Test matrix**: single level group, multiple level groups, no level groups, recurring subscription levels\n\n## Provides To\n- 7732C01F-06 (Donation-only experience overhaul) depends on this level restoration logic being solid",
+  "labels": [
+    "bug-fix",
+    "pr-merge",
+    "donation-only",
+    "checkout",
+    "phase-0",
+    "phase-1"
+  ],
+  "priority": "P0",
+  "created_at": "2026-02-24T01:23:53.448Z"
+}

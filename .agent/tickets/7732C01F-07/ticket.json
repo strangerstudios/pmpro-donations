@@ -1,0 +1,12 @@
+{
+  "number": 7,
+  "title": "Admin donation amount field when creating/editing orders",
+  "body": "## Summary\nAdd a donation amount field to the admin \"Add New Order\" and \"Add Member\" pages so administrators can specify donation amounts without going through front-end checkout.\n\n## Product Context\n- **Goal**: Admins should be able to record offline donations or manually create donation orders from the WordPress admin.\n- **User Flow**: Admin goes to Add New Order → selects a level with donations enabled → donation amount field appears → enters amount → order created with donation recorded in order meta.\n\n## Implementation\n- Hook into `pmpro_after_order_settings` on the add-new-order admin page\n- Check if existing edit hooks in `admin.php` already handle this — may need only minor additions\n- Show donation amount field only when the selected level has donations enabled\n- Save donation to order meta on order creation\n- Integrate with \"Add Member\" admin page if applicable\n\n## Files\n- `includes/admin.php`",
+  "labels": [
+    "enhancement",
+    "admin",
+    "phase-2"
+  ],
+  "priority": "P2",
+  "created_at": "2026-02-24T01:24:44.387Z"
+}

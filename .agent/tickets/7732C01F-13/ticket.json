@@ -1,0 +1,13 @@
+{
+  "number": 13,
+  "title": "Per-level email and confirmation template overrides for donations",
+  "body": "## Summary\nAllow different email confirmation templates and confirmation page content per level type (donation vs membership vs purchase). This extends the donation-only experience overhaul with a more generic template override system.\n\n## Product Context\n- **Goal**: Users increasingly use PMPro for generic purchases, not just memberships. Different level types need different communication.\n- **User Flow**: Admin configures a donation level → selects \"Donation\" email template → sets custom confirmation content → donors receive donation-specific emails with `!!donation!!` and `!!donation_note!!` variables.\n- **Source**: Ideas meeting (Kim)\n\n## Implementation\n1. **Level settings** (`includes/level-settings.php`):\n   - New setting: `email_template_override` — allows selecting a different email template\n   - Leverages existing `confirmation_message` setting (already per-level)\n\n2. **Email filtering**:\n   - Hook `pmpro_email_filter` to swap template when checkout level has donations\n   - Register donation-specific email variables: `!!donation!!`, `!!donation_note!!`\n\n3. **Compatibility**:\n   - Compatible with pmpro-email-templates add-on if installed\n   - May need coordination with Email Templates add-on for full functionality\n\n## Integration Points\n- **Receives from**: 7732C01F-12 (donation-only experience overhaul provides the base donation language filtering)\n- **Receives from**: 7732C01F-06 (donor note field provides the `!!donation_note!!` variable)\n\n## Files\n- `includes/level-settings.php` — template override setting\n- `includes/checkout.php` — email filter hooks",
+  "labels": [
+    "feature",
+    "email",
+    "admin",
+    "phase-3"
+  ],
+  "priority": "P2",
+  "created_at": "2026-02-24T01:26:06.361Z"
+}

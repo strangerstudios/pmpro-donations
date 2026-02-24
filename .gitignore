@@ -1,0 +1,9 @@
+
+
+# Agent orchestration system
+.agent/logs/
+.agent/sessions/
+.agent/data/
+.agent/tickets/*/sessions.log
+.agent/tickets/*/progress.json
+.agent/tickets/*/*.tsbuildinfo

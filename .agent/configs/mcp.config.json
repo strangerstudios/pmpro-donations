@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "agent-v2": {
+      "command": "node",
+      "args": [
+        "/home/flint/.npm-global/lib/node_modules/@matt.weber.io/homurai/dist/bin/mcp-server.js"
+      ],
+      "env": {
+        "AGENT_ROOT": "/home/flint/repos/strangerstudios/pmpro-donations"
+      }
+    }
+  }
+}

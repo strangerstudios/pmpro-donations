@@ -1,0 +1,59 @@
+[
+  {
+    "timestamp": "2026-02-24T01:32:46.433Z",
+    "agent": "planner",
+    "action": "Agent started",
+    "result": "success",
+    "eventType": "AGENT_START"
+  },
+  {
+    "timestamp": "2026-02-24T01:33:49.129Z",
+    "agent": "planner",
+    "action": "Agent completed",
+    "result": "success",
+    "artifactsCreated": [
+      "plan.json"
+    ],
+    "eventType": "AGENT_COMPLETE"
+  },
+  {
+    "timestamp": "2026-02-24T01:33:49.136Z",
+    "agent": "coder",
+    "iteration": 0,
+    "action": "Agent started",
+    "result": "success",
+    "eventType": "AGENT_START"
+  },
+  {
+    "timestamp": "2026-02-24T01:34:53.352Z",
+    "agent": "coder",
+    "iteration": 0,
+    "action": "Agent completed",
+    "result": "success",
+    "artifactsCreated": [
+      "implementation.md",
+      "code files"
+    ],
+    "eventType": "AGENT_COMPLETE"
+  },
+  {
+    "timestamp": "2026-02-24T01:34:53.376Z",
+    "agent": "review-pool",
+    "iteration": 1,
+    "action": "Agent started",
+    "result": "success",
+    "eventType": "AGENT_START"
+  },
+  {
+    "timestamp": "2026-02-24T01:36:03.525Z",
+    "agent": "review-pool",
+    "iteration": 1,
+    "action": "Agent completed",
+    "result": "success",
+    "artifactsCreated": [
+      "review.json",
+      "review-report.md"
+    ],
+    "eventType": "AGENT_COMPLETE"
+  }
+]

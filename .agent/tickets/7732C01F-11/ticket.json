@@ -1,0 +1,13 @@
+{
+  "number": 11,
+  "title": "Donation reminder emails on configurable schedule",
+  "body": "## Summary\nSend periodic reminder emails to members encouraging them to donate again. Useful for free levels with donation-only functionality where re-engagement drives repeat donations.\n\n## Product Context\n- **Goal**: Increase repeat donation rates by sending timely, respectful reminders to past donors.\n- **User Flow**: Member donates → X days later receives a friendly reminder email with donation link → can opt out of future reminders.\n- **Issue**: #12\n\n## Implementation\n1. **Level settings** (`includes/level-settings.php`):\n   - `reminder_interval` (none | monthly | quarterly | annually)\n\n2. **Cron job**:\n   - Register WP cron event to check for members due for reminders\n   - Query: members who donated more than X days ago (based on interval)\n   - Track last donation date per user in user meta\n\n3. **Email**:\n   - Reminder email template with donation link\n   - Use PMPro's existing email infrastructure\n\n4. **Opt-out**:\n   - Respect unsubscribe/opt-out preference\n   - Store opt-out in user meta\n\n## Dependencies\nBenefits from PMPro's existing email infrastructure.\n\n## Files\n- `includes/level-settings.php` — reminder interval setting\n- New: `includes/reminders.php` — cron job, email logic\n- Main plugin file — register cron hooks",
+  "labels": [
+    "feature",
+    "email",
+    "cron",
+    "phase-3"
+  ],
+  "priority": "P2",
+  "created_at": "2026-02-24T01:25:32.719Z"
+}

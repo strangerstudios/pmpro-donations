@@ -1,0 +1,18 @@
+{
+  "allowWrites": [
+    "src/**",
+    "lib/**",
+    "tests/**",
+    "test/**",
+    "docs/**",
+    ".agent/**"
+  ],
+  "denyWrites": [
+    ".git/**",
+    "node_modules/**",
+    "venv/**",
+    "__pycache__/**",
+    ".agent/configs/**"
+  ],
+  "commands": []
+}

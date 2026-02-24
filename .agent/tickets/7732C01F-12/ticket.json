@@ -1,0 +1,16 @@
+{
+  "number": 12,
+  "title": "Donation-only level experience overhaul — language, UI, and confirmation",
+  "body": "## Summary\nComprehensively improve the donation-only level experience so it feels like a proper donation flow rather than a membership checkout hack. This consolidates Issues #62 (donation-specific confirmation) and Ideas Meeting item \"Better donations without a level\" into a single cohesive effort.\n\n## Product Context\n- **Goal**: When a user checks out for a donation-only level, every piece of text, email, and UI element should reference \"donation\" — not \"membership.\"\n- **User Flow**: Donor selects donation-only level → checkout page says \"Make a Donation\" (not \"Select a Membership\") → confirmation says \"Thank you for your donation\" → email references donation → account page does NOT show donation-only level as an active membership.\n- **Components**: Checkout text filtering, confirmation page, email templates, account page filtering.\n\n## Implementation\n1. **Checkout text** (`includes/checkout.php`):\n   - Filter `pmpro_checkout_page_title` and other checkout text hooks\n   - Replace membership language with donation language for donation-only levels\n   - Hide membership-specific UI elements (expiration dates, etc.)\n\n2. **Confirmation page** (`includes/donation-only-level.php`):\n   - Filter `pmpro_confirmation_message` for donation-only levels\n   - Show \"Thank you for your donation\" instead of \"your membership is now active\"\n   - Use existing `confirmation_message` level setting as starting point\n\n3. **Email integration** (`includes/checkout.php`):\n   - Filter `pmpro_email_data` to provide donation-specific subject lines and body content\n   - Add/filter email template for donation-only checkouts\n   - Ensure no \"your membership level has changed\" messaging\n\n4. **Account page**:\n   - Don't show donation-only level on membership account page\n   - Filter relevant account page hooks\n\n## Integration Points\n- **Receives from**: 7732C01F-03 (donation-only level restoration fix must be in place first)\n- **Provides to**: 7732C01F-12 (email templates per level builds on this foundation)\n\n## Files\n- `includes/donation-only-level.php` — primary changes\n- `includes/checkout.php` — text filtering, email data",
+  "labels": [
+    "enhancement",
+    "donation-only",
+    "checkout",
+    "email",
+    "ux",
+    "phase-2",
+    "phase-3"
+  ],
+  "priority": "P1",
+  "created_at": "2026-02-24T01:25:54.516Z"
+}

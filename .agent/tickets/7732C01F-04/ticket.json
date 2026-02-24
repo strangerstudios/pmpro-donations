@@ -1,0 +1,14 @@
+{
+  "number": 4,
+  "title": "Fix donation amount storage bugs — Pay by Check gateway and whitespace",
+  "body": "## Summary\nFix two related donation amount storage bugs that cause donation data to be lost or corrupted:\n\n1. **Pay by Check gateway** (Issue #86, High Priority): Donation amount stored as 0 in order meta when using Pay by Check gateway. Works correctly with Stripe and other gateways.\n2. **Whitespace in amounts** (Issue #89, Medium Priority): Donation amounts with trailing whitespace (e.g., \"10 \") stored as strings with the space, causing exclusion from reports and numeric queries.\n\n## Root Cause Investigation (Pay by Check)\nThe `pmprodon_store_donation_amount_in_order_meta()` function hooks `pmpro_after_checkout` and reads from `$_REQUEST['donation']`. Pay by Check may handle the checkout flow differently, clearing `$_REQUEST` before this hook fires. Compare the checkout flow for PBC vs Stripe to find where the donation value is lost.\n\n## Implementation (Whitespace Fix)\nAdd `trim()` before storing donation amount in ALL storage paths:\n1. `pmprodon_store_donation_amount_in_order_meta()` in `includes/checkout.php`\n2. `pmprodon_pmpro_updated_order()` in `includes/admin.php` (admin order editing)\n3. `pmprodon_pmpro_checkout_level()` where donation is read from `$_REQUEST`\n\nAlso verify the existing `preg_replace('/[^0-9\\.]/', ...)` sanitization handles whitespace, or add explicit `trim()`.\n\n## Files\n- `includes/checkout.php` (primary — `pmprodon_store_donation_amount_in_order_meta`)\n- `includes/admin.php` (admin order editing path)",
+  "labels": [
+    "bug-fix",
+    "checkout",
+    "gateway",
+    "data-integrity",
+    "phase-1"
+  ],
+  "priority": "P1",
+  "created_at": "2026-02-24T01:24:09.904Z"
+}

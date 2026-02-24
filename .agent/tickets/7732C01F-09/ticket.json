@@ -1,0 +1,14 @@
+{
+  "number": 9,
+  "title": "Cover processing fees checkbox at checkout",
+  "body": "## Summary\nAdd a \"Cover processing fees\" checkbox at checkout so donors can optionally increase their donation to cover payment gateway fees, ensuring the organization receives the full intended donation amount.\n\n## Product Context\n- **Goal**: Many donors are willing to add a small amount to cover processing fees. This feature maximizes donation value for organizations.\n- **User Flow**: Donor enters $50 donation → sees checkbox: \"Add $1.75 to cover processing fees\" → checks box → total updates to $51.75 → organization receives full $50 after fees.\n- **Source**: Ideas meeting (Jason), High Priority\n\n## Implementation\n1. **Level settings** (`includes/level-settings.php`):\n   - `cover_fees_enabled` (checkbox to enable feature per level)\n   - `cover_fees_percentage` (default 2.9 for Stripe)\n   - `cover_fees_flat` (default $0.30 for Stripe)\n\n2. **Checkout** (`includes/checkout.php`):\n   - Render checkbox below donation amount: \"Add $X.XX to cover processing fees\"\n   - JavaScript calculates fee dynamically as donation amount changes\n   - Fee formula: `fee = (donation + flat) / (1 - percentage/100) - donation`\n   - Updates checkout total in real-time\n\n3. **Order meta**:\n   - Store original donation and fee separately: `donation_fee_covered`\n   - Show fee breakdown on invoice\n\n## Files\n- `includes/checkout.php` — checkbox rendering, JS calculation\n- `includes/level-settings.php` — fee configuration settings\n- `includes/common.php` — fee calculation helper function",
+  "labels": [
+    "feature",
+    "checkout",
+    "javascript",
+    "gateway",
+    "phase-3"
+  ],
+  "priority": "P1",
+  "created_at": "2026-02-24T01:25:10.536Z"
+}

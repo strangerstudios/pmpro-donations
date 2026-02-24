@@ -1,0 +1,14 @@
+{
+  "number": 2,
+  "title": "Merge PR #84 — Enable payment gateways for free levels with donations",
+  "body": "## Summary\nMerge PR #84 by @ipokkel (opened 2025-04-16) which fixes Issue #81: PayPal Express and other payment gateways not appearing on checkout for free levels that have donations enabled.\n\n## Product Context\n- **Goal**: Free membership levels with donations enabled should show payment gateways so users can actually pay their donation amount.\n- **User Flow**: User selects a free level with donations → checkout page renders payment gateway fields → user enters donation amount and pays.\n\n## Details\n- **PR**: #84, branch `payments-free-level` → `dev`\n- **Resolves**: Issue #81\n- **Changes**:\n  - New function `pmprodon_enable_payments_for_free_level_donations()` hooked to `pmpro_is_level_free`\n  - If a free level has donations enabled (with min_price > 0 or valid dropdown values), returns `false` so gateways render\n  - Adds validation: if donation is required on free level, donation must be > 0\n\n## Review Notes\n- Logic is sound but needs edge case testing: `dropdown_prices` containing only \"other\" should still allow $0 donation\n- Validation (`intval($level->initial_payment) === 0 && donation <= 0`) should only apply when `min_price > 0` — otherwise users should be able to donate $0 on a free level\n- Test with: PayPal Express, Stripe, Pay by Check gateways",
+  "labels": [
+    "bug-fix",
+    "pr-merge",
+    "gateway",
+    "checkout",
+    "phase-0"
+  ],
+  "priority": "P1",
+  "created_at": "2026-02-24T01:23:37.778Z"
+}

@@ -1,0 +1,13 @@
+{
+  "number": 14,
+  "title": "Integration Verification: PMPro Donations v2.3 end-to-end QA",
+  "body": "## Summary\nEnd-to-end integration verification for all PMPro Donations v2.3 features and bug fixes. This ticket covers manual QA of the complete user flow across all changes to ensure nothing breaks when all features are combined.\n\n## Scope\nVerify the integrated behavior of all v2.3 tickets working together:\n- PR merges (PHP 8.5 fix, gateway fix, donation-only fix)\n- Bug fixes (Pay by Check, whitespace)\n- New features (buttons UI, cover fees, donor notes, reports)\n- Experience improvements (donation-only language, email templates)\n\n## Test Matrix\n1. **Gateway coverage**: Test full checkout flow with Stripe, PayPal Express, Pay by Check\n2. **Level types**: Free level + donation, paid level + donation, donation-only level\n3. **User states**: New user, existing member, admin-created order\n4. **Feature combinations**: Buttons + cover fees + donor note all enabled on same level\n5. **PHP versions**: 8.1, 8.2, 8.5+\n\n## Integration Checks\n- Donation buttons UI + cover fees checkbox interact correctly (fee updates when button clicked)\n- Donor note flows from checkout → order meta → email → invoice → CSV export → admin edit\n- Donation-only level: proper language + level restoration + confirmation email all work together\n- Reports correctly aggregate data from all gateway types and new meta fields\n- Admin order creation includes donation amount, note, and fee fields",
+  "labels": [
+    "qa",
+    "integration",
+    "testing",
+    "release"
+  ],
+  "priority": "P1",
+  "created_at": "2026-02-24T01:26:22.740Z"
+}

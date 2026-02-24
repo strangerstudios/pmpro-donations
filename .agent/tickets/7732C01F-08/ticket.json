@@ -1,0 +1,15 @@
+{
+  "number": 8,
+  "title": "Big and beautiful donation amount buttons UI at checkout",
+  "body": "## Summary\nReplace the plain dropdown with visually appealing, large, clickable donation amount button tiles at checkout — inspired by modern charity donation forms. This is the first CSS file in the plugin.\n\n## Product Context\n- **Goal**: Make the donation selection experience feel modern and inviting, increasing conversion.\n- **User Flow**: Donor arrives at checkout → sees large, attractive amount buttons ($10, $25, $50, $100, Other) → clicks desired amount → button highlights → proceeds to checkout.\n- **Source**: Ideas meeting (Jason), High Priority\n\n## Implementation\n1. **New display mode** when `dropdown_prices` are set:\n   - Render as button grid instead of `<select>` dropdown\n   - Each amount is a clickable card/tile showing the formatted price\n   - \"Other\" option renders as a compact text input\n   - Selected button gets active state styling\n\n2. **Level settings** (`includes/level-settings.php`):\n   - New setting: `display_mode` (dropdown | buttons)\n   - Default to buttons for new installs\n\n3. **Styling**:\n   - New `css/` directory or inline styles using PMPro design tokens\n   - This is the plugin's first CSS file — establish good patterns\n   - Responsive design for mobile\n   - Accessible: keyboard navigable, ARIA labels, focus states\n\n4. **Fallback**: Falls back to text input if no dropdown prices configured\n\n## Files\n- `includes/checkout.php` — new rendering logic\n- New `css/` directory with stylesheet\n- `includes/level-settings.php` — display_mode setting",
+  "labels": [
+    "feature",
+    "ui",
+    "checkout",
+    "css",
+    "accessibility",
+    "phase-3"
+  ],
+  "priority": "P1",
+  "created_at": "2026-02-24T01:24:58.645Z"
+}

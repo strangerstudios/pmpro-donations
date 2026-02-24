@@ -1,0 +1,26 @@
+{
+  "ticketId": "7732C01F-01",
+  "title": "Fix PHP 8.5 deprecation: replace (double) casts with (float) in checkout.php",
+  "type": "bugfix",
+  "complexity": "low",
+  "estimatedHours": 0.5,
+  "filesToEdit": ["includes/checkout.php"],
+  "filesToCreate": [],
+  "acceptanceCriteria": [
+    "All 3 occurrences of (double) cast in includes/checkout.php are replaced with (float)",
+    "No other code changes beyond the cast replacements",
+    "No deprecation notices on PHP 8.5+ for (double) casts",
+    "Checkout validation logic (min/max amounts, price formatting) behaves identically"
+  ],
+  "technicalApproach": "Replace 3 occurrences of `(double)` with `(float)` in includes/checkout.php. These are at line 80 (dropdown price formatting), line 257 (min price validation), and line 261 (max price validation). This is a trivial rename — `(double)` and `(float)` are semantically identical in PHP but `(double)` triggers deprecation warnings in PHP 8.5+. No behavioral change whatsoever. QA is skipped because this project has no build tools, linter, or test framework (pure PHP WordPress plugin). Review perspectives for security, performance, testing, documentation, and architecture are skipped because this is a zero-risk single-token rename with no logic, API, or structural changes.",
+  "risks": ["Extremely low risk — (double) and (float) are fully equivalent PHP casts"],
+  "dependencies": [],
+  "testingStrategy": "Manual verification: confirm the 3 replacements are correct and no other code is changed. No automated tests available in this project.",
+  "requiresTests": false,
+  "testsToCreate": [],
+  "testCommand": null,
+  "waiveTestsReason": "This is a trivial cast keyword rename ((double) -> (float)) with zero behavioral change in a PHP WordPress plugin that has no test framework. The two cast types are semantically identical in PHP. Adding a test framework for this one-token change would be disproportionate.",
+  "skipQA": true,
+  "skipReview": false,
+  "skipReviewPerspectives": ["architecture", "security", "performance", "testing", "documentation"]
+}

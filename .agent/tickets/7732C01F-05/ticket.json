@@ -1,0 +1,15 @@
+{
+  "number": 5,
+  "title": "Built-in donations report with filtering and CSV export",
+  "body": "## Summary\nBuild a proper donations report page for the PMPro Reports dashboard. PR #83 by @vbuster01 provides a starting point but requires substantial rework to meet coding standards and security requirements before it can be merged.\n\n## Product Context\n- **Goal**: Give site admins visibility into donation activity through a dedicated report page integrated into PMPro's existing Reports dashboard.\n- **User Flow**: Admin navigates to PMPro → Reports → Donations Report → sees totals, filters by month/year, views individual donations, exports CSV.\n\n## Implementation (Rework of PR #83)\n1. **File restructure**: Move from root to `includes/reports.php`\n2. **Function naming**: Rename all `MY_pmpro_` prefixed functions to `pmprodon_` per conventions\n3. **Security fixes**:\n   - Add `$wpdb->prepare()` for ALL query parameters\n   - Add `wp_verify_nonce()` for CSV export\n   - Add capability checks\n4. **WordPress standards**:\n   - Replace `date()` with `wp_date()` or `gmdate()`\n   - Proper escaping and sanitization on all output/input\n   - Use `pmpro-donations` text domain (not `pmpro`)\n5. **Integration**: Add `require_once` from main plugin file\n6. **Report features**:\n   - Report widget on PMPro Reports dashboard\n   - Total donations, average donation, donation count, top donors\n   - Month/year filtering with proper UI\n   - Individual donation entries with member details\n   - CSV export with nonce verification and capability check\n7. **Styling**: Follow PMPro's existing report page patterns and styles\n\n## Files\n- New: `includes/reports.php` (replaces PR #83's `pmpro-donations-report.php`)\n- Modified: Main plugin file (add require_once)",
+  "labels": [
+    "feature",
+    "reports",
+    "admin",
+    "security",
+    "pr-merge",
+    "phase-4"
+  ],
+  "priority": "P1",
+  "created_at": "2026-02-24T01:24:24.229Z"
+}

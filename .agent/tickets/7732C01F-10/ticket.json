@@ -1,0 +1,14 @@
+{
+  "number": 10,
+  "title": "Guest donations without account creation",
+  "body": "## Summary\nAllow donation-only checkout without creating a WordPress user account. For pure donation pages, requiring account creation adds friction that reduces conversion. This is a complex feature flagged as a v3.0 candidate.\n\n## Product Context\n- **Goal**: Remove the account creation barrier for one-time donors, increasing donation conversion rates.\n- **User Flow**: Visitor clicks \"Donate\" → selects amount → sees option to donate as guest → enters email only → pays → receives confirmation email (no account details) → can access confirmation via unique key.\n- **Issue**: #22\n\n## Implementation\n1. **Level settings**: New `allow_guest_donations` checkbox\n2. **Checkout flow**:\n   - Dropdown on checkout: \"Donate as Guest\" or \"Create Account\"\n   - Guest flow: collect email only, skip registration fields\n   - Create temp user, process payment, delete user after confirmation\n   - Generate random key for confirmation page access\n3. **Confirmation**: Custom confirmation email without account details\n4. **Edge cases**: Logged-in users don't see the guest/account toggle\n\n## Risk\nHigh complexity — touches core PMPro user creation flow. Requires careful testing of the temp user creation/deletion cycle and its interaction with gateway webhooks, recurring payments, etc.\n\n## Files\n- `includes/checkout.php` — guest flow logic\n- `includes/donation-only-level.php` — guest support\n- `includes/level-settings.php` — new setting",
+  "labels": [
+    "feature",
+    "checkout",
+    "user-flow",
+    "phase-3",
+    "v3.0-candidate"
+  ],
+  "priority": "P2",
+  "created_at": "2026-02-24T01:25:22.728Z"
+}

@@ -1,0 +1,13 @@
+{
+  "number": 1,
+  "title": "Merge PR #90 — PHP 8.5 deprecation fix for (double) casts",
+  "body": "## Summary\nMerge existing PR #90 by @dwanjuki (opened 2026-01-09) which fixes PHP 8.5 deprecation notices by replacing `(double)` casts with `(float)` in `checkout.php`.\n\n## Details\n- **PR**: #90, branch `fix-php-8.5-notices` → `dev`\n- **Changes**: Replace 3 occurrences of `(double)` cast with `(float)` in `checkout.php`\n- **Risk**: Low — trivial cast rename with no behavioral change. `(double)` and `(float)` are equivalent in PHP but `(double)` triggers deprecation in PHP 8.5+.\n\n## Action\n1. Confirm no merge conflicts with `dev-2.3`\n2. Merge PR as-is\n3. Verify no deprecation notices on PHP 8.5+\n4. Quick smoke test of checkout validation (min/max amounts, price formatting)",
+  "labels": [
+    "bug-fix",
+    "php-compat",
+    "pr-merge",
+    "phase-0"
+  ],
+  "priority": "P2",
+  "created_at": "2026-02-24T01:23:23.674Z"
+}
