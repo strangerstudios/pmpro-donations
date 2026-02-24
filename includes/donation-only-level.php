@@ -18,6 +18,12 @@
 function pmprodon_pmpro_checkout_before_change_membership_level( $user_id, $morder ) {
 	global $pmprodon_existing_member_flag, $pmpro_level;
 
+	// Skip level preservation for guest donors — they have no existing levels.
+	$is_guest = get_user_meta( $user_id, 'pmprodon_is_guest_donor', true );
+	if ( ! empty( $is_guest ) ) {
+		return;
+	}
+
 	if ( pmpro_hasMembershipLevel() && pmpro_is_checkout() && ! empty( $pmpro_level ) && pmprodon_is_donations_only( $pmpro_level->id ) ) {
 		// Store the user's current level info before it gets changed.
 		$current_levels = pmpro_getMembershipLevelsForUser( $user_id );
@@ -37,6 +43,9 @@ add_action( 'pmpro_checkout_before_change_membership_level', 'pmprodon_pmpro_che
  * Uses PMPro API to detect donation-only level assignment, then restores
  * the correct previous level respecting level groups.
  *
+ * For non-members (new users with no prior levels), cancels the donation-only
+ * level so it does not persist on the account page.
+ *
  * @since 2.3
  *
  * @param int $user_id The user ID.
@@ -44,89 +53,131 @@ add_action( 'pmpro_checkout_before_change_membership_level', 'pmprodon_pmpro_che
 function pmprodon_pmpro_after_checkout( $user_id ) {
 	global $pmprodon_existing_member_flag;
 
-	if ( ! isset( $pmprodon_existing_member_flag ) ) {
+	// Skip level restoration for guest donors — they have no previous levels.
+	$is_guest = get_user_meta( $user_id, 'pmprodon_is_guest_donor', true );
+	if ( ! empty( $is_guest ) ) {
+		// Guest donors should not retain a donation-only level either.
+		pmprodon_cancel_donation_only_level_for_user( $user_id );
 		return;
 	}
 
-	// Get user's current levels.
-	$current_levels = pmpro_getMembershipLevelsForUser( $user_id );
+	// Handle existing members — restore their previous level.
+	if ( isset( $pmprodon_existing_member_flag ) ) {
+		// Get user's current levels.
+		$current_levels = pmpro_getMembershipLevelsForUser( $user_id );
 
-	// Check if they now have a donation-only level.
-	$donation_level_id = null;
-	$has_donation_level = false;
+		// Check if they now have a donation-only level.
+		$donation_level_id  = null;
+		$has_donation_level = false;
+
+		foreach ( $current_levels as $level ) {
+			if ( pmprodon_is_donations_only( $level->id ) ) {
+				$donation_level_id  = $level->id;
+				$has_donation_level = true;
+				break;
+			}
+		}
+
+		// If user has a donation-only level, restore their previous level.
+		if ( $has_donation_level ) {
+			// Get their previous levels that we stored.
+			$previous_levels = get_user_meta( $user_id, 'pmprodon_previous_levels', true );
+
+			if ( ! empty( $previous_levels ) ) {
+				// Determine which level we should restore.
+				$level_to_restore = null;
+
+				// Find a level from the same group as the donation level.
+				$donation_group_id = null;
+				if ( function_exists( 'pmpro_get_group_id_for_level' ) ) {
+					$donation_group_id = pmpro_get_group_id_for_level( $donation_level_id );
+				}
+
+				if ( $donation_group_id ) {
+					// Find a previous level in the same group.
+					foreach ( $previous_levels as $prev_level ) {
+						$prev_level_group_id = pmpro_get_group_id_for_level( $prev_level->id );
+						if ( $prev_level_group_id === $donation_group_id ) {
+							$level_to_restore = $prev_level;
+							break;
+						}
+					}
+				}
+
+				// If no level found in the same group, use the first previous level.
+				if ( ! $level_to_restore ) {
+					$level_to_restore = $previous_levels[0];
+				}
+
+				// Cancel the donation-only level properly.
+				pmpro_cancelMembershipLevel( $donation_level_id, $user_id, 'inactive' );
+
+				// Create a custom level array for restoration.
+				$custom_level = array(
+					'user_id'         => $user_id,
+					'membership_id'   => $level_to_restore->id,
+					'code_id'         => $level_to_restore->code_id,
+					'initial_payment' => $level_to_restore->initial_payment,
+					'billing_amount'  => $level_to_restore->billing_amount,
+					'cycle_number'    => $level_to_restore->cycle_number,
+					'cycle_period'    => $level_to_restore->cycle_period,
+					'billing_limit'   => $level_to_restore->billing_limit,
+					'trial_amount'    => $level_to_restore->trial_amount,
+					'trial_limit'     => $level_to_restore->trial_limit,
+					'startdate'       => $level_to_restore->startdate,
+					'enddate'         => $level_to_restore->enddate,
+				);
+
+				// Restore the original level.
+				pmpro_changeMembershipLevel( $custom_level, $user_id );
+			}
+		}
+
+		// Always clean up stored meta when existing member flag was set.
+		delete_user_meta( $user_id, 'pmprodon_previous_levels' );
+
+		// Reset user.
+		global $all_membership_levels;
+		unset( $all_membership_levels[ $user_id ] );
+		pmpro_set_current_user();
+
+		return;
+	}
+
+	// Handle non-members — cancel the donation-only level so it does not
+	// persist on the account page. This user had no prior membership.
+	pmprodon_cancel_donation_only_level_for_user( $user_id );
+}
+add_action( 'pmpro_after_checkout', 'pmprodon_pmpro_after_checkout' );
+
+/**
+ * Cancel any donation-only level for a user.
+ *
+ * Used after checkout for non-members and guest donors so that the
+ * donation-only level does not persist on the account page.
+ *
+ * @since 2.3
+ *
+ * @param int $user_id The user ID.
+ */
+function pmprodon_cancel_donation_only_level_for_user( $user_id ) {
+	$current_levels = pmpro_getMembershipLevelsForUser( $user_id );
+	if ( empty( $current_levels ) ) {
+		return;
+	}
 
 	foreach ( $current_levels as $level ) {
 		if ( pmprodon_is_donations_only( $level->id ) ) {
-			$donation_level_id = $level->id;
-			$has_donation_level = true;
+			pmpro_cancelMembershipLevel( $level->id, $user_id, 'inactive' );
+
+			// Reset user cache.
+			global $all_membership_levels;
+			unset( $all_membership_levels[ $user_id ] );
+			pmpro_set_current_user();
 			break;
 		}
 	}
-
-	// If user has a donation-only level, restore their previous level.
-	if ( $has_donation_level ) {
-		// Get their previous levels that we stored.
-		$previous_levels = get_user_meta( $user_id, 'pmprodon_previous_levels', true );
-
-		if ( ! empty( $previous_levels ) ) {
-			// Determine which level we should restore.
-			$level_to_restore = null;
-
-			// Find a level from the same group as the donation level.
-			$donation_group_id = null;
-			if ( function_exists( 'pmpro_get_group_id_for_level' ) ) {
-				$donation_group_id = pmpro_get_group_id_for_level( $donation_level_id );
-			}
-
-			if ( $donation_group_id ) {
-				// Find a previous level in the same group.
-				foreach ( $previous_levels as $prev_level ) {
-					$prev_level_group_id = pmpro_get_group_id_for_level( $prev_level->id );
-					if ( $prev_level_group_id === $donation_group_id ) {
-						$level_to_restore = $prev_level;
-						break;
-					}
-				}
-			}
-
-			// If no level found in the same group, use the first previous level.
-			if ( ! $level_to_restore ) {
-				$level_to_restore = $previous_levels[0];
-			}
-
-			// Cancel the donation-only level properly.
-			pmpro_cancelMembershipLevel( $donation_level_id, $user_id, 'inactive' );
-
-			// Create a custom level array for restoration.
-			$custom_level = array(
-				'user_id'         => $user_id,
-				'membership_id'   => $level_to_restore->id,
-				'code_id'         => $level_to_restore->code_id,
-				'initial_payment' => $level_to_restore->initial_payment,
-				'billing_amount'  => $level_to_restore->billing_amount,
-				'cycle_number'    => $level_to_restore->cycle_number,
-				'cycle_period'    => $level_to_restore->cycle_period,
-				'billing_limit'   => $level_to_restore->billing_limit,
-				'trial_amount'    => $level_to_restore->trial_amount,
-				'trial_limit'     => $level_to_restore->trial_limit,
-				'startdate'       => $level_to_restore->startdate,
-				'enddate'         => $level_to_restore->enddate,
-			);
-
-			// Restore the original level.
-			pmpro_changeMembershipLevel( $custom_level, $user_id );
-		}
-	}
-
-	// Always clean up stored meta when existing member flag was set.
-	delete_user_meta( $user_id, 'pmprodon_previous_levels' );
-
-	// Reset user.
-	global $all_membership_levels;
-	unset( $all_membership_levels[ $user_id ] );
-	pmpro_set_current_user();
 }
-add_action( 'pmpro_after_checkout', 'pmprodon_pmpro_after_checkout' );
 
 /**
  * On the edit level page, we never want to prevent a user from selecting a donation-only level.
