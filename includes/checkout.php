@@ -1289,6 +1289,7 @@ function pmprodon_setup_guest_donor_user( $user_id ) {
 
 	// Mark user as a guest donor.
 	update_user_meta( $user_id, 'pmprodon_is_guest_donor', 1 );
+	update_user_meta( $user_id, 'pmprodon_guest_created', current_time( 'timestamp' ) );
 
 	// Remove all roles so the user cannot log in.
 	$user = new WP_User( $user_id );
@@ -1316,7 +1317,9 @@ function pmprodon_store_guest_confirmation_key( $user_id, $order ) {
 	}
 
 	$confirmation_key = pmprodon_generate_confirmation_key();
+	$key_created_at   = current_time( 'timestamp' );
 	update_pmpro_membership_order_meta( $order->id, 'pmprodon_confirmation_key', $confirmation_key );
+	update_pmpro_membership_order_meta( $order->id, 'pmprodon_confirmation_key_created', $key_created_at );
 
 	// Store the guest flag on the order meta for easy lookup.
 	update_pmpro_membership_order_meta( $order->id, 'pmprodon_is_guest_order', 1 );
@@ -1445,6 +1448,17 @@ function pmprodon_handle_confirmation_key_access() {
 		return;
 	}
 
+	// Enforce expiration for confirmation-key access.
+	$key_created_at = intval( get_pmpro_membership_order_meta( $order_id, 'pmprodon_confirmation_key_created', true ) );
+	$key_lifetime   = apply_filters( 'pmprodon_confirmation_key_lifetime', 30 * DAY_IN_SECONDS );
+	if ( empty( $key_created_at ) ) {
+		$order_for_timestamp = new MemberOrder( $order_id );
+		$key_created_at      = $order_for_timestamp->getTimestamp();
+	}
+	if ( empty( $key_created_at ) || ( current_time( 'timestamp' ) - intval( $key_created_at ) ) > $key_lifetime ) {
+		return;
+	}
+
 	// Load the order and set up the global for the confirmation template.
 	$order = new MemberOrder( $order_id );
 	if ( empty( $order->id ) ) {
@@ -1459,6 +1473,59 @@ function pmprodon_handle_confirmation_key_access() {
 	wp_set_current_user( $order->user_id );
 }
 add_action( 'template_redirect', 'pmprodon_handle_confirmation_key_access', 1 );
+
+/**
+ * Clean up stale guest-donor user accounts.
+ *
+ * Guest users are temporary operational accounts used to process checkout.
+ * This daily cleanup keeps them from persisting indefinitely.
+ *
+ * @since 2.3
+ */
+function pmprodon_cleanup_stale_guest_donor_users() {
+	if ( ! function_exists( 'get_users' ) ) {
+		return;
+	}
+
+	$retention_seconds = apply_filters( 'pmprodon_guest_user_retention', 45 * DAY_IN_SECONDS );
+	$cutoff            = current_time( 'timestamp' ) - intval( $retention_seconds );
+
+	$per_page = 200;
+	do {
+		$guest_ids = get_users(
+			array(
+				'fields'     => 'ID',
+				'number'     => $per_page,
+				'meta_query' => array(
+					'relation' => 'AND',
+					array(
+						'key'   => 'pmprodon_is_guest_donor',
+						'value' => 1,
+					),
+					array(
+						'key'     => 'pmprodon_guest_created',
+						'value'   => $cutoff,
+						'compare' => '<=',
+						'type'    => 'NUMERIC',
+					),
+				),
+			)
+		);
+
+		if ( empty( $guest_ids ) ) {
+			break;
+		}
+
+		foreach ( $guest_ids as $guest_id ) {
+			if ( ! function_exists( 'wp_delete_user' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/user.php';
+			}
+			wp_delete_user( intval( $guest_id ) );
+		}
+
+	} while ( count( $guest_ids ) === $per_page );
+}
+add_action( 'pmprodon_donation_reminders_cron', 'pmprodon_cleanup_stale_guest_donor_users', 20 );
 
 /**
  * Restore guest checkout state for PayPal Express redirect flow.

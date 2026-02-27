@@ -116,27 +116,30 @@ function pmprodon_pmpro_after_checkout( $user_id ) {
 
 				pmpro_cancelMembershipLevel( $donation_level_id, $user_id, 'inactive' );
 
-				// Create a custom level array for restoration.
-				$custom_level = array(
-					'user_id'         => $user_id,
-					'membership_id'   => $level_to_restore->id,
-					'code_id'         => $level_to_restore->code_id,
-					'initial_payment' => $level_to_restore->initial_payment,
-					'billing_amount'  => $level_to_restore->billing_amount,
-					'cycle_number'    => $level_to_restore->cycle_number,
-					'cycle_period'    => $level_to_restore->cycle_period,
-					'billing_limit'   => $level_to_restore->billing_limit,
-					'trial_amount'    => $level_to_restore->trial_amount,
-					'trial_limit'     => $level_to_restore->trial_limit,
-					'startdate'       => $level_to_restore->startdate,
-					'enddate'         => $level_to_restore->enddate,
-				);
+					$current_levels = pmpro_getMembershipLevelsForUser( $user_id );
+					if ( ! pmprodon_user_has_level( $current_levels, $level_to_restore->id ) ) {
+						// Create a custom level array for restoration.
+						$custom_level = array(
+							'user_id'         => $user_id,
+							'membership_id'   => $level_to_restore->id,
+							'code_id'         => $level_to_restore->code_id,
+							'initial_payment' => $level_to_restore->initial_payment,
+							'billing_amount'  => $level_to_restore->billing_amount,
+							'cycle_number'    => $level_to_restore->cycle_number,
+							'cycle_period'    => $level_to_restore->cycle_period,
+							'billing_limit'   => $level_to_restore->billing_limit,
+							'trial_amount'    => $level_to_restore->trial_amount,
+							'trial_limit'     => $level_to_restore->trial_limit,
+							'startdate'       => $level_to_restore->startdate,
+							'enddate'         => $level_to_restore->enddate,
+						);
 
-				// Restore the original level.
-				$restored = pmpro_changeMembershipLevel( $custom_level, $user_id );
-				if ( ! $restored ) {
-					error_log( sprintf( 'PMPro Donations: Failed to restore level %d for user %d after donation-only checkout.', $level_to_restore->id, $user_id ) );
-				}
+						// Restore the original level.
+						$restored = pmpro_changeMembershipLevel( $custom_level, $user_id );
+						if ( ! $restored ) {
+							error_log( sprintf( 'PMPro Donations: Failed to restore level %d for user %d after donation-only checkout.', $level_to_restore->id, $user_id ) );
+						}
+					}
 
 				// Re-enable cancellation emails.
 				remove_filter( 'pmpro_send_cancel_admin_email', '__return_false' );
@@ -192,6 +195,29 @@ function pmprodon_cancel_donation_only_level_for_user( $user_id ) {
 			break;
 		}
 	}
+}
+
+/**
+ * Check whether a level ID is present in a user's current levels.
+ *
+ * @since 2.3
+ *
+ * @param array $levels   Array of level objects.
+ * @param int   $level_id Level ID to check.
+ * @return bool
+ */
+function pmprodon_user_has_level( $levels, $level_id ) {
+	if ( empty( $levels ) ) {
+		return false;
+	}
+
+	foreach ( $levels as $level ) {
+		if ( ! empty( $level->id ) && intval( $level->id ) === intval( $level_id ) ) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**

@@ -177,67 +177,76 @@ function pmprodon_process_donation_reminders() {
 		$interval_seconds = $level_data['interval_seconds'];
 		$level            = $level_data['level'];
 
-		// Get active members on this level.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$members = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT DISTINCT mu.user_id
-				FROM {$wpdb->pmpro_memberships_users} mu
-				WHERE mu.membership_id = %d
-				AND mu.status = 'active'
-				LIMIT 500",
-				$level_id
-			)
-		);
+		// Process active members on this level in deterministic batches.
+		$last_user_id = 0;
+		$batch_size   = 500;
+		do {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$members = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT DISTINCT mu.user_id
+					FROM {$wpdb->pmpro_memberships_users} mu
+					WHERE mu.membership_id = %d
+					AND mu.status = 'active'
+					AND mu.user_id > %d
+					ORDER BY mu.user_id ASC
+					LIMIT %d",
+					$level_id,
+					$last_user_id,
+					$batch_size
+				)
+			);
 
-		if ( empty( $members ) ) {
-			continue;
-		}
-
-		foreach ( $members as $member ) {
-			$user_id = intval( $member->user_id );
-
-			// Skip guest donors.
-			$is_guest = get_user_meta( $user_id, 'pmprodon_is_guest_donor', true );
-			if ( ! empty( $is_guest ) ) {
-				continue;
+			if ( empty( $members ) ) {
+				break;
 			}
 
-			// Skip opted-out users.
-			$opted_out = get_user_meta( $user_id, 'pmprodon_reminder_optout', true );
-			if ( ! empty( $opted_out ) ) {
-				continue;
-			}
+			foreach ( $members as $member ) {
+				$user_id = intval( $member->user_id );
+				$last_user_id = max( $last_user_id, $user_id );
 
-			// Check last donation date.
-			$last_donation = get_user_meta( $user_id, 'pmprodon_last_donation_date', true );
-			if ( empty( $last_donation ) ) {
-				// No donation date recorded — skip, since we only remind past donors.
-				continue;
-			}
-
-			$time_since_donation = $now - intval( $last_donation );
-			if ( $time_since_donation < $interval_seconds ) {
-				// Not yet due for a reminder.
-				continue;
-			}
-
-			// Check last reminder sent timestamp.
-			$last_reminder = get_user_meta( $user_id, 'pmprodon_last_reminder_sent', true );
-			if ( ! empty( $last_reminder ) ) {
-				$time_since_reminder = $now - intval( $last_reminder );
-				if ( $time_since_reminder < $interval_seconds ) {
-					// Already sent a reminder within this interval.
+				// Skip guest donors.
+				$is_guest = get_user_meta( $user_id, 'pmprodon_is_guest_donor', true );
+				if ( ! empty( $is_guest ) ) {
 					continue;
 				}
-			}
 
-			// Send the reminder email.
-			$sent = pmprodon_send_reminder_email( $user_id, $level );
-			if ( $sent ) {
-				update_user_meta( $user_id, 'pmprodon_last_reminder_sent', $now );
+				// Skip opted-out users.
+				$opted_out = get_user_meta( $user_id, 'pmprodon_reminder_optout', true );
+				if ( ! empty( $opted_out ) ) {
+					continue;
+				}
+
+				// Check last donation date.
+				$last_donation = get_user_meta( $user_id, 'pmprodon_last_donation_date', true );
+				if ( empty( $last_donation ) ) {
+					// No donation date recorded — skip, since we only remind past donors.
+					continue;
+				}
+
+				$time_since_donation = $now - intval( $last_donation );
+				if ( $time_since_donation < $interval_seconds ) {
+					// Not yet due for a reminder.
+					continue;
+				}
+
+				// Check last reminder sent timestamp.
+				$last_reminder = get_user_meta( $user_id, 'pmprodon_last_reminder_sent', true );
+				if ( ! empty( $last_reminder ) ) {
+					$time_since_reminder = $now - intval( $last_reminder );
+					if ( $time_since_reminder < $interval_seconds ) {
+						// Already sent a reminder within this interval.
+						continue;
+					}
+				}
+
+				// Send the reminder email.
+				$sent = pmprodon_send_reminder_email( $user_id, $level );
+				if ( $sent ) {
+					update_user_meta( $user_id, 'pmprodon_last_reminder_sent', $now );
+				}
 			}
-		}
+		} while ( count( $members ) === $batch_size );
 	}
 }
 add_action( 'pmprodon_donation_reminders_cron', 'pmprodon_process_donation_reminders' );
