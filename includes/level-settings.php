@@ -31,9 +31,9 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 	</div>
 	<div class="pmpro_section_inside" <?php echo $section_visibility === 'hidden' ? 'style="display: none"' : ''; ?>>
 		<p>
-			<?php _e( 'If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.', 'pmpro-donations' ); ?>
+			<?php esc_html_e( 'If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maxium amount allowed for gifts for this level.', 'pmpro-donations' ); ?>
 			<?php
-			$donations_link = '<a title="' . esc_attr__( 'Donations Add On', 'pmpro-donations' ) . '" target="_blank" rel="nofollow noopener" href="https://www.paidmembershipspro.com/add-ons/donations-add-on/?utm_source=plugin&utm_medium=pmpro-donations&utm_campaign=add-ons&utm_content=&utm_term=">' . esc_html__( 'Donations', 'pmpro-donations' ) . '</a>';
+			$donations_link = '<a title="' . esc_attr__( 'Donations Add On Documentation', 'pmpro-donations' ) . '" target="_blank" rel="nofollow noopener" href="https://www.paidmembershipspro.com/add-ons/donations-add-on/?utm_source=plugin&utm_medium=pmpro-donations&utm_campaign=add-ons">' . esc_html__( 'Donations', 'pmpro-donations' ) . '</a>';
 			printf( esc_html__( 'Learn more about %s.', 'pmpro-donations' ), $donations_link ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			?>
 		</p>
