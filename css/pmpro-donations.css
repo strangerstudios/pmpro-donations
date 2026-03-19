@@ -1,0 +1,155 @@
+/**
+ * PMPro Donations — Frontend Styles
+ *
+ * Styles for the donation amount button grid at checkout.
+ *
+ * @since 2.3
+ */
+
+/* -----------------------------------------------
+ * Button Grid Layout
+ * ----------------------------------------------- */
+.pmprodon_buttons_grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	gap: 12px;
+	margin-bottom: 16px;
+	width: 100%;
+}
+
+/* -----------------------------------------------
+ * Individual Button Tiles
+ * ----------------------------------------------- */
+.pmprodon_button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px 12px;
+	border: 2px solid #dcdcde;
+	border-radius: 6px;
+	background: #fff;
+	cursor: pointer;
+	text-align: center;
+	transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+	position: relative;
+	min-height: 56px;
+}
+
+.pmprodon_button:hover {
+	border-color: #2271b1;
+	background-color: #f0f6fc;
+}
+
+.pmprodon_button:focus-within {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+/* -----------------------------------------------
+ * Active / Selected State
+ * ----------------------------------------------- */
+.pmprodon_button--active {
+	border-color: #2271b1;
+	background-color: #f0f6fc;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.pmprodon_button--active .pmprodon_button_label {
+	font-weight: 700;
+	color: #2271b1;
+}
+
+/* -----------------------------------------------
+ * Visually Hidden Radio Inputs (accessible)
+ * ----------------------------------------------- */
+.pmprodon_button_input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* -----------------------------------------------
+ * Button Label Text
+ * ----------------------------------------------- */
+.pmprodon_button_label {
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: #1d2327;
+}
+
+/* -----------------------------------------------
+ * Disabled State (review/confirmation mode)
+ * ----------------------------------------------- */
+.pmprodon_button[aria-disabled="true"] {
+	opacity: 0.6;
+	cursor: default;
+	pointer-events: none;
+}
+
+/* -----------------------------------------------
+ * Responsive: Mobile
+ * ----------------------------------------------- */
+@media (max-width: 480px) {
+	.pmprodon_buttons_grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 8px;
+	}
+
+	.pmprodon_button {
+		padding: 12px 8px;
+		min-height: 48px;
+	}
+
+	.pmprodon_button_label {
+		font-size: 16px;
+	}
+}
+
+/* -----------------------------------------------
+ * Responsive: Tablet
+ * ----------------------------------------------- */
+@media (min-width: 481px) and (max-width: 768px) {
+	.pmprodon_buttons_grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+/* -----------------------------------------------
+ * Cover Fees Checkbox
+ * ----------------------------------------------- */
+.pmprodon_cover_fees_field {
+	margin-top: 16px;
+	padding: 12px 16px;
+	background: #f9f9f9;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+
+.pmprodon_cover_fees_label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	line-height: 1.4;
+	color: #1d2327;
+}
+
+.pmprodon_cover_fees_label input[type="checkbox"] {
+	margin: 0;
+	flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+	.pmprodon_cover_fees_field {
+		padding: 10px 12px;
+	}
+}

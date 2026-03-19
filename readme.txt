@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, membership, donate, donations, gifts, charity, charities
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 2.2
+Stable tag: 2.3
 
 Allow customers to set an additional donation amount with customized minimum, maxium, and suggested amounts via dropdown at checkout.
 
@@ -24,6 +24,23 @@ This plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-donations/issues
 
 == Changelog ==
+= 2.3 - 2026-02-24 =
+* FEATURE: Added donation amount button tiles UI as an alternative to the dropdown at checkout. #88
+* FEATURE: Added "Cover Processing Fees" checkbox at checkout so donors can cover gateway fees. #89
+* FEATURE: Added guest donations — allow non-logged-in visitors to donate without creating an account. #84
+* FEATURE: Added donation reminder emails on a configurable schedule (monthly, quarterly, annually). #91
+* FEATURE: Added per-level email template overrides compatible with the Email Templates add-on. #93
+* FEATURE: Added donor note text field at checkout with invoice and email integration. #86
+* FEATURE: Added admin donation amount and note fields on the order edit and Add Member pages. #87
+* FEATURE: Added built-in Donations report with filtering by month/year and CSV export. #85
+* ENHANCEMENT: Donation-only level checkout now shows donation-appropriate language throughout. #92
+* ENHANCEMENT: Donation-only confirmation page and emails use donation language instead of membership language. #92
+* BUG FIX: Fixed payment gateways not rendering on free levels with donations enabled. #84
+* BUG FIX: Fixed donation-only level checkout replacing user's existing membership. Now uses PMPro API with level group awareness. #85
+* BUG FIX: Fixed donation amount not being stored when using the Pay by Check gateway. #86
+* BUG FIX: Fixed whitespace in donation amount input causing storage issues. #89
+* BUG FIX: Replaced deprecated `(double)` casts with `(float)` for PHP 8.5 compatibility. #90
+
 = 2.2 - 2025-04-17 =
 * BUG FIX: Fixed an issue where !!donation!! was not correctly being rendered in the email confirmation template. (@becleung, @MaximilianoRicoTabo)
 * BUG FIX: Fixed CSS class selectors for <select> dropdown for the predefined donation amounts. (@kimcoleman)
