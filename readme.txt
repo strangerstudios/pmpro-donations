@@ -5,7 +5,7 @@ Requires at least: 5.0
 Tested up to: 6.8
 Stable tag: 2.2
 
-Allow customers to set an additional donation amount with customized minimum, maxium, and suggested amounts via dropdown at checkout.
+Allow customers to set an additional donation amount with customized minimum, maximum, and suggested amounts via dropdown at checkout.
 
 == Description ==
 
