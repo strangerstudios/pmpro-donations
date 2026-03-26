@@ -43,6 +43,38 @@ function pmprodon_pmpro_after_checkout( $user_id ) {
 add_action( 'pmpro_after_checkout', 'pmprodon_pmpro_after_checkout' );
 
 /**
+ * Suppress the "Your current membership level of X will be removed when you complete your purchase."
+ * warning on the checkout page when purchasing a donation-only level, since the old level is preserved.
+ *
+ * @since TBD
+ *
+ * @param object $pmpro_level The level being checked out.
+ */
+function pmprodon_suppress_level_removal_warning( $pmpro_level ) {
+	if ( ! empty( $pmpro_level ) && pmprodon_is_donations_only( $pmpro_level->id ) ) {
+		add_filter( 'gettext', 'pmprodon_filter_level_removal_warning_text', 10, 3 );
+	}
+}
+add_action( 'pmpro_checkout_preheader_after_get_level_at_checkout', 'pmprodon_suppress_level_removal_warning' );
+
+/**
+ * Return an empty string for the "level will be removed" warning text so it is not displayed.
+ *
+ * @since TBD
+ *
+ * @param string $translation Translated text.
+ * @param string $text        Original text.
+ * @param string $domain      Text domain.
+ * @return string
+ */
+function pmprodon_filter_level_removal_warning_text( $translation, $text, $domain ) {
+	if ( 'paid-memberships-pro' === $domain && 'Your current membership level of %s will be removed when you complete your purchase.' === $text ) {
+		return '';
+	}
+	return $translation;
+}
+
+/**
  * On the edit level page, we never want to prevent a user from selecting a donation-only level.
  *
  * @since 1.1.2
