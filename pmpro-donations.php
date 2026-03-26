@@ -20,6 +20,7 @@ require_once( PMPRODON_DIR . '/includes/checkout.php' );
 require_once( PMPRODON_DIR . '/includes/donation-only-level.php' );
 require_once( PMPRODON_DIR . '/includes/level-settings.php' );
 require_once( PMPRODON_DIR . '/includes/admin.php' );
+require_once( PMPRODON_DIR . '/includes/reports.php' );
 
 /**
  * Load the languages folder for translations.
