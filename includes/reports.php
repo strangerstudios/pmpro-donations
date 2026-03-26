@@ -38,7 +38,8 @@ function pmprodon_get_donations_for_period( $period ) {
 	$sqlQuery = "SELECT COUNT(*) as count, COALESCE(SUM(om.meta_value), 0) as total
 		FROM $wpdb->pmpro_membership_ordermeta om
 		JOIN $wpdb->pmpro_membership_orders o ON om.pmpro_membership_order_id = o.id
-		WHERE om.meta_key = 'donation_amount' AND om.meta_value > 0";
+		WHERE om.meta_key = 'donation_amount' AND om.meta_value > 0
+		AND o.status NOT IN('refunded', 'review', 'token', 'error')";
 	
 	if ( 'today' === $period ) {
 		$sqlQuery .= " AND DATE(o.timestamp) = CURDATE()";
@@ -48,7 +49,7 @@ function pmprodon_get_donations_for_period( $period ) {
 		$sqlQuery .= " AND YEAR(o.timestamp) = YEAR(NOW())";
 	}
 
-	// Get the query.
+	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input is interpolated; values are hardcoded or sanitized above.
 	$row = $wpdb->get_row(
 		$sqlQuery
 	);
@@ -85,7 +86,8 @@ function pmprodon_get_donations_chart_data( $args ) {
 		$date_expr = "YEAR( DATE_ADD( o.timestamp, INTERVAL " . esc_sql( $tz_offset ) . " SECOND ) )";
 	}
 
-	$where = "WHERE om.meta_key = 'donation_amount' AND om.meta_value > 0";
+	$where = "WHERE om.meta_key = 'donation_amount' AND om.meta_value > 0
+		AND o.status NOT IN('refunded', 'review', 'token', 'error')";
 
 	if ( $startdate ) {
 		$where .= $wpdb->prepare( " AND o.timestamp >= DATE_ADD( %s, INTERVAL -%d SECOND )", $startdate, $tz_offset );
@@ -152,7 +154,8 @@ function pmprodon_resolve_date_range( $period, $month, $year, $custom_start_date
 function pmprodon_get_donations( $startdate = null, $enddate = null ) {
 	global $wpdb;
 
-	$where = "WHERE om.meta_key = 'donation_amount' AND om.meta_value > 0";
+	$where = "WHERE om.meta_key = 'donation_amount' AND om.meta_value > 0
+		AND o.status NOT IN('refunded', 'review', 'token', 'error')";
 
 	if ( $startdate ) {
 		$where .= $wpdb->prepare( ' AND o.timestamp >= %s', $startdate );
@@ -266,6 +269,7 @@ function pmprodon_get_donation_amounts_paid( $period, $count = null ) {
 			FROM {$wpdb->prefix}pmpro_membership_ordermeta om
 			JOIN {$wpdb->prefix}pmpro_membership_orders o ON om.pmpro_membership_order_id = o.id
 			WHERE om.meta_key = 'donation_amount' AND om.meta_value > 0
+			AND o.status NOT IN('refunded', 'review', 'token', 'error')
 			AND o.timestamp >= %s
 			GROUP BY amount
 			ORDER BY num DESC",
@@ -586,7 +590,7 @@ function pmpro_report_donations_page() {
 		<div class="pmpro_chart_area">
 			<div id="chart_div"></div>
 			<div class="pmpro_chart_description">
-				<p><center><em><?php esc_html_e( 'Average line calculated using data prior to current day, month, or year.', 'pmpro-donations' ); ?></em></center></p>
+				<p style="text-align: center;"><em><?php esc_html_e( 'Average line calculated using data prior to current day, month, or year.', 'pmpro-donations' ); ?></em></p>
 			</div>
 		</div>
 
