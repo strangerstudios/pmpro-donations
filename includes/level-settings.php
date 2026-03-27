@@ -1,10 +1,15 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Add Min Price and Max Price Fields on the edit levels page
  */
 function pmprodon_pmpro_membership_level_after_other_settings() {
 	global $pmpro_currency_symbol;
-	$level_id = intval( $_REQUEST['edit'] );
+	$level_id = isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0;
 	$donfields       = pmprodon_get_level_settings( $level_id );			
 	$donations       = ( ! isset( $donfields['donations'] ) ) ? 0 : $donfields['donations'];
 	$donations_only  = ( ! isset( $donfields['donations_only'] ) ) ? 0 : $donfields['donations_only'];
@@ -34,46 +39,47 @@ function pmprodon_pmpro_membership_level_after_other_settings() {
 			<?php esc_html_e( 'If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maximum amount allowed for gifts for this level.', 'pmpro-donations' ); ?>
 			<?php
 			$donations_link = '<a title="' . esc_attr__( 'Donations Add On Documentation', 'pmpro-donations' ) . '" target="_blank" rel="nofollow noopener" href="https://www.paidmembershipspro.com/add-ons/donations-add-on/?utm_source=plugin&utm_medium=pmpro-donations&utm_campaign=add-ons">' . esc_html__( 'Donations', 'pmpro-donations' ) . '</a>';
+			/* translators: %s is a link to the Donations Add On documentation */
 			printf( esc_html__( 'Learn more about %s.', 'pmpro-donations' ), $donations_link ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			?>
 		</p>
 		<table class="donations-settings-table">
 			<tbody class="form-table">
 				<tr>
-					<th scope="row" valign="top"><label for="donations"><?php _e( 'Enable:', 'pmpro-donations' ); ?></label></th>
+					<th scope="row" valign="top"><label for="donations"><?php esc_html_e( 'Enable:', 'pmpro-donations' ); ?></label></th>
 					<td>
-						<input type="checkbox" id="donations" name="donations" value="1" <?php checked( $donations, '1' ); ?> /> <label for="donations"><?php _e( 'Enable Donations', 'pmpro-donations' ); ?></label>
+						<input type="checkbox" id="donations" name="donations" value="1" <?php checked( $donations, '1' ); ?> /> <label for="donations"><?php esc_html_e( 'Enable Donations', 'pmpro-donations' ); ?></label>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row" valign="top"><label for="donations_only"><?php _e( 'Donations-Only Level:', 'pmpro-donations' ); ?></label></th>
+					<th scope="row" valign="top"><label for="donations_only"><?php esc_html_e( 'Donations-Only Level:', 'pmpro-donations' ); ?></label></th>
 					<td>
-						<input type="checkbox" id="donations_only" name="donations_only" value="1" <?php checked( $donations_only, '1' ); ?> /> <label for="donations_only"><?php _e( 'Check to have existing members NOT switched to this level at checkout.', 'pmpro-donations' ); ?></label>
+						<input type="checkbox" id="donations_only" name="donations_only" value="1" <?php checked( $donations_only, '1' ); ?> /> <label for="donations_only"><?php esc_html_e( 'Check to have existing members NOT switched to this level at checkout.', 'pmpro-donations' ); ?></label>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row" valign="top"><label for="donation_min_price"><?php _e( 'Min Amount:', 'pmpro-donations' ); ?></label></th>
+					<th scope="row" valign="top"><label for="donation_min_price"><?php esc_html_e( 'Min Amount:', 'pmpro-donations' ); ?></label></th>
 					<td>
-						<?php echo $pmpro_currency_symbol; ?><input type="text" id="donation_min_price" name="donation_min_price" value="<?php echo esc_attr( pmpro_filter_price_for_text_field( $min_price ) ) ?>" />
+						<?php echo esc_html( $pmpro_currency_symbol ); ?><input type="text" id="donation_min_price" name="donation_min_price" value="<?php echo esc_attr( pmpro_filter_price_for_text_field( $min_price ) ) ?>" />
 					</td>
 				</tr>
 				<tr>
-					<th scope="row" valign="top"><label for="donation_max_price"><?php _e( 'Max Amount:', 'pmpro-donations' ); ?></label></th>
+					<th scope="row" valign="top"><label for="donation_max_price"><?php esc_html_e( 'Max Amount:', 'pmpro-donations' ); ?></label></th>
 					<td>
-						<?php echo $pmpro_currency_symbol; ?><input type="text" id="donation_max_price" name="donation_max_price" value="<?php echo esc_attr( pmpro_filter_price_for_text_field( $max_price ) ) ?>" />
+						<?php echo esc_html( $pmpro_currency_symbol ); ?><input type="text" id="donation_max_price" name="donation_max_price" value="<?php echo esc_attr( pmpro_filter_price_for_text_field( $max_price ) ) ?>" />
 					</td>
 				</tr>
 				<tr>
-					<th scope="row" valign="top"><label for="dropdown_prices"><?php _e( 'Price Dropdown:', 'pmpro-donations' ); ?></label></th>
+					<th scope="row" valign="top"><label for="dropdown_prices"><?php esc_html_e( 'Price Dropdown:', 'pmpro-donations' ); ?></label></th>
 					<td>
-						<input type="text" id="dropdown_prices" name="dropdown_prices" size="60" value="<?php echo esc_attr( $dropdown_prices ); ?>" /><br /><small><?php _e( "Enter numbers separated by commas to popuplate a dropdown with suggested prices. Include 'other' (all lowercase) in the list to allow users to enter their own amount.", 'pmpro-donations' ); ?></small>
+						<input type="text" id="dropdown_prices" name="dropdown_prices" size="60" value="<?php echo esc_attr( $dropdown_prices ); ?>" /><br /><small><?php esc_html_e( "Enter numbers separated by commas to popuplate a dropdown with suggested prices. Include 'other' (all lowercase) in the list to allow users to enter their own amount.", 'pmpro-donations' ); ?></small>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row" valign="top"><label for="donations_text"><?php _e( 'Help Text:', 'pmpro-donations' ); ?></label></th>
+					<th scope="row" valign="top"><label for="donations_text"><?php esc_html_e( 'Help Text:', 'pmpro-donations' ); ?></label></th>
 					<td>
 						<?php wp_editor( $donations_text, 'donations_text', array( 'textarea_rows' => 5 ) ); ?>
-						<br /><small><?php _e( 'If not blank, this text will override the default text generated to explain the range of donation values accepted.', 'pmpro-donations' ); ?></small>
+						<br /><small><?php esc_html_e( 'If not blank, this text will override the default text generated to explain the range of donation values accepted.', 'pmpro-donations' ); ?></small>
 					</td>
 				</tr>
         <tr>
@@ -116,21 +122,16 @@ add_action( 'pmpro_membership_level_before_content_settings', 'pmprodon_pmpro_me
  * Save level cost text when the level is saved/added
  */
 function pmprodon_pmpro_save_membership_level( $level_id ) {
-	if ( ! empty( $_REQUEST['donations'] ) ) {
-		$donations = 1;
-	} else {
-		$donations = 0;
-	}
-	if ( ! empty( $_REQUEST['donations_only'] ) ) {
-		$donations_only = 1;
-	} else {
-		$donations_only = 0;
-	}
-	$min_price	          = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_min_price'] );
-	$max_price	          = preg_replace( '[^0-9\.]', '', $_REQUEST['donation_max_price'] );
-	$text	              = wp_kses_post( wp_unslash( $_REQUEST['donations_text'] ) );
-	$confirmation_message = wp_kses_post( wp_unslash( $_REQUEST['confirmation_message'] ) );
-	$dropdown_prices      = sanitize_text_field( $_REQUEST['dropdown_prices'] );
+	$donations      = ! empty( $_REQUEST['donations'] ) ? 1 : 0;
+	$donations_only = ! empty( $_REQUEST['donations_only'] ) ? 1 : 0;
+
+	$raw_min          = isset( $_REQUEST['donation_min_price'] ) ? wp_unslash( $_REQUEST['donation_min_price'] ) : '';
+	$raw_max          = isset( $_REQUEST['donation_max_price'] ) ? wp_unslash( $_REQUEST['donation_max_price'] ) : '';
+	$min_price        = '' !== $raw_min ? floatval( $raw_min ) : '';
+	$max_price        = '' !== $raw_max ? floatval( $raw_max ) : '';
+	$text             = wp_kses_post( wp_unslash( isset( $_REQUEST['donations_text'] ) ? $_REQUEST['donations_text'] : '' ) );
+	$confirmation_message = wp_kses_post( wp_unslash( isset( $_REQUEST['confirmation_message'] ) ? $_REQUEST['confirmation_message'] : '' ) );
+	$dropdown_prices  = sanitize_text_field( wp_unslash( isset( $_REQUEST['dropdown_prices'] ) ? $_REQUEST['dropdown_prices'] : '' ) );
 
 	update_option(
 		'pmprodon_' . $level_id, array(

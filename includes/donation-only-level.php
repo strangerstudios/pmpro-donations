@@ -1,4 +1,9 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
 	IDEA
 	* Add setting to edit level page to mark it as a "donation-only level".
@@ -31,8 +36,14 @@ function pmprodon_pmpro_after_checkout( $user_id ) {
 
 	if ( isset( $pmprodon_existing_member_flag ) ) {
 		// Remove last row added to members_users table.
-		$sqlQuery = "DELETE FROM $wpdb->pmpro_memberships_users WHERE user_id = '" . esc_sql( $user_id ) . "' AND membership_id = '" . esc_sql( $pmpro_level->id ) . "' ORDER BY id DESC LIMIT 1";
-		$wpdb->query( $sqlQuery );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM $wpdb->pmpro_memberships_users WHERE user_id = %d AND membership_id = %d ORDER BY id DESC LIMIT 1",
+				$user_id,
+				$pmpro_level->id
+			)
+		);
 
 		// Reset user.
 		global $all_membership_levels;

@@ -1,4 +1,9 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Donation report.
 
 /**
@@ -9,7 +14,7 @@ function pmprodon_report_donations_enqueue_scripts() {
 		return;
 	}
 	if ( ! wp_script_is( 'corechart', 'enqueued' ) ) {
-		wp_enqueue_script( 'corechart', PMPRO_URL . '/js/corechart.js' );
+		wp_enqueue_script( 'corechart', PMPRO_URL . '/js/corechart.js', array(), PMPRO_VERSION, false );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'pmprodon_report_donations_enqueue_scripts' );
@@ -49,10 +54,8 @@ function pmprodon_get_donations_for_period( $period ) {
 		$sqlQuery .= " AND YEAR(o.timestamp) = YEAR(NOW())";
 	}
 
-	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No user input is interpolated; values are hardcoded or sanitized above.
-	$row = $wpdb->get_row(
-		$sqlQuery
-	);
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- No user input; SQL is hardcoded MySQL functions only.
+	$row = $wpdb->get_row( $sqlQuery );
 
 	return $row ? $row : (object) array( 'count' => 0, 'total' => 0 );
 }
@@ -97,7 +100,8 @@ function pmprodon_get_donations_chart_data( $args ) {
 		$where .= $wpdb->prepare( " AND o.timestamp <= DATE_ADD( %s, INTERVAL -%d SECOND )", $end, $tz_offset );
 	}
 
-	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	// $date_expr uses esc_sql on an integer; $where is built with $wpdb->prepare for all user values.
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	return $wpdb->get_results(
 		"SELECT {$date_expr} as date, COUNT(*) as count, SUM(om.meta_value) as value
 		FROM $wpdb->pmpro_membership_ordermeta om
@@ -106,6 +110,7 @@ function pmprodon_get_donations_chart_data( $args ) {
 		GROUP BY {$date_expr}
 		ORDER BY {$date_expr}"
 	);
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 }
 
 /**
@@ -127,11 +132,11 @@ function pmprodon_resolve_date_range( $period, $month, $year, $custom_start_date
 		$enddate   = $year . '-12-' . date_i18n( 't', strtotime( $year . '-12-01' ) );
 	} elseif ( '7days' === $period || '30days' === $period ) {
 		$timeframe = ( '7days' === $period ) ? 7 : 30;
-		$startdate = date( 'Y-m-d', strtotime( current_time( 'mysql' ) . ' -' . $timeframe . ' DAY' ) );
+		$startdate = gmdate( 'Y-m-d', strtotime( current_time( 'mysql' ) . ' -' . $timeframe . ' DAY' ) );
 		$enddate   = current_time( 'mysql' );
 	} elseif ( '12months' === $period ) {
-		$startdate = date( 'Y-m-01', strtotime( current_time( 'mysql' ) . ' -12 month' ) );
-		$enddate   = date( 'Y-m-t', strtotime( current_time( 'mysql' ) . ' -1 month' ) );
+		$startdate = gmdate( 'Y-m-01', strtotime( current_time( 'mysql' ) . ' -12 month' ) );
+		$enddate   = gmdate( 'Y-m-t', strtotime( current_time( 'mysql' ) . ' -1 month' ) );
 	} elseif ( 'custom' === $period ) {
 		$startdate = $custom_start_date;
 		$enddate   = $custom_end_date;
@@ -165,7 +170,8 @@ function pmprodon_get_donations( $startdate = null, $enddate = null ) {
 		$where .= $wpdb->prepare( ' AND o.timestamp <= %s', $end );
 	}
 
-	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	// $where is built with $wpdb->prepare for all date values; remaining SQL is hardcoded.
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	return $wpdb->get_results(
 		"SELECT om.meta_value, o.timestamp, o.user_id, u.user_login,
 		        um1.meta_value as first_name, um2.meta_value as last_name
@@ -177,6 +183,7 @@ function pmprodon_get_donations( $startdate = null, $enddate = null ) {
 		{$where}
 		ORDER BY o.timestamp DESC"
 	);
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 }
 
 /**
@@ -195,17 +202,17 @@ function pmprodon_donations_csv_export() {
 		wp_die( esc_html__( 'Security check failed.', 'pmpro-donations' ) );
 	}
 
-	$period           = isset( $_GET['period'] ) ? sanitize_text_field( $_GET['period'] ) : 'annual';
+	$period           = isset( $_GET['period'] ) ? sanitize_text_field( wp_unslash( $_GET['period'] ) ) : 'annual';
 	$month            = isset( $_GET['month'] ) ? intval( $_GET['month'] ) : (int) date_i18n( 'n', current_time( 'timestamp' ) );
 	$year             = isset( $_GET['year'] ) ? intval( $_GET['year'] ) : (int) date_i18n( 'Y', current_time( 'timestamp' ) );
-	$custom_start     = isset( $_GET['custom_start_date'] ) ? sanitize_text_field( $_GET['custom_start_date'] ) : '';
-	$custom_end       = isset( $_GET['custom_end_date'] ) ? sanitize_text_field( $_GET['custom_end_date'] ) : '';
+	$custom_start     = isset( $_GET['custom_start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['custom_start_date'] ) ) : '';
+	$custom_end       = isset( $_GET['custom_end_date'] ) ? sanitize_text_field( wp_unslash( $_GET['custom_end_date'] ) ) : '';
 
 	$date_range = pmprodon_resolve_date_range( $period, $month, $year, $custom_start, $custom_end );
 	$donations  = pmprodon_get_donations( $date_range['startdate'], $date_range['enddate'] );
 
 	header( 'Content-Type: text/csv' );
-	header( 'Content-Disposition: attachment; filename="pmpro-donations-' . date( 'Y-m-d' ) . '.csv"' );
+	header( 'Content-Disposition: attachment; filename="pmpro-donations-' . gmdate( 'Y-m-d' ) . '.csv"' );
 
 	$output = fopen( 'php://output', 'w' );
 
@@ -263,6 +270,7 @@ function pmprodon_get_donation_amounts_paid( $period, $count = null ) {
 		$startdate = '1970-01-01';
 	}
 
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$rows = $wpdb->get_results(
 		$wpdb->prepare(
 			"SELECT ROUND(om.meta_value, 8) as amount, COUNT(*) as num
@@ -333,7 +341,8 @@ function pmpro_report_donations_widget() {
 				<tr class="pmpro_report_tr">
 					<td>
 						<?php if ( ! empty( $amounts ) ) { ?>
-							<button aria-label="<?php echo esc_attr( sprintf( __( 'Toggle donations by amount for %s', 'pmpro-donations' ), $period_label ) ); ?>" class="pmpro_report_th pmpro_report_th_closed"><?php echo esc_html( $period_label ); ?></button>
+							<?php /* translators: %s is the period label (e.g. "Today", "This Month") */ ?>
+					<button aria-label="<?php echo esc_attr( sprintf( __( 'Toggle donations by amount for %s', 'pmpro-donations' ), $period_label ) ); ?>" class="pmpro_report_th pmpro_report_th_closed"><?php echo esc_html( $period_label ); ?></button>
 						<?php } else { ?>
 							<?php echo esc_html( $period_label ); ?>
 						<?php } ?>
@@ -348,7 +357,8 @@ function pmpro_report_donations_widget() {
 					}
 				?>
 					<tr class="pmpro_report_tr_sub" style="display: none;">
-						<td aria-label="<?php echo esc_attr( sprintf( __( 'Donations of %s for %s', 'pmpro-donations' ), pmpro_formatPrice( $amount ), $period_label ) ); ?>">- <?php echo pmpro_escape_price( pmpro_formatPrice( $amount ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+						<?php /* translators: %1$s is the donation amount, %2$s is the period label (e.g. "Today") */ ?>
+						<td aria-label="<?php echo esc_attr( sprintf( __( 'Donations of %1$s for %2$s', 'pmpro-donations' ), pmpro_formatPrice( $amount ), $period_label ) ); ?>">- <?php echo pmpro_escape_price( pmpro_formatPrice( $amount ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
 						<td><?php echo esc_html( number_format_i18n( $quantity['total'] ) ); ?></td>
 						<td><?php echo pmpro_escape_price( pmpro_formatPrice( $amount * $quantity['total'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
 					</tr>
@@ -360,7 +370,8 @@ function pmpro_report_donations_widget() {
 	</table>
 	<?php if ( function_exists( 'pmpro_report_donations_page' ) ) { ?>
 		<p class="pmpro_report-button">
-			<a class="button button-primary" href="<?php echo esc_url( admin_url( 'admin.php?page=pmpro-reports&report=donations' ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'View the full %s report', 'pmpro-donations' ), $pmpro_reports['donations'] ) ); ?>"><?php esc_html_e( 'Details', 'pmpro-donations' ); ?></a>
+			<?php /* translators: %s is the report name */ ?>
+		<a class="button button-primary" href="<?php echo esc_url( admin_url( 'admin.php?page=pmpro-reports&report=donations' ) ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'View the full %s report', 'pmpro-donations' ), $pmpro_reports['donations'] ) ); ?>"><?php esc_html_e( 'Details', 'pmpro-donations' ); ?></a>
 		</p>
 	<?php } ?>
 </span>
@@ -376,14 +387,14 @@ function pmpro_report_donations_page() {
 	}
 
 	// Get form values.
-	$period   = isset( $_REQUEST['period'] ) ? sanitize_text_field( $_REQUEST['period'] ) : 'monthly';
+	$period   = isset( $_REQUEST['period'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['period'] ) ) : 'monthly';
 	$thisyear = (int) date_i18n( 'Y', current_time( 'timestamp' ) );
 	$month    = isset( $_REQUEST['month'] ) ? intval( $_REQUEST['month'] ) : (int) date_i18n( 'n', current_time( 'timestamp' ) );
 	$year     = isset( $_REQUEST['year'] ) ? intval( $_REQUEST['year'] ) : $thisyear;
 
 	// Resolve date range via shared helper (also used by CSV export).
-	$custom_start = isset( $_REQUEST['custom_start_date'] ) ? sanitize_text_field( $_REQUEST['custom_start_date'] ) : '';
-	$custom_end   = isset( $_REQUEST['custom_end_date'] ) ? sanitize_text_field( $_REQUEST['custom_end_date'] ) : '';
+	$custom_start = isset( $_REQUEST['custom_start_date'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['custom_start_date'] ) ) : '';
+	$custom_end   = isset( $_REQUEST['custom_end_date'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['custom_end_date'] ) ) : '';
 	$date_range   = pmprodon_resolve_date_range( $period, $month, $year, $custom_start, $custom_end );
 	$startdate    = $date_range['startdate'];
 	$enddate      = $date_range['enddate'];
@@ -426,11 +437,11 @@ function pmpro_report_donations_page() {
 		$loop = strtotime( $startdate );
 		$end  = strtotime( $enddate );
 		while ( $loop <= $end ) {
-			$d = date( 'Y-m-d', $loop );
+			$d = gmdate( 'Y-m-d', $loop );
 			if ( ! isset( $dates[ $d ] ) ) {
 				$dates[ $d ] = (object) array( 'date' => $d, 'count' => 0, 'value' => 0 );
 			}
-			if ( $d <= date( 'Y-m-d' ) ) {
+			if ( $d <= gmdate( 'Y-m-d' ) ) {
 				$total_in_period += $dates[ $d ]->value;
 				$units_in_period++;
 			}
@@ -441,11 +452,11 @@ function pmpro_report_donations_page() {
 		$loop = strtotime( $startdate );
 		$end  = strtotime( $enddate );
 		while ( $loop <= $end ) {
-			$d = date( 'Y-m', $loop );
+			$d = gmdate( 'Y-m', $loop );
 			if ( ! isset( $dates[ $d ] ) ) {
 				$dates[ $d ] = (object) array( 'date' => $d, 'count' => 0, 'value' => 0 );
 			}
-			if ( $d <= date( 'Y-m' ) ) {
+			if ( $d <= gmdate( 'Y-m' ) ) {
 				$total_in_period += $dates[ $d ]->value;
 				$units_in_period++;
 			}
@@ -491,7 +502,9 @@ function pmpro_report_donations_page() {
 		$tooltip  = '<div style="padding:15px; font-size: 14px; line-height: 20px; color: #000000;">';
 		$tooltip .= '<strong>' . esc_html( $tooltip_label ) . '</strong><br/>';
 		$tooltip .= '<ul style="margin-bottom: 0px;">';
+		/* translators: %d is the number of donations */
 		$tooltip .= '<li>' . sprintf( esc_html__( 'Donations: %d', 'pmpro-donations' ), intval( $data->count ) ) . '</li>';
+		/* translators: %s is the formatted donation amount */
 		$tooltip .= '<li>' . sprintf( esc_html__( 'Amount: %s', 'pmpro-donations' ), pmpro_formatPrice( $data->value ) ) . '</li>';
 		$tooltip .= '</ul></div>';
 		$google_chart_row_data[ $date ] = array(
@@ -524,8 +537,10 @@ function pmpro_report_donations_page() {
 	$period_label = isset( $period_labels[ $period ] ) ? $period_labels[ $period ] : ucwords( $period );
 
 	if ( $report_date ) {
+		/* translators: %1$s is the period label (e.g. "Monthly"), %2$s is the date (e.g. "2025" or "March 2025") */
 		$chart_title = sprintf( __( '%1$s Donations for %2$s', 'pmpro-donations' ), $period_label, $report_date );
 	} else {
+		/* translators: %s is the period label (e.g. "Annual") */
 		$chart_title = sprintf( __( '%s Donations', 'pmpro-donations' ), $period_label );
 	}
 
