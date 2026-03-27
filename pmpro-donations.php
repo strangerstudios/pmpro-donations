@@ -3,12 +3,18 @@
 Plugin Name: Paid Memberships Pro - Donations
 Plugin URI: https://www.paidmembershipspro.com/add-ons/donations-add-on/
 Description: Allow customers to set an additional donation amount at checkout.
-Version: 2.2
+Version: 2.3
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com/
 Text Domain: pmpro-donations
 Domain Path: /languages
+License: GPL-2.0+
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 // Definitions
 define( 'PMPRODON_DIR', dirname( __FILE__ ) );
@@ -36,7 +42,7 @@ add_action( 'plugins_loaded', 'pmprodon_load_textdomain' );
 function pmprodon_plugin_row_meta( $links, $file ) {
 	if ( strpos( $file, 'pmpro-donations.php' ) !== false ) {
 		$new_links = array(
-			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/donations-add-on/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/donations-add-on/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-donations' ) ) . '">' . __( 'Docs', 'pmpro-donations' ) . '</a>',
 			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-donations' ) ) . '">' . __( 'Support', 'pmpro-donations' ) . '</a>',
 		);
 		$links     = array_merge( $links, $new_links );

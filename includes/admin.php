@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Add donation column to the export csv orders
  *
@@ -43,10 +47,10 @@ function pmprodon_add_donation_field_to_orders_page( $order ) {
 	<table class="form-table">
 		<tbody>
 			<tr>
-				<th scope="row" valign="top"><label for="donation"><?php _e( 'Donation Amount', 'pmpro-don' ); ?>:</label></th>
+				<th scope="row" valign="top"><label for="donation"><?php esc_html_e( 'Donation Amount', 'pmpro-donations' ); ?>:</label></th>
 				<td>
 					<input type="text" id="donation_amount" name="donation_amount" size="20" value="<?php echo esc_attr( pmpro_filter_price_for_text_field( $donation ) ); ?>" />
-					<p class="description"><?php _e( 'Enter the donation amount for this order.', 'pmpro-don' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Enter the donation amount for this order.', 'pmpro-donations' ); ?></p>
 				</td>
 			</tr>
 		</tbody>
@@ -66,8 +70,8 @@ add_action( 'pmpro_after_order_settings', 'pmprodon_add_donation_field_to_orders
  * @since 2.0
  */
 function pmprodon_save_donation_amount( $order ) {
-	if ( isset( $_REQUEST['donation_amount'] ) && is_admin() && 'pmpro-orders' === $_REQUEST['page'] ) {
-        $float_amount = is_numeric( $_REQUEST['donation_amount'] ) ? floatval( $_REQUEST['donation_amount'] ) : '';
+	if ( isset( $_REQUEST['donation_amount'] ) && is_admin() && isset( $_REQUEST['page'] ) && 'pmpro-orders' === $_REQUEST['page'] ) {
+		$float_amount = is_numeric( $_REQUEST['donation_amount'] ) ? floatval( $_REQUEST['donation_amount'] ) : '';
 		update_pmpro_membership_order_meta( $order->id, 'donation_amount', $float_amount );
 	}
 }

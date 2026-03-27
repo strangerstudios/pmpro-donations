@@ -1,19 +1,23 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Update donation amount if a dropdown value is used
  */
 function pmprodon_init_dropdown_values() {
-
 	if ( ! empty( $_REQUEST['donation_dropdown'] ) && $_REQUEST['donation_dropdown'] != 'other' ) {
-		$_REQUEST['donation'] = sanitize_text_field( $_REQUEST['donation_dropdown'] );
+		$_REQUEST['donation'] = sanitize_text_field( wp_unslash( $_REQUEST['donation_dropdown'] ) );
 	}
 
 	if ( ! empty( $_GET['donation_dropdown'] ) && $_GET['donation_dropdown'] != 'other' ) {
-		$_GET['donation'] = sanitize_text_field( $_GET['donation_dropdown'] );
+		$_GET['donation'] = sanitize_text_field( wp_unslash( $_GET['donation_dropdown'] ) );
 	}
 
 	if ( ! empty( $_POST['donation_dropdown'] ) && $_POST['donation_dropdown'] != 'other' ) {
-		$_POST['donation'] = sanitize_text_field( $_POST['donation_dropdown'] );
+		$_POST['donation'] = sanitize_text_field( wp_unslash( $_POST['donation_dropdown'] ) );
 	}
 }
 add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_init_dropdown_values', 1 );
@@ -38,7 +42,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 	$dropdown_prices = $donfields['dropdown_prices'];
 
 	if ( isset( $_REQUEST['donation'] ) ) {
-		$donation = preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] );
+		$donation = preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) );
 	} elseif ( ! empty( $min_price ) ) {
 		$donation = $min_price;
 	} else {
@@ -91,7 +95,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 							}
 							?>
 							<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
-								<?php echo $pmpro_currency_symbol; ?> <input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_alter_price' ) ); ?>" autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
+								<?php echo esc_html( $pmpro_currency_symbol ); ?> <input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_alter_price' ) ); ?>" autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
 								<?php if ( $pmpro_review ) { ?>
 									<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
 								<?php } ?>
@@ -105,10 +109,13 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 							if ( ! empty( $donfields['text'] ) ) {
 								echo wp_kses_post( wpautop( $donfields['text'] ) );
 							} elseif ( ! empty( $donfields['min_price'] ) && empty( $donfields['max_price'] ) ) {
+								/* translators: %s is the minimum donation amount */
 								echo '<p>' . esc_html( sprintf( __( 'Enter an amount %s or greater', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) ) ) . '</p>';
 							} elseif ( ! empty( $donfields['max_price'] ) && empty( $donfields['min_price'] ) ) {
+								/* translators: %s is the maximum donation amount */
 								echo '<p>' . esc_html( sprintf( __( 'Enter an amount %s or less', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) ) ) . '</p>';
 							} elseif ( ! empty( $donfields['max_price'] ) && ! empty( $donfields['min_price'] ) ) {
+								/* translators: %1$s is the minimum donation amount, %2$s is the maximum donation amount */
 								echo '<p>' . esc_html( sprintf( __( 'Enter an amount between %1$s and %2$s', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ), pmpro_formatPrice( $donfields['max_price'] ) ) ) . '</p>';
 							}
 							?>
@@ -210,9 +217,8 @@ add_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_u
  * Set price at checkout
  */
 function pmprodon_pmpro_checkout_level( $level ) {
-
 	if ( isset( $_REQUEST['donation'] ) ) {
-		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] ) );
+		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) ) );
 	} else {
 		return $level;
 	}
@@ -251,14 +257,16 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 			}
 
 			// get price
-			$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] ) );
+			$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) ) );
 
 			// check that the donation falls between the min and max
 			if ( (float) $donation < 0 || ( ! empty( $donfields['min_price'] ) && (float) $donation < (float) $donfields['min_price'] ) ) {
+				/* translators: %s is the minimum accepted donation amount */
 				$pmpro_msg  = sprintf( __( 'The lowest accepted donation is %s. Please enter a new amount.', 'pmpro-donations' ), pmpro_formatPrice( $donfields['min_price'] ) );
 				$pmpro_msgt = 'pmpro_error';
 				$continue   = false;
 			} elseif ( ! empty( $donfields['max_price'] ) && (float) $donation > (float) $donfields['max_price'] ) {
+				/* translators: %s is the maximum accepted donation amount */
 				$pmpro_msg = sprintf( __( 'The highest accepted donation is %s. Please enter a new amount.', 'pmpro-donations' ), pmpro_formatPrice( $donfields['max_price'] ) );
 
 				$pmpro_msgt = 'pmpro_error';
@@ -312,7 +320,7 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_unhook_pmpro_level_cost
 function pmprodon_pmpro_checkout_order( $order ) {
 	_deprecated_function( __FUNCTION__, '2.0' );
 	if ( ! empty( $_REQUEST['donation'] ) ) {
-		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', $_REQUEST['donation'] ) );
+		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) ) );
 	} else {
 		return $order;
 	}
@@ -428,7 +436,7 @@ function pmprodon_ppe_add_donation_to_request() {
 	if ( empty( $_REQUEST['token'] ) ) {
 		return;
 	}
-	$token = sanitize_text_field( $_REQUEST['token'] );
+	$token = sanitize_text_field( wp_unslash( $_REQUEST['token'] ) );
 
 	// Make sure that the MemberOrder class is loaded.
 	if ( ! class_exists( 'MemberOrder' ) ) {
@@ -467,7 +475,7 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_p
  */
 function pmprodon_store_donation_amount_in_order_meta( $user_id, $order ) {
 	if ( isset( $_REQUEST['donation'] ) ) {
-		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( $_REQUEST['donation'] ) );
+		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( wp_unslash( $_REQUEST['donation'] ) ) );
 	}
 }
 add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );
@@ -490,10 +498,10 @@ function pmprodon_pmpro_confirmation_message( $message, $invoice ) {
 		$level_id = $invoice->membership_id;
 	//If for some reason we can't find the level ID, try to get it from the URL.
 	 } else if ( isset ( $_REQUEST['pmpro_level'] ) ) {
-		$level_id = $_REQUEST['pmpro_level'];
+		$level_id = intval( $_REQUEST['pmpro_level'] );
 	// Backwards compatibility for PMPro 2.x
-	 }  else if ( isset ( $_REQUEST['level'] ) ) { 
-		$level_id = $_REQUEST['level'];
+	 }  else if ( isset ( $_REQUEST['level'] ) ) {
+		$level_id = intval( $_REQUEST['level'] );
 	//Bail if we can't find the level ID.
 	} else {
 		return $message;
