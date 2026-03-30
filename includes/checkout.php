@@ -353,6 +353,40 @@ function pmprodon_pmpro_invoice_bullets_bottom( $order ) {
 }
 add_filter( 'pmpro_invoice_bullets_bottom', 'pmprodon_pmpro_invoice_bullets_bottom' );
 
+/**
+ * Override pmpro_isLevelFree for donation orders so the confirmation
+ * page loads the invoice template and fires invoice bullet hooks.
+ *
+ * Without this, donations-only levels (base price $0) are treated as
+ * "free" on the confirmation page, skipping the entire invoice section
+ * and hiding the donation amount breakdown.
+ *
+ * @since 2.3.1
+ *
+ * @param bool   $is_free Whether the level is free.
+ * @param object $level   The level object.
+ * @return bool
+ */
+function pmprodon_pmpro_is_level_free( $is_free, $level ) {
+	if ( ! $is_free || empty( $level->id ) ) {
+		return $is_free;
+	}
+
+	$settings = pmprodon_get_level_settings( $level->id );
+	if ( empty( $settings['donations'] ) ) {
+		return $is_free;
+	}
+
+	// Check if the current invoice has a non-zero total (i.e. a donation was made).
+	global $pmpro_invoice;
+	if ( ! empty( $pmpro_invoice ) && ! empty( $pmpro_invoice->total ) && (float) $pmpro_invoice->total > 0 ) {
+		return false;
+	}
+
+	return $is_free;
+}
+add_filter( 'pmpro_is_level_free', 'pmprodon_pmpro_is_level_free', 10, 2 );
+
 function pmprodon_pmpro_email_data( $data, $email ) {
 	$order_id = empty( $email->data['order_id'] ) ? false : $email->data['order_id'];
 	if ( ! empty( $order_id ) ) {
