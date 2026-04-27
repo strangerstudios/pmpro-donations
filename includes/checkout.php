@@ -130,7 +130,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 	</fieldset> <!-- end pmpro_form_fieldset-donation -->
 	<script>
 		//some vars for keeping track of whether or not we show billing
-		var pmpro_gateway_billing = <?php if ( in_array( $gateway, array( 'paypalexpress', 'twocheckout' ) ) !== false ) { echo'false';	} else { echo 'true'; } ?>;
+		var pmpro_gateway_billing = <?php if ( in_array( $gateway, array( 'paypalexpress', 'twocheckout', 'paypal' ) ) !== false ) { echo'false';	} else { echo 'true'; } ?>;
 		var pmpro_pricing_billing = <?php if ( ! pmpro_isLevelFree( $pmpro_level ) ) { echo 'true';	} else { echo 'false'; } ?>;
 		var pmpro_donation_billing = pmpro_pricing_billing;
 
@@ -183,7 +183,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 
 			//does the gateway require billing?
 			if(jQuery('input[name=gateway]').length) {
-				var no_billing_gateways = ['paypalexpress', 'twocheckout', 'check', 'paypalstandard'];
+				var no_billing_gateways = ['paypalexpress', 'twocheckout', 'check', 'paypalstandard', 'paypal'];
 				var gateway = jQuery('input[name=gateway]:checked').val();
 				if(no_billing_gateways.indexOf(gateway) > -1)
 					pmpro_gateway_billing = false;
