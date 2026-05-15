@@ -57,7 +57,7 @@ add_action( 'pmpro_after_checkout', 'pmprodon_pmpro_after_checkout' );
  * Suppress the "Your current membership level of X will be removed when you complete your purchase."
  * warning on the checkout page when purchasing a donation-only level, since the old level is preserved.
  *
- * @since TBD
+ * @since 2.4
  *
  * @param object $pmpro_level The level being checked out.
  */
@@ -71,7 +71,7 @@ add_action( 'pmpro_checkout_preheader_after_get_level_at_checkout', 'pmprodon_su
 /**
  * Return an empty string for the "level will be removed" warning text so it is not displayed.
  *
- * @since TBD
+ * @since 2.4
  *
  * @param string $translation Translated text.
  * @param string $text        Original text.

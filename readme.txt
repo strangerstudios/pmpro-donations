@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: pmpro, membership, donate, donations, gifts
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 2.3
+Stable tag: 2.4
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,6 +26,11 @@ This plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-donations/issues
 
 == Changelog ==
+= 2.4 - 2026-05-15 =
+* ENHANCEMENT: Added support for the new pmpro-paypal Add On (1.1+) as a no-billing gateway at checkout. #100 (@dparker1005)
+* ENHANCEMENT: The membership cost and donation amount now appear on the admin View Order page and the printable order template, in addition to the existing public invoice and confirmation pages. Now requires Paid Memberships Pro v3.1 or later. #98 (@andrewlimaza)
+* DEPRECATED: The `pmpro_donations_invoice_bullets` filter has been removed. Use the core `pmpro_order_single_meta` filter to customize donation entries on order views. #98 (@andrewlimaza)
+
 = 2.3 - 2026-03-27 =
 * ENHANCEMENT: Added Donations Received report that gives an isolated view of all successful donations received. (@andrewlimaza, @vbuster01)
 * ENHANCEMENT: Added improved links in the admin area so admins may find helpful links quicker (@kimcoleman)
