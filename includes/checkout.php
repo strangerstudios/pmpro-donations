@@ -336,36 +336,34 @@ function pmprodon_pmpro_checkout_order( $order ) {
 }
 
 /**
- * Show the donation and membership cost price on order views (admin, confirmation, invoice).
+ * Add donation and membership cost rows to the order meta on order views
+ * (public invoice, admin View Order, printable order).
  *
- * Replaces pmprodon_pmpro_invoice_bullets_bottom().
+ * Replaces pmprodon_pmpro_invoice_bullets_bottom(). The old
+ * pmpro_donations_invoice_bullets filter is removed — use the core
+ * pmpro_order_single_meta filter to customize these entries.
  *
- * @param array $single_meta The single meta array.
- * @param object $order The order object.
- * @return array The modified single meta array.
+ * @param array  $single_meta Existing meta entries keyed by slug.
+ * @param object $order       The order object.
+ * @return array
  */
 function pmprodon_show_donation_amount_on_order_views( $single_meta, $order ) {
 	$components = pmprodon_get_price_components( $order );
 
 	if ( ! empty( $components['donation'] ) ) {
-		$single_meta['level_cost'] = array( 'label' => __( 'Membership Cost', 'pmpro-donations' ), 'value' => pmpro_formatPrice( $components['price'] ) );
-		$single_meta['donation_amount'] = array( 'label' => __( 'Donation Amount', 'pmpro-donations' ), 'value' => pmpro_formatPrice( $components['donation'] ) );
-
-		/**
-		 * Filter the order meta fields shown for donations on order views.
-		 *
-		 * Replaces the deprecated pmpro_donations_invoice_bullets filter.
-		 *
-		 * @param array  $single_meta Array of meta fields, each with 'label' and 'value' keys.
-		 * @param object $order       The order object.
-		 */
-		$single_meta = apply_filters( 'pmpro_donations_order_view_meta', $single_meta, $order );
+		$single_meta['level_cost'] = array(
+			'label' => __( 'Membership Cost', 'pmpro-donations' ),
+			'value' => pmpro_formatPrice( $components['price'] ),
+		);
+		$single_meta['donation_amount'] = array(
+			'label' => __( 'Donation Amount', 'pmpro-donations' ),
+			'value' => pmpro_formatPrice( $components['donation'] ),
+		);
 	}
 
 	return $single_meta;
 }
 add_filter( 'pmpro_order_single_meta', 'pmprodon_show_donation_amount_on_order_views', 10, 2 );
-
 
 function pmprodon_pmpro_email_data( $data, $email ) {
 	$order_id = empty( $email->data['order_id'] ) ? false : $email->data['order_id'];
