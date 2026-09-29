@@ -487,7 +487,7 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_p
  */
 function pmprodon_store_donation_amount_in_order_meta( $user_id, $order ) {
 	if ( isset( $_REQUEST['donation'] ) ) {
-		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( wp_unslash( $_REQUEST['donation'] ) ) );
+		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) ) ) );
 	}
 }
 add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );
