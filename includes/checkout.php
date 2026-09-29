@@ -498,11 +498,11 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_p
  * @param object The order object.
  */
 function pmprodon_store_donation_amount_in_order_meta( $user_id, $order ) {
-	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Runs on pmpro_after_checkout, after core verifies pmpro_checkout_nonce in preheaders/checkout.php.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Runs on pmpro_after_checkout, after core verifies pmpro_checkout_nonce in preheaders/checkout.php. preg_replace() strips everything except digits and dots.
 	if ( isset( $_REQUEST['donation'] ) ) {
 		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( wp_unslash( $_REQUEST['donation'] ) ) );
 	}
-	// phpcs:enable WordPress.Security.NonceVerification.Recommended
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 }
 add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );
 
