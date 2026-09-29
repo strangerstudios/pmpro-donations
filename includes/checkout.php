@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Update donation amount if a dropdown value is used
  */
 function pmprodon_init_dropdown_values() {
-	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- Checkout form values; core verifies pmpro_checkout_nonce in preheaders/checkout.php before processing a submission. No state change here.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- Runs before core's checkout nonce check. Only copies the dropdown value into the donation request value for this page load; no persistent state change.
 	if ( ! empty( $_REQUEST['donation_dropdown'] ) && $_REQUEST['donation_dropdown'] != 'other' ) {
 		$_REQUEST['donation'] = sanitize_text_field( wp_unslash( $_REQUEST['donation_dropdown'] ) );
 	}
@@ -450,7 +450,7 @@ add_action( 'pmpro_checkout_preheader', 'pmprodon_pmpro_checkout_preheader' );
  */
 function pmprodon_ppe_add_donation_to_request() {
 	// Check if the "review" or "confirm" request variables are set.
-	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only: looks up the PayPal Express token order during checkout review/confirm; core verifies pmpro_checkout_nonce on submission.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Runs before core's checkout nonce check. Only looks up the PayPal Express token order and fills in the donation request value for this page load; no persistent state change.
 	if ( empty( $_REQUEST['review'] ) && empty( $_REQUEST['confirm'] ) ) {
 		return;
 	}
@@ -498,7 +498,7 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_p
  * @param object The order object.
  */
 function pmprodon_store_donation_amount_in_order_meta( $user_id, $order ) {
-	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Runs on pmpro_after_checkout, after core verifies pmpro_checkout_nonce in preheaders/checkout.php. preg_replace() strips everything except digits and dots.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Runs on pmpro_after_checkout. Only checkout submissions (nonce-checked in preheaders/checkout.php) include a donation value; gateway notifications that fire this hook don't. The value is sanitized before saving and cast with floatval() when read.
 	if ( isset( $_REQUEST['donation'] ) ) {
 		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( wp_unslash( $_REQUEST['donation'] ) ) );
 	}
