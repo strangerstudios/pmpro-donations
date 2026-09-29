@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Enqueue Google Charts corechart library on the donations report page.
  */
 function pmprodon_report_donations_enqueue_scripts() {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only: page routing check for enqueueing report scripts.
 	if ( ! isset( $_REQUEST['page'], $_REQUEST['report'] ) || 'pmpro-reports' !== $_REQUEST['page'] || 'donations' !== $_REQUEST['report'] ) {
 		return;
 	}
@@ -386,6 +387,7 @@ function pmpro_report_donations_page() {
 		wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'pmpro-donations' ) );
 	}
 
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only report filters; capability checked above.
 	// Get form values.
 	$period   = isset( $_REQUEST['period'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['period'] ) ) : 'monthly';
 	$thisyear = (int) date_i18n( 'Y', current_time( 'timestamp' ) );
@@ -395,6 +397,7 @@ function pmpro_report_donations_page() {
 	// Resolve date range via shared helper (also used by CSV export).
 	$custom_start = isset( $_REQUEST['custom_start_date'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['custom_start_date'] ) ) : '';
 	$custom_end   = isset( $_REQUEST['custom_end_date'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['custom_end_date'] ) ) : '';
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	$date_range   = pmprodon_resolve_date_range( $period, $month, $year, $custom_start, $custom_end );
 	$startdate    = $date_range['startdate'];
 	$enddate      = $date_range['enddate'];

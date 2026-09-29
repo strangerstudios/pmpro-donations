@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Update donation amount if a dropdown value is used
  */
 function pmprodon_init_dropdown_values() {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- Runs before core's checkout nonce check. Only copies the dropdown value into the donation request value for this page load; no persistent state change.
 	if ( ! empty( $_REQUEST['donation_dropdown'] ) && $_REQUEST['donation_dropdown'] != 'other' ) {
 		$_REQUEST['donation'] = sanitize_text_field( wp_unslash( $_REQUEST['donation_dropdown'] ) );
 	}
@@ -19,6 +20,7 @@ function pmprodon_init_dropdown_values() {
 	if ( ! empty( $_POST['donation_dropdown'] ) && $_POST['donation_dropdown'] != 'other' ) {
 		$_POST['donation'] = sanitize_text_field( wp_unslash( $_POST['donation_dropdown'] ) );
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
 }
 add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_init_dropdown_values', 1 );
 
@@ -41,6 +43,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 	$max_price = $donfields['max_price'];
 	$dropdown_prices = $donfields['dropdown_prices'];
 
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checkout form values; core verifies pmpro_checkout_nonce in preheaders/checkout.php before processing a submission. preg_replace() strips everything except digits and dots.
 	if ( isset( $_REQUEST['donation'] ) ) {
 		$donation = preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) );
 	} elseif ( ! empty( $min_price ) ) {
@@ -48,6 +51,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 	} else {
 		$donation = '';
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 	?>
 	<fieldset id="pmpro_form_fieldset-donation" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset', 'pmpro_form_fieldset-donation' ) ); ?>">
@@ -94,7 +98,7 @@ function pmprodon_pmpro_checkout_after_user_fields() {
 								<?php
 							}
 							?>
-							<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { ?>style="display: none;"<?php } ?>>
+							<span id="pmprodon_donation_input" <?php if ( ! empty( $pmprodon_allow_other ) && ( empty( $_REQUEST['donation_dropdown'] ) || $_REQUEST['donation_dropdown'] != 'other' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only: decides whether to show the Other amount input. ?>style="display: none;"<?php } ?>>
 								<?php echo esc_html( $pmpro_currency_symbol ); ?> <input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_alter_price' ) ); ?>" autocomplete="off" type="text" id="donation" name="donation" size="10" value="<?php echo esc_attr( $donation ); ?>" <?php if ( $pmpro_review ) { ?>disabled="disabled"<?php } ?> />
 								<?php if ( $pmpro_review ) { ?>
 									<input type="hidden" name="donation" value="<?php echo esc_attr( $donation ); ?>" />
@@ -217,11 +221,13 @@ add_action( 'pmpro_checkout_after_user_fields', 'pmprodon_pmpro_checkout_after_u
  * Set price at checkout
  */
 function pmprodon_pmpro_checkout_level( $level ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checkout form values; core verifies pmpro_checkout_nonce in preheaders/checkout.php before processing a submission. preg_replace() strips everything except digits and dots.
 	if ( isset( $_REQUEST['donation'] ) ) {
 		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) ) );
 	} else {
 		return $level;
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 	if ( ! empty( $donation ) && $donation > 0 ) {
 		// save initial payment amount
@@ -245,6 +251,7 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 		global $pmpro_currency_symbol, $pmpro_msg, $pmpro_msgt;
 
 		// was a donation passed in?
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checkout form values; core verifies pmpro_checkout_nonce in preheaders/checkout.php before processing a submission. preg_replace() strips everything except digits and dots.
 		if ( isset( $_REQUEST['donation'] ) ) {
 			// get values
 			$level = pmpro_getLevelAtCheckout();
@@ -258,6 +265,7 @@ function pmprodon_pmpro_registration_checks( $continue ) {
 
 			// get price
 			$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) ) );
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			// check that the donation falls between the min and max
 			if ( (float) $donation < 0 || ( ! empty( $donfields['min_price'] ) && (float) $donation < (float) $donfields['min_price'] ) ) {
@@ -319,11 +327,13 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprodon_unhook_pmpro_level_cost
  */
 function pmprodon_pmpro_checkout_order( $order ) {
 	_deprecated_function( __FUNCTION__, '2.0' );
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Deprecated function; Checkout form values; core verifies pmpro_checkout_nonce in preheaders/checkout.php before processing a submission. preg_replace() strips everything except digits and dots.
 	if ( ! empty( $_REQUEST['donation'] ) ) {
 		$donation = sanitize_text_field( preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) ) );
 	} else {
 		return $order;
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 	if ( empty( $order->notes ) ) {
 		$order->notes = '';
@@ -440,6 +450,7 @@ add_action( 'pmpro_checkout_preheader', 'pmprodon_pmpro_checkout_preheader' );
  */
 function pmprodon_ppe_add_donation_to_request() {
 	// Check if the "review" or "confirm" request variables are set.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Runs before core's checkout nonce check. Only looks up the PayPal Express token order and fills in the donation request value for this page load; no persistent state change.
 	if ( empty( $_REQUEST['review'] ) && empty( $_REQUEST['confirm'] ) ) {
 		return;
 	}
@@ -474,6 +485,7 @@ function pmprodon_ppe_add_donation_to_request() {
 	if ( ! empty( $donation['donation'] ) && empty( $_REQUEST['donation'] ) ) {
 		$_REQUEST['donation'] = $donation['donation'];
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 }
 add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_ppe_add_donation_to_request' );
 
@@ -486,9 +498,11 @@ add_action( 'pmpro_checkout_preheader_before_get_level_at_checkout', 'pmprodon_p
  * @param object The order object.
  */
 function pmprodon_store_donation_amount_in_order_meta( $user_id, $order ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Runs on pmpro_after_checkout. Only checkout submissions (nonce-checked in preheaders/checkout.php) include a donation value; gateway notifications that fire this hook don't. The value is sanitized before saving and cast with floatval() when read.
 	if ( isset( $_REQUEST['donation'] ) ) {
 		update_pmpro_membership_order_meta( $order->id, 'donation_amount', sanitize_text_field( preg_replace( '/[^0-9\.]/', '', wp_unslash( $_REQUEST['donation'] ) ) ) );
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 }
 add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_meta', 10, 2 );
 
@@ -506,6 +520,7 @@ add_action( 'pmpro_after_checkout', 'pmprodon_store_donation_amount_in_order_met
  */
 function pmprodon_pmpro_confirmation_message( $message, $invoice ) {
 	//Get the level ID from the MemberOrder object.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only: level ID fallback for the confirmation message, cast with intval().
 	if ( $invoice ) {
 		$level_id = $invoice->membership_id;
 	//If for some reason we can't find the level ID, try to get it from the URL.
@@ -518,6 +533,7 @@ function pmprodon_pmpro_confirmation_message( $message, $invoice ) {
 	} else {
 		return $message;
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	//Bail if not a donation level or donations are not enabled or there is no confirmation message.
 	$settings = pmprodon_get_level_settings( $level_id );

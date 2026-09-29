@@ -70,7 +70,8 @@ add_action( 'pmpro_after_order_settings', 'pmprodon_add_donation_field_to_orders
  * @since 2.0
  */
 function pmprodon_save_donation_amount( $order ) {
-	if ( isset( $_REQUEST['donation_amount'] ) && is_admin() && isset( $_REQUEST['page'] ) && 'pmpro-orders' === $_REQUEST['page'] ) {
+	// pmpro_updated_order fires on every order update, so only save when the edit order form was submitted.
+	if ( isset( $_REQUEST['donation_amount'] ) && is_admin() && isset( $_REQUEST['page'] ) && 'pmpro-orders' === $_REQUEST['page'] && isset( $_REQUEST['pmpro_orders_nonce'] ) && wp_verify_nonce( sanitize_key( $_REQUEST['pmpro_orders_nonce'] ), 'save_order' ) ) {
 		$float_amount = is_numeric( $_REQUEST['donation_amount'] ) ? floatval( $_REQUEST['donation_amount'] ) : '';
 		update_pmpro_membership_order_meta( $order->id, 'donation_amount', $float_amount );
 	}

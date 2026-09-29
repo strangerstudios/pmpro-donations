@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function pmprodon_pmpro_membership_level_after_other_settings() {
 	global $pmpro_currency_symbol;
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only: level ID used to display settings on the edit level page.
 	$level_id = isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0;
 	$donfields       = pmprodon_get_level_settings( $level_id );			
 	$donations       = ( ! isset( $donfields['donations'] ) ) ? 0 : $donfields['donations'];
@@ -122,6 +123,7 @@ add_action( 'pmpro_membership_level_before_content_settings', 'pmprodon_pmpro_me
  * Save level cost text when the level is saved/added
  */
 function pmprodon_pmpro_save_membership_level( $level_id ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Runs on pmpro_save_membership_level, after core check_admin_referer( pmpro_membershiplevels_nonce ) in adminpages/membershiplevels.php. Min/max values are cast with floatval() below.
 	$donations      = ! empty( $_REQUEST['donations'] ) ? 1 : 0;
 	$donations_only = ! empty( $_REQUEST['donations_only'] ) ? 1 : 0;
 
@@ -132,6 +134,7 @@ function pmprodon_pmpro_save_membership_level( $level_id ) {
 	$text             = wp_kses_post( wp_unslash( isset( $_REQUEST['donations_text'] ) ? $_REQUEST['donations_text'] : '' ) );
 	$confirmation_message = wp_kses_post( wp_unslash( isset( $_REQUEST['confirmation_message'] ) ? $_REQUEST['confirmation_message'] : '' ) );
 	$dropdown_prices  = sanitize_text_field( wp_unslash( isset( $_REQUEST['dropdown_prices'] ) ? $_REQUEST['dropdown_prices'] : '' ) );
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 	update_option(
 		'pmprodon_' . $level_id, array(
