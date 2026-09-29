@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Donations 2.4\n"
+"Project-Id-Version: Paid Memberships Pro - Donations 2.4.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-15T16:36:18+00:00\n"
+"POT-Creation-Date: 2026-09-29T14:58:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-donations\n"
@@ -40,9 +40,9 @@ msgid "https://www.paidmembershipspro.com/"
 msgstr ""
 
 #: includes/admin.php:50
-#: includes/checkout.php:61
-#: includes/checkout.php:359
-#: includes/reports.php:486
+#: includes/checkout.php:65
+#: includes/checkout.php:369
+#: includes/reports.php:489
 msgid "Donation Amount"
 msgstr ""
 
@@ -50,343 +50,343 @@ msgstr ""
 msgid "Enter the donation amount for this order."
 msgstr ""
 
-#: includes/checkout.php:57
+#: includes/checkout.php:61
 msgid "Make a Gift"
 msgstr ""
 
-#: includes/checkout.php:90
+#: includes/checkout.php:94
 msgid "Other"
 msgstr ""
 
 #. translators: %s is the minimum donation amount
-#: includes/checkout.php:113
+#: includes/checkout.php:117
 #, php-format
 msgid "Enter an amount %s or greater"
 msgstr ""
 
 #. translators: %s is the maximum donation amount
-#: includes/checkout.php:116
+#: includes/checkout.php:120
 #, php-format
 msgid "Enter an amount %s or less"
 msgstr ""
 
 #. translators: %1$s is the minimum donation amount, %2$s is the maximum donation amount
-#: includes/checkout.php:119
+#: includes/checkout.php:123
 #, php-format
 msgid "Enter an amount between %1$s and %2$s"
 msgstr ""
 
-#: includes/checkout.php:255
+#: includes/checkout.php:262
 msgid "Error: You tried to set the donation on a level that doesn't have donations. Please try again."
 msgstr ""
 
 #. translators: %s is the minimum accepted donation amount
-#: includes/checkout.php:265
+#: includes/checkout.php:273
 #, php-format
 msgid "The lowest accepted donation is %s. Please enter a new amount."
 msgstr ""
 
 #. translators: %s is the maximum accepted donation amount
-#: includes/checkout.php:270
+#: includes/checkout.php:278
 #, php-format
 msgid "The highest accepted donation is %s. Please enter a new amount."
 msgstr ""
 
-#: includes/checkout.php:332
-#: includes/checkout.php:333
+#: includes/checkout.php:342
+#: includes/checkout.php:343
 #: includes/common.php:30
 #: includes/common.php:37
 msgid "Donation"
 msgstr ""
 
-#: includes/checkout.php:355
+#: includes/checkout.php:365
 msgid "Membership Cost"
 msgstr ""
 
-#: includes/checkout.php:400
+#: includes/checkout.php:410
 msgid "Invoice"
 msgstr ""
 
-#: includes/checkout.php:400
+#: includes/checkout.php:410
 msgid "Donation Amount:"
 msgstr ""
 
-#: includes/level-settings.php:34
+#: includes/level-settings.php:35
 msgid "Donations Settings"
 msgstr ""
 
-#: includes/level-settings.php:39
+#: includes/level-settings.php:40
 msgid "If donations are enabled, users will be able to set an additional donation amount at checkout. That price will be added to any initial payment you set on this level. You can set the minimum and maximum amount allowed for gifts for this level."
 msgstr ""
 
-#: includes/level-settings.php:41
+#: includes/level-settings.php:42
 msgid "Donations Add On Documentation"
 msgstr ""
 
-#: includes/level-settings.php:41
-#: includes/reports.php:329
-#: includes/reports.php:702
+#: includes/level-settings.php:42
+#: includes/reports.php:330
+#: includes/reports.php:705
 msgid "Donations"
 msgstr ""
 
 #. translators: %s is a link to the Donations Add On documentation
-#: includes/level-settings.php:43
+#: includes/level-settings.php:44
 #, php-format
 msgid "Learn more about %s."
 msgstr ""
 
-#: includes/level-settings.php:49
+#: includes/level-settings.php:50
 msgid "Enable:"
 msgstr ""
 
-#: includes/level-settings.php:51
+#: includes/level-settings.php:52
 msgid "Enable Donations"
 msgstr ""
 
-#: includes/level-settings.php:55
+#: includes/level-settings.php:56
 msgid "Donations-Only Level:"
 msgstr ""
 
-#: includes/level-settings.php:57
+#: includes/level-settings.php:58
 msgid "Check to have existing members NOT switched to this level at checkout."
 msgstr ""
 
-#: includes/level-settings.php:61
+#: includes/level-settings.php:62
 msgid "Min Amount:"
 msgstr ""
 
-#: includes/level-settings.php:67
+#: includes/level-settings.php:68
 msgid "Max Amount:"
 msgstr ""
 
-#: includes/level-settings.php:73
+#: includes/level-settings.php:74
 msgid "Price Dropdown:"
 msgstr ""
 
-#: includes/level-settings.php:75
+#: includes/level-settings.php:76
 msgid "Enter numbers separated by commas to popuplate a dropdown with suggested prices. Include 'other' (all lowercase) in the list to allow users to enter their own amount."
 msgstr ""
 
-#: includes/level-settings.php:79
+#: includes/level-settings.php:80
 msgid "Help Text:"
 msgstr ""
 
-#: includes/level-settings.php:82
+#: includes/level-settings.php:83
 msgid "If not blank, this text will override the default text generated to explain the range of donation values accepted."
 msgstr ""
 
-#: includes/level-settings.php:86
+#: includes/level-settings.php:87
 msgid "Confirmation text:"
 msgstr ""
 
-#: includes/level-settings.php:89
+#: includes/level-settings.php:90
 msgid "If not blank, this text will be shown after the default confirmation text on the membership checkout confirmation page."
 msgstr ""
 
-#: includes/reports.php:29
-#: includes/reports.php:559
+#: includes/reports.php:30
+#: includes/reports.php:562
 msgid "Donations Received"
 msgstr ""
 
-#: includes/reports.php:198
-#: includes/reports.php:386
+#: includes/reports.php:199
+#: includes/reports.php:387
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: includes/reports.php:202
+#: includes/reports.php:203
 msgid "Security check failed."
 msgstr ""
 
-#: includes/reports.php:222
+#: includes/reports.php:223
 msgid "Member ID"
 msgstr ""
 
-#: includes/reports.php:223
+#: includes/reports.php:224
 msgid "Username"
 msgstr ""
 
-#: includes/reports.php:224
+#: includes/reports.php:225
 msgid "First Name"
 msgstr ""
 
-#: includes/reports.php:225
+#: includes/reports.php:226
 msgid "Last Name"
 msgstr ""
 
-#: includes/reports.php:226
-#: includes/reports.php:330
-#: includes/reports.php:703
+#: includes/reports.php:227
+#: includes/reports.php:331
+#: includes/reports.php:706
 msgid "Amount"
 msgstr ""
 
-#: includes/reports.php:227
-#: includes/reports.php:701
+#: includes/reports.php:228
+#: includes/reports.php:704
 msgid "Date"
 msgstr ""
 
-#: includes/reports.php:312
+#: includes/reports.php:313
 msgid "Today"
 msgstr ""
 
-#: includes/reports.php:313
+#: includes/reports.php:314
 msgid "This Month"
 msgstr ""
 
-#: includes/reports.php:314
+#: includes/reports.php:315
 msgid "This Year"
 msgstr ""
 
-#: includes/reports.php:315
-#: includes/reports.php:523
+#: includes/reports.php:316
+#: includes/reports.php:526
 msgid "All Time"
 msgstr ""
 
-#: includes/reports.php:328
+#: includes/reports.php:329
 msgid "Period"
 msgstr ""
 
 #. translators: %s is the period label (e.g. "Today", "This Month")
-#: includes/reports.php:345
+#: includes/reports.php:346
 #, php-format
 msgid "Toggle donations by amount for %s"
 msgstr ""
 
 #. translators: %1$s is the donation amount, %2$s is the period label (e.g. "Today")
-#: includes/reports.php:361
+#: includes/reports.php:362
 #, php-format
 msgid "Donations of %1$s for %2$s"
 msgstr ""
 
 #. translators: %s is the report name
-#: includes/reports.php:374
+#: includes/reports.php:375
 #, php-format
 msgid "View the full %s report"
 msgstr ""
 
 #. translators: %s is the report name
-#: includes/reports.php:374
+#: includes/reports.php:375
 msgid "Details"
 msgstr ""
 
-#: includes/reports.php:487
+#: includes/reports.php:490
 msgid "Average Amount"
 msgstr ""
 
 #. translators: %d is the number of donations
-#: includes/reports.php:506
+#: includes/reports.php:509
 #, php-format
 msgid "Donations: %d"
 msgstr ""
 
 #. translators: %s is the formatted donation amount
-#: includes/reports.php:508
+#: includes/reports.php:511
 #, php-format
 msgid "Amount: %s"
 msgstr ""
 
-#: includes/reports.php:529
-#: includes/reports.php:568
-msgid "Daily"
-msgstr ""
-
-#: includes/reports.php:530
-#: includes/reports.php:569
-msgid "Monthly"
-msgstr ""
-
-#: includes/reports.php:531
-#: includes/reports.php:570
-msgid "Annual"
-msgstr ""
-
 #: includes/reports.php:532
 #: includes/reports.php:571
-msgid "Last 7 Days"
+msgid "Daily"
 msgstr ""
 
 #: includes/reports.php:533
 #: includes/reports.php:572
-msgid "Last 30 Days"
+msgid "Monthly"
 msgstr ""
 
 #: includes/reports.php:534
 #: includes/reports.php:573
-msgid "Last 12 Months"
+msgid "Annual"
 msgstr ""
 
 #: includes/reports.php:535
+#: includes/reports.php:574
+msgid "Last 7 Days"
+msgstr ""
+
+#: includes/reports.php:536
+#: includes/reports.php:575
+msgid "Last 30 Days"
+msgstr ""
+
+#: includes/reports.php:537
+#: includes/reports.php:576
+msgid "Last 12 Months"
+msgstr ""
+
+#: includes/reports.php:538
 msgid "Custom"
 msgstr ""
 
 #. translators: %1$s is the period label (e.g. "Monthly"), %2$s is the date (e.g. "2025" or "March 2025")
-#: includes/reports.php:541
+#: includes/reports.php:544
 #, php-format
 msgid "%1$s Donations for %2$s"
 msgstr ""
 
 #. translators: %s is the period label (e.g. "Annual")
-#: includes/reports.php:544
+#: includes/reports.php:547
 #, php-format
 msgid "%s Donations"
 msgstr ""
 
-#: includes/reports.php:560
+#: includes/reports.php:563
 msgid "Export to CSV"
 msgstr ""
 
-#: includes/reports.php:563
+#: includes/reports.php:566
 msgid "Customize Report"
 msgstr ""
 
-#: includes/reports.php:565
+#: includes/reports.php:568
 msgid "Show"
 msgstr ""
 
-#: includes/reports.php:566
+#: includes/reports.php:569
 msgid "Select report time period"
 msgstr ""
 
-#: includes/reports.php:574
+#: includes/reports.php:577
 msgid "Custom Range"
 msgstr ""
 
-#: includes/reports.php:577
+#: includes/reports.php:580
 msgid "for"
 msgstr ""
 
-#: includes/reports.php:579
+#: includes/reports.php:582
 msgid "Select report month"
 msgstr ""
 
-#: includes/reports.php:586
+#: includes/reports.php:589
 msgid "Select report year"
 msgstr ""
 
-#: includes/reports.php:593
+#: includes/reports.php:596
 msgid "from"
 msgstr ""
 
-#: includes/reports.php:594
+#: includes/reports.php:597
 msgid "Start date"
 msgstr ""
 
-#: includes/reports.php:596
+#: includes/reports.php:599
 msgid "to"
 msgstr ""
 
-#: includes/reports.php:597
+#: includes/reports.php:600
 msgid "End date"
 msgstr ""
 
-#: includes/reports.php:602
+#: includes/reports.php:605
 msgid "Generate Report"
 msgstr ""
 
-#: includes/reports.php:608
+#: includes/reports.php:611
 msgid "Average line calculated using data prior to current day, month, or year."
 msgstr ""
 
-#: includes/reports.php:719
+#: includes/reports.php:722
 msgid "Total"
 msgstr ""
 
