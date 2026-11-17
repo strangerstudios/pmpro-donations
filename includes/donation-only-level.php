@@ -51,7 +51,7 @@ add_action( 'pmpro_checkout_before_change_membership_level', 'pmprodon_pmpro_che
 /**
  * Don't cancel subscriptions or deactivate levels during an existing member's donation-only checkout.
  *
- * @since TBD
+ * @since 2.4.2
  *
  * @return bool
  */
@@ -62,7 +62,7 @@ function pmprodon_keep_existing_memberships() {
 /**
  * Remove this Add On's filters and state for an existing member's donation-only checkout.
  *
- * @since TBD
+ * @since 2.4.2
  */
 function pmprodon_reset_existing_member_checkout() {
 	global $pmprodon_existing_member_flag;

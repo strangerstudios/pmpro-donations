@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: pmpro, membership, donate, donations, gifts
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 License: GPL-2.0+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,6 +26,11 @@ This plugin requires Paid Memberships Pro.
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-donations/issues
 
 == Changelog ==
+= 2.4.2 - 2026-11-17 =
+* BUG FIX: Fixed an issue where completing a Pay by Check order from the Edit Order page would clear the donation amount saved at checkout. #104 (@dparker1005)
+* BUG FIX: Fixed an issue where existing members checking out for a donation-only level through an offsite gateway such as Stripe Checkout, or through Pay by Check, would lose their existing membership levels. #105 (@dparker1005)
+* BUG FIX: Fixed an issue where members who already held a donation-only level would lose it after donating again. #105 (@dparker1005)
+
 = 2.4.1 - 2026-09-29 =
 * SECURITY: The donation amount saved to the order now matches the amount validated and charged at checkout. #102 (@becleung)
 * SECURITY: Saving a donation amount on the admin edit order screen now requires that form's nonce. #101 (@dparker1005)
